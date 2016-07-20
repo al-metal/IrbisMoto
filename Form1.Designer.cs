@@ -34,6 +34,7 @@
             this.tbDescription = new System.Windows.Forms.TextBox();
             this.tbKeywords = new System.Windows.Forms.TextBox();
             this.btnSaveTemplates = new System.Windows.Forms.Button();
+            this.btnActual = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // rtbMiniText
@@ -83,11 +84,22 @@
             this.btnSaveTemplates.UseVisualStyleBackColor = true;
             this.btnSaveTemplates.Click += new System.EventHandler(this.btnSaveTemplates_Click);
             // 
+            // btnActual
+            // 
+            this.btnActual.Location = new System.Drawing.Point(969, 12);
+            this.btnActual.Name = "btnActual";
+            this.btnActual.Size = new System.Drawing.Size(290, 48);
+            this.btnActual.TabIndex = 6;
+            this.btnActual.Text = "Актуализировать информацию";
+            this.btnActual.UseVisualStyleBackColor = true;
+            this.btnActual.Click += new System.EventHandler(this.btnActual_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1294, 450);
+            this.Controls.Add(this.btnActual);
             this.Controls.Add(this.btnSaveTemplates);
             this.Controls.Add(this.tbKeywords);
             this.Controls.Add(this.tbDescription);
@@ -109,6 +121,7 @@
         private System.Windows.Forms.TextBox tbDescription;
         private System.Windows.Forms.TextBox tbKeywords;
         private System.Windows.Forms.Button btnSaveTemplates;
+        private System.Windows.Forms.Button btnActual;
     }
 }
 

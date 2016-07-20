@@ -129,5 +129,10 @@ namespace IrbisMoto
 
             MessageBox.Show("Сохранено");
         }
+
+        private void btnActual_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
