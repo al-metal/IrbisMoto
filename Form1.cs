@@ -146,6 +146,9 @@ namespace IrbisMoto
 
             for (int i = 8; q > i; i++)
             {
+                if(w.Cells[i, 1].Value == null)
+                    break;
+                
                 double articl = (double)w.Cells[i, 1].Value;
                 double quantity = (double)w.Cells[i, 9].Value;
 
