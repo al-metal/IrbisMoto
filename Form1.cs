@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using web;
@@ -16,6 +17,9 @@ namespace IrbisMoto
     public partial class Form1 : Form
     {
         WebRequest webRequest = new WebRequest();
+        string otv = null;
+        int deleteTovar = 0;
+
         public Form1()
         {
             InitializeComponent();
@@ -140,12 +144,25 @@ namespace IrbisMoto
             ExcelWorksheet w = p.Workbook.Worksheets[3];
             int q = w.Dimension.Rows;
 
-            for (int i = 10; q > i; i++)
+            for (int i = 8; q > i; i++)
             {
                 double articl = (double)w.Cells[i, 1].Value;
-                int quantity = (int)w.Cells[i, 9].Value;
+                double quantity = (double)w.Cells[i, 9].Value;
 
+                if(quantity == 0)
+                {
+                    otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
+                    string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
+                    if(urlTovar != "")
+                    {
+                        urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
+                        List<string> tovarList = webRequest.arraySaveimage(urlTovar);
+                        webRequest.deleteProduct(tovarList);
+                        deleteTovar++;
+                    }
+                }
             }
+            MessageBox.Show("Удалено " + deleteTovar + " позиций товара");
         }
     }
 }
