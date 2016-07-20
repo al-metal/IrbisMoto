@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OfficeOpenXml;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -132,7 +133,10 @@ namespace IrbisMoto
 
         private void btnActual_Click(object sender, EventArgs e)
         {
-
+            FileInfo file = new FileInfo("Прайс.xlsx");
+            ExcelPackage p = new ExcelPackage(file);
+            ExcelWorksheet w = p.Workbook.Worksheets[3];
+            int q = w.Dimension.Rows;
         }
     }
 }
