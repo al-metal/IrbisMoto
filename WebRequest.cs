@@ -140,7 +140,7 @@ namespace web
             {
                 string productId = new Regex("(?<=<section class=\"comment\" id=\").*?(?=\">)").Match(otv).ToString();
                 String article = new Regex("(?<=Артикул:)[\\w\\W]*(?=</div><div><div class)").Match(otv).Value.Trim();
-                if (article.Length > 11)
+                if (article.Length > 13)
                 {
                     article = new Regex("(?<=Артикул:)[\\w\\W]*(?=</title>)").Match(otv).ToString().Trim();
                 }
