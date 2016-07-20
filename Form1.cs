@@ -151,6 +151,9 @@ namespace IrbisMoto
                 
                 double articl = (double)w.Cells[i, 1].Value;
                 double quantity = (double)w.Cells[i, 9].Value;
+                double priceIrbisDiler = (double)w.Cells[i, 6].Value;
+                double actualPrice = Price(priceIrbisDiler);
+
 
                 if(quantity == 0)
                 {
@@ -166,6 +169,31 @@ namespace IrbisMoto
                 }
             }
             MessageBox.Show("Удалено " + deleteTovar + " позиций товара");
+        }
+
+        public double Price(double priceDiler)
+        {
+            double discount = 0;
+            double actualPrice = 0;
+            if (priceDiler <= 15)
+                discount = 2.7;
+            if (priceDiler <= 199)
+                discount = 2.5;
+            if (priceDiler <= 2000)
+                discount = 1.7;
+            if (priceDiler <= 7999)
+                discount = 1.4;
+            if (priceDiler >= 8000)
+                discount = 1.3;
+
+            actualPrice = priceDiler * discount;
+            actualPrice = Math.Round(actualPrice, 0);
+            int price = Convert.ToInt32(actualPrice);
+            price = (price / 10) * 10;
+            actualPrice = Convert.ToDouble(price);
+
+            
+            return actualPrice;
         }
     }
 }
