@@ -9,11 +9,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using web;
 
 namespace IrbisMoto
 {
     public partial class Form1 : Form
     {
+        WebRequest webRequest = new WebRequest();
         public Form1()
         {
             InitializeComponent();
@@ -137,6 +139,13 @@ namespace IrbisMoto
             ExcelPackage p = new ExcelPackage(file);
             ExcelWorksheet w = p.Workbook.Worksheets[3];
             int q = w.Dimension.Rows;
+
+            for (int i = 10; q > i; i++)
+            {
+                double articl = (double)w.Cells[i, 1].Value;
+                int quantity = (int)w.Cells[i, 9].Value;
+
+            }
         }
     }
 }
