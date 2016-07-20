@@ -19,6 +19,7 @@ namespace IrbisMoto
         WebRequest webRequest = new WebRequest();
         string otv = null;
         int deleteTovar = 0;
+        int editPrice = 0;
 
         public Form1()
         {
@@ -154,12 +155,11 @@ namespace IrbisMoto
                 double priceIrbisDiler = (double)w.Cells[i, 6].Value;
                 double actualPrice = Price(priceIrbisDiler);
 
-
-                if(quantity == 0)
+                if (quantity == 0)
                 {
                     otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
                     string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
-                    if(urlTovar != "")
+                    if (urlTovar != "")
                     {
                         urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
                         List<string> tovarList = webRequest.arraySaveimage(urlTovar);
@@ -167,8 +167,25 @@ namespace IrbisMoto
                         deleteTovar++;
                     }
                 }
+                else
+                {
+                    otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
+                    string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
+                    if (urlTovar != "")
+                    {
+                        urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
+                        List<string> tovarList = webRequest.arraySaveimage(urlTovar);
+                        double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
+                        if(actualPrice != priceBike18)
+                        {
+                            tovarList[9] = actualPrice.ToString();
+                            webRequest.saveImage(tovarList);
+                            editPrice++;
+                        }
+                    }
+                }
             }
-            MessageBox.Show("Удалено " + deleteTovar + " позиций товара");
+            MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
         }
 
         public double Price(double priceDiler)
