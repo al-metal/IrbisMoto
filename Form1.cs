@@ -183,6 +183,16 @@ namespace IrbisMoto
                             editPrice++;
                         }
                     }
+                    else
+                    {
+                        ExcelRange er = w.Cells[i, 2];
+                        if (er.Hyperlink != null)
+                        {
+                            string urlImg = er.Hyperlink.ToString();
+                        }
+                        string name = (string)w.Cells[i, 3].Value;
+                        string stock = (string)w.Cells[i, 14].Value;
+                    }
                 }
             }
             MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
