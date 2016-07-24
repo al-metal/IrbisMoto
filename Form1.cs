@@ -154,6 +154,25 @@ namespace IrbisMoto
                 double quantity = (double)w.Cells[i, 9].Value;
                 double priceIrbisDiler = (double)w.Cells[i, 6].Value;
                 double actualPrice = Price(priceIrbisDiler);
+                string action = (string)w.Cells[i, 14].Value;
+                if(action != "")
+                {
+                    switch (action)
+                    {
+                        case "ЛУЧШАЯ ЦЕНА!":
+                            action = "";
+                            break;
+                        case "Новое поступление":
+                            action = "";
+                            break;
+                        case "Новое постуление":
+                            action = "";
+                            break;
+                        default:
+                            action = "";
+                            break;
+                    }
+                }
 
                 if (quantity == 0)
                 {
@@ -178,6 +197,7 @@ namespace IrbisMoto
                         double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
                         if(actualPrice != priceBike18)
                         {
+                            //tovarList[39]
                             tovarList[9] = actualPrice.ToString();
                             webRequest.saveImage(tovarList);
                             editPrice++;
