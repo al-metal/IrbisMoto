@@ -204,12 +204,16 @@ namespace IrbisMoto
             double actualPrice = 0;
             if (priceDiler <= 15)
                 discount = 2.7;
+            else
             if (priceDiler <= 199)
                 discount = 2.5;
+            else
             if (priceDiler <= 2000)
                 discount = 1.7;
+            else
             if (priceDiler <= 7999)
                 discount = 1.4;
+            else
             if (priceDiler >= 8000)
                 discount = 1.3;
 
@@ -219,7 +223,6 @@ namespace IrbisMoto
             price = (price / 10) * 10;
             actualPrice = Convert.ToDouble(price);
 
-            
             return actualPrice;
         }
     }
