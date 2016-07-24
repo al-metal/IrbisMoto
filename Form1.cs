@@ -147,7 +147,7 @@ namespace IrbisMoto
 
             for (int i = 8; q > i; i++)
             {
-                if(w.Cells[i, 1].Value == null)
+                if (w.Cells[i, 1].Value == null)
                     break;
                 
                 double articl = (double)w.Cells[i, 1].Value;
@@ -160,13 +160,13 @@ namespace IrbisMoto
                     switch (action)
                     {
                         case "ЛУЧШАЯ ЦЕНА!":
-                            action = "";
+                            action = "&markers[3]=1";
                             break;
                         case "Новое поступление":
-                            action = "";
+                            action = "&markers[1]=1";
                             break;
                         case "Новое постуление":
-                            action = "";
+                            action = "&markers[1]=1";
                             break;
                         default:
                             action = "";
@@ -182,8 +182,18 @@ namespace IrbisMoto
                     {
                         urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
                         List<string> tovarList = webRequest.arraySaveimage(urlTovar);
-                        webRequest.deleteProduct(tovarList);
-                        deleteTovar++;
+                        if (action != "")
+                        {
+                            tovarList[39] = action;
+                            tovarList[9] = actualPrice.ToString();
+                            webRequest.saveImage(tovarList);
+                            editPrice++;
+                        }
+                        else
+                        {
+                            webRequest.deleteProduct(tovarList);
+                            deleteTovar++;
+                        }
                     }
                 }
                 else
@@ -197,8 +207,13 @@ namespace IrbisMoto
                         double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
                         if(actualPrice != priceBike18)
                         {
-                            //tovarList[39]
+                            tovarList[39] = action;
                             tovarList[9] = actualPrice.ToString();
+                            webRequest.saveImage(tovarList);
+                            editPrice++;
+                        }else if(tovarList[39].ToString() != action)
+                        {
+                            tovarList[39] = action;
                             webRequest.saveImage(tovarList);
                             editPrice++;
                         }
