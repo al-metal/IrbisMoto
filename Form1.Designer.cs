@@ -107,7 +107,7 @@
             this.Controls.Add(this.rtbFullText);
             this.Controls.Add(this.rtbMiniText);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Irbis Moto";
             this.ResumeLayout(false);
             this.PerformLayout();
 
