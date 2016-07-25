@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,10 +17,11 @@ namespace IrbisMoto
 {
     public partial class Form1 : Form
     {
-        WebRequest webRequest = new WebRequest();
+        web.WebRequest webRequest = new web.WebRequest();
         string otv = null;
         int deleteTovar = 0;
         int editPrice = 0;
+        WebClient webClient = new WebClient();
 
         public Form1()
         {
@@ -27,6 +29,10 @@ namespace IrbisMoto
             if (!Directory.Exists("files"))
             {
                 Directory.CreateDirectory("files");
+            }
+            if (!Directory.Exists("pic"))
+            {
+                Directory.CreateDirectory("pic");
             }
 
             if (!File.Exists("files\\miniText.txt"))
@@ -155,7 +161,15 @@ namespace IrbisMoto
                 double priceIrbisDiler = (double)w.Cells[i, 6].Value;
                 double actualPrice = Price(priceIrbisDiler);
                 string action = (string)w.Cells[i, 14].Value;
-                if(action != "")
+
+                ExcelRange er = w.Cells[i, 2];
+                if (er.Hyperlink != null)
+                {
+                    string urlImg = er.Hyperlink.ToString();
+                    webClient.DownloadFile(urlImg, "pic\\" + articl + ".jpg");
+                }
+
+                if (action != "")
                 {
                     switch (action)
                     {
@@ -220,11 +234,6 @@ namespace IrbisMoto
                     }
                     else
                     {
-                        ExcelRange er = w.Cells[i, 2];
-                        if (er.Hyperlink != null)
-                        {
-                            string urlImg = er.Hyperlink.ToString();
-                        }
                         string name = (string)w.Cells[i, 3].Value;
                         string stock = (string)w.Cells[i, 14].Value;
                     }
