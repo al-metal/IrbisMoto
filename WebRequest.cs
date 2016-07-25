@@ -39,6 +39,8 @@ namespace web
             res = (HttpWebResponse)req.GetResponse();
             StreamReader ressr = new StreamReader(res.GetResponseStream());
             String otv = ressr.ReadToEnd();
+            res.GetResponseStream().Close();
+            req.GetResponse().Close();
 
             return otv;
         }

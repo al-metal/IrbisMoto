@@ -151,93 +151,206 @@ namespace IrbisMoto
             ExcelWorksheet w = p.Workbook.Worksheets[3];
             int q = w.Dimension.Rows;
 
+            //for (int i = 8; q > i; i++)
+            //{
+            //    if (w.Cells[i, 1].Value == null)
+            //        break;
+                
+            //    double articl = (double)w.Cells[i, 1].Value;
+            //    double quantity = (double)w.Cells[i, 9].Value;
+            //    double priceIrbisDiler = (double)w.Cells[i, 6].Value;
+            //    double actualPrice = Price(priceIrbisDiler);
+            //    string action = (string)w.Cells[i, 14].Value;
+
+            //    ExcelRange er = w.Cells[i, 2];
+            //    if (er.Hyperlink != null)
+            //    {
+            //        string urlImg = er.Hyperlink.ToString();
+            //        try
+            //        {
+            //            webClient.DownloadFile(urlImg, "pic\\" + articl + ".jpg");
+            //        }
+            //        catch
+            //        {
+
+            //        }
+                    
+            //    }
+
+            //    if (action != "")
+            //    {
+            //        switch (action)
+            //        {
+            //            case "ЛУЧШАЯ ЦЕНА!":
+            //                action = "&markers[3]=1";
+            //                break;
+            //            case "Новое поступление":
+            //                action = "&markers[1]=1";
+            //                break;
+            //            case "Новое постуление":
+            //                action = "&markers[1]=1";
+            //                break;
+            //            default:
+            //                action = "";
+            //                break;
+            //        }
+            //    }
+
+            //    if (quantity == 0)
+            //    {
+            //        otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
+            //        string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
+            //        if (urlTovar != "")
+            //        {
+            //            urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
+            //            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
+            //            if (action != "")
+            //            {
+            //                tovarList[39] = action;
+            //                tovarList[9] = actualPrice.ToString();
+            //                webRequest.saveImage(tovarList);
+            //                editPrice++;
+            //            }
+            //            else
+            //            {
+            //                webRequest.deleteProduct(tovarList);
+            //                deleteTovar++;
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
+            //        string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
+            //        if (urlTovar != "")
+            //        {
+            //            urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
+            //            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
+            //            double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
+            //            if(actualPrice != priceBike18)
+            //            {
+            //                tovarList[39] = action;
+            //                tovarList[9] = actualPrice.ToString();
+            //                webRequest.saveImage(tovarList);
+            //                editPrice++;
+            //            }else if(tovarList[39].ToString() != action)
+            //            {
+            //                tovarList[39] = action;
+            //                webRequest.saveImage(tovarList);
+            //                editPrice++;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            string name = (string)w.Cells[i, 3].Value;
+            //            string stock = (string)w.Cells[i, 14].Value;
+            //        }
+            //    }
+            //}
+            //MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
+
+            //Запчасти для снегоходов
+            w = p.Workbook.Worksheets[4];
+            q = w.Dimension.Rows;
+
             for (int i = 8; q > i; i++)
             {
-                if (w.Cells[i, 1].Value == null)
-                    break;
-                
-                double articl = (double)w.Cells[i, 1].Value;
-                double quantity = (double)w.Cells[i, 9].Value;
-                double priceIrbisDiler = (double)w.Cells[i, 6].Value;
-                double actualPrice = Price(priceIrbisDiler);
-                string action = (string)w.Cells[i, 14].Value;
-
-                ExcelRange er = w.Cells[i, 2];
-                if (er.Hyperlink != null)
+                if (w.Cells[i, 1].Value != null)
                 {
-                    string urlImg = er.Hyperlink.ToString();
-                    webClient.DownloadFile(urlImg, "pic\\" + articl + ".jpg");
-                }
+                    double articl = (double)w.Cells[i, 1].Value;
+                    double quantity = (double)w.Cells[i, 9].Value;
+                    double priceIrbisDiler = (double)w.Cells[i, 6].Value;
+                    double actualPrice = Price(priceIrbisDiler);
+                    string action = (string)w.Cells[i, 14].Value;
 
-                if (action != "")
-                {
-                    switch (action)
+                    ExcelRange er = w.Cells[i, 2];
+                    if (er.Hyperlink != null)
                     {
-                        case "ЛУЧШАЯ ЦЕНА!":
-                            action = "&markers[3]=1";
-                            break;
-                        case "Новое поступление":
-                            action = "&markers[1]=1";
-                            break;
-                        case "Новое постуление":
-                            action = "&markers[1]=1";
-                            break;
-                        default:
-                            action = "";
-                            break;
-                    }
-                }
-
-                if (quantity == 0)
-                {
-                    otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
-                    string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
-                    if (urlTovar != "")
-                    {
-                        urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
-                        List<string> tovarList = webRequest.arraySaveimage(urlTovar);
-                        if (action != "")
+                        string urlImg = er.Hyperlink.ToString();
+                        try
                         {
-                            tovarList[39] = action;
-                            tovarList[9] = actualPrice.ToString();
-                            webRequest.saveImage(tovarList);
-                            editPrice++;
+                            webClient.DownloadFile(urlImg, "pic\\" + articl + ".jpg");
                         }
-                        else
+                        catch
                         {
-                            webRequest.deleteProduct(tovarList);
-                            deleteTovar++;
+
+                        }
+
+                    }
+
+                    if (action != "")
+                    {
+                        switch (action)
+                        {
+                            case "ЛУЧШАЯ ЦЕНА!":
+                                action = "&markers[3]=1";
+                                break;
+                            case "Новое поступление":
+                                action = "&markers[1]=1";
+                                break;
+                            case "Новое постуление":
+                                action = "&markers[1]=1";
+                                break;
+                            default:
+                                action = "";
+                                break;
                         }
                     }
-                }
-                else
-                {
-                    otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
-                    string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
-                    if (urlTovar != "")
+
+                    if (quantity == 0)
                     {
-                        urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
-                        List<string> tovarList = webRequest.arraySaveimage(urlTovar);
-                        double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
-                        if(actualPrice != priceBike18)
+                        otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
+                        string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
+                        if (urlTovar != "")
                         {
-                            tovarList[39] = action;
-                            tovarList[9] = actualPrice.ToString();
-                            webRequest.saveImage(tovarList);
-                            editPrice++;
-                        }else if(tovarList[39].ToString() != action)
-                        {
-                            tovarList[39] = action;
-                            webRequest.saveImage(tovarList);
-                            editPrice++;
+                            urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
+                            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
+                            if (action != "")
+                            {
+                                tovarList[39] = action;
+                                tovarList[9] = actualPrice.ToString();
+                                webRequest.saveImage(tovarList);
+                                editPrice++;
+                            }
+                            else
+                            {
+                                webRequest.deleteProduct(tovarList);
+                                deleteTovar++;
+                            }
                         }
                     }
                     else
                     {
-                        string name = (string)w.Cells[i, 3].Value;
-                        string stock = (string)w.Cells[i, 14].Value;
+                        otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
+                        string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
+                        if (urlTovar != "")
+                        {
+                            urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
+                            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
+                            double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
+                            if (actualPrice != priceBike18)
+                            {
+                                tovarList[39] = action;
+                                tovarList[9] = actualPrice.ToString();
+                                webRequest.saveImage(tovarList);
+                                editPrice++;
+                            }
+                            else if (tovarList[39].ToString() != action)
+                            {
+                                tovarList[39] = action;
+                                webRequest.saveImage(tovarList);
+                                editPrice++;
+                            }
+                        }
+                        else
+                        {
+                            string name = (string)w.Cells[i, 3].Value;
+                            string stock = (string)w.Cells[i, 14].Value;
+                        }
                     }
                 }
+
+                
             }
             MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
         }
