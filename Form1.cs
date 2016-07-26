@@ -1424,6 +1424,7 @@ namespace IrbisMoto
 
         private void btnUpdateImage_Click(object sender, EventArgs e)
         {
+            int countUpdateImage = 0;
             otv = webRequest.getRequest("http://bike18.ru/products/category/1183836");
             MatchCollection razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
             for(int i = 0; razdel.Count > i; i++)
@@ -1476,6 +1477,7 @@ namespace IrbisMoto
                             List<string> listProd = webRequest.arraySaveimage(urlTovar);
                             listProd[3] = "10833347";
                             webRequest.saveImage(listProd);
+                            countUpdateImage++;
                         }
                     }
                 }
@@ -1484,6 +1486,8 @@ namespace IrbisMoto
             otv = webRequest.getRequest("http://bike18.ru/products/category/1289775");
 
             otv = webRequest.getRequest("http://bike18.ru/products/category/2182755");
+
+            MessageBox.Show("Обновлено картинок: " + countUpdateImage);
         }
 
         public string DownloadImages(string artProd)
