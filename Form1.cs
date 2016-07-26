@@ -272,6 +272,7 @@ namespace IrbisMoto
                     else
                     {
                         string name = (string)w.Cells[i, 3].Value;
+                        name = name.Replace("\"", "");
                         string stock = (string)w.Cells[i, 14].Value;
                         bool kioshi = name.Contains("KIYOSHI");
                         if (!kioshi)
