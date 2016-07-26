@@ -103,6 +103,7 @@
             this.btnUpdateImage.TabIndex = 7;
             this.btnUpdateImage.Text = "Обновить картинки";
             this.btnUpdateImage.UseVisualStyleBackColor = true;
+            this.btnUpdateImage.Click += new System.EventHandler(this.btnUpdateImage_Click);
             // 
             // Form1
             // 

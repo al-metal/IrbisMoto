@@ -314,7 +314,7 @@ namespace IrbisMoto
                                     razdel = razdel + "Блоки переключения, бендиксы, барабаны";
                                     break;
                                 case "Болты":
-                                    razdel = razdel + "Аккумуляторная";
+                                    razdel = razdel + "Болты, буксы";
                                     break;
                                 case "Вал":
                                     razdel = razdel + "Валы";
@@ -1420,6 +1420,37 @@ namespace IrbisMoto
             StreamReader ressrImg = new StreamReader(resimg.GetResponseStream());
             string otvimg = ressrImg.ReadToEnd();
             return otvimg;
+        }
+
+        private void btnUpdateImage_Click(object sender, EventArgs e)
+        {
+            otv = webRequest.getRequest("http://bike18.ru/products/category/1183836");
+            MatchCollection razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
+            for(int i = 0; razdel.Count > i; i++)
+            {
+                otv = webRequest.getRequest(razdel[i].ToString() + "/page/all");
+                MatchCollection tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*?(?=\" >)").Matches(otv);
+                for(int n = 0; tovar.Count > n; n++)
+                {
+                    otv = webRequest.getRequest(tovar[n].ToString());
+                    string urlImageTovar = new Regex("(?<=class=\"avatar-view \"><link rel=\"image_src\" href=\").*?(?=\">)").Match(otv).ToString();
+                    if(urlImageTovar == "")
+                    {
+                        string articl = new Regex("(?<= Артикул:)[\\w\\W]*?(?=</div>)").Match(otv).ToString();
+                        articl = articl.Trim();
+                        if(File.Exists("pic\\" + articl + ".jpg"))
+                        {
+                            string urlTovar = tovar[n].ToString().Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
+                            otv = webRequest.PostRequest(urlTovar);
+                            webRequest.downloadImage(articl);
+                        }
+                    }
+                }
+            }
+
+            otv = webRequest.getRequest("http://bike18.ru/products/category/1289775");
+
+            otv = webRequest.getRequest("http://bike18.ru/products/category/2182755");
         }
     }
 }
