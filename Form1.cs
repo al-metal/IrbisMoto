@@ -179,7 +179,7 @@ namespace IrbisMoto
             //ExcelWorksheet w = p.Workbook.Worksheets[3];
             //int q = w.Dimension.Rows;
 
-            //for (int i = 41; q > i; i++)
+            //for (int i = 8; q > i; i++)
             //{
             //    if (w.Cells[i, 1].Value == null)
             //        break;
@@ -1016,8 +1016,10 @@ namespace IrbisMoto
                         string errstr = new Regex("(?<=errorLine\":).*?(?=,\")").Match(otvimg).ToString();
                         string[] naSite = File.ReadAllLines("naSite.csv", Encoding.GetEncoding(1251));
                         int u = Convert.ToInt32(errstr) - 1;
-                        MatchCollection strslug3 = new Regex("(?<=\\\";\\\").*?(?=\\\")").Matches(naSite[u]);
-                        string strslug = strslug3[12].ToString();
+                        string[] strslug3 = naSite[u].Split(';');
+                        int slugint = strslug3.Length - 5;
+                        //MatchCollection strslug3 = new Regex("(?<=\\\";\\\").*?(?=\\\")").Matches(naSite[u]);
+                        string strslug = strslug3[slugint].ToString();
                         //методом подбора ищется ЧПУ
                         int slug = strslug.Length;
                         string strslug2 = strslug.Remove(slug - 2);
