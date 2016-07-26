@@ -150,34 +150,34 @@ namespace IrbisMoto
 
         private void btnActual_Click(object sender, EventArgs e)
         {
-            //File.Delete("naSite.csv");
+            File.Delete("naSite.csv");
 
-            //List<string> newProduct = new List<string>();
-            //newProduct.Add("id");                                                                               //id
-            //newProduct.Add("Артикул *");                                                 //артикул
-            //newProduct.Add("Название товара *");                                          //название
-            //newProduct.Add("Стоимость товара *");                                    //стоимость
-            //newProduct.Add("Стоимость со скидкой");                                       //со скидкой
-            //newProduct.Add("Раздел товара *");                                         //раздел товара
-            //newProduct.Add("Товар в наличии *");                                                    //в наличии
-            //newProduct.Add("Поставка под заказ *");                                                 //поставка
-            //newProduct.Add("Срок поставки (дни) *");                                           //срок поставки
-            //newProduct.Add("Краткий текст");                                 //краткий текст
-            //newProduct.Add("Текст полностью");                                          //полностью текст
-            //newProduct.Add("Заголовок страницы (title)");                               //заголовок страницы
-            //newProduct.Add("Описание страницы (description)");                                 //описание
-            //newProduct.Add("Ключевые слова страницы (keywords)");                                 //ключевые слова
-            //newProduct.Add("ЧПУ страницы (slug)");                                   //ЧПУ
-            //newProduct.Add("С этим товаром покупают");                              //с этим товаром покупают
-            //newProduct.Add("Рекламные метки");
-            //newProduct.Add("Показывать на сайте *");                                           //показывать
-            //newProduct.Add("Удалить *");                                    //удалить
-            //files.fileWriterCSV(newProduct, "naSite");
+            List<string> newProduct = new List<string>();
+            newProduct.Add("id");                                                                               //id
+            newProduct.Add("Артикул *");                                                 //артикул
+            newProduct.Add("Название товара *");                                          //название
+            newProduct.Add("Стоимость товара *");                                    //стоимость
+            newProduct.Add("Стоимость со скидкой");                                       //со скидкой
+            newProduct.Add("Раздел товара *");                                         //раздел товара
+            newProduct.Add("Товар в наличии *");                                                    //в наличии
+            newProduct.Add("Поставка под заказ *");                                                 //поставка
+            newProduct.Add("Срок поставки (дни) *");                                           //срок поставки
+            newProduct.Add("Краткий текст");                                 //краткий текст
+            newProduct.Add("Текст полностью");                                          //полностью текст
+            newProduct.Add("Заголовок страницы (title)");                               //заголовок страницы
+            newProduct.Add("Описание страницы (description)");                                 //описание
+            newProduct.Add("Ключевые слова страницы (keywords)");                                 //ключевые слова
+            newProduct.Add("ЧПУ страницы (slug)");                                   //ЧПУ
+            newProduct.Add("С этим товаром покупают");                              //с этим товаром покупают
+            newProduct.Add("Рекламные метки");
+            newProduct.Add("Показывать на сайте *");                                           //показывать
+            newProduct.Add("Удалить *");                                    //удалить
+            files.fileWriterCSV(newProduct, "naSite");
 
-            //FileInfo file = new FileInfo("Прайс.xlsx");
-            //ExcelPackage p = new ExcelPackage(file);
-            //ExcelWorksheet w = p.Workbook.Worksheets[3];
-            //int q = w.Dimension.Rows;
+            FileInfo file = new FileInfo("Прайс.xlsx");
+            ExcelPackage p = new ExcelPackage(file);
+            ExcelWorksheet w = p.Workbook.Worksheets[3];
+            int q = w.Dimension.Rows;
 
             //for (int i = 8; q > i; i++)
             //{
@@ -680,7 +680,7 @@ namespace IrbisMoto
             //                        razdel = razdel + "Разное";
             //                        break;
             //                }
-                            
+
             //                string minitext = null;
             //                string titleText = null;
             //                string descriptionText = null;
@@ -692,7 +692,7 @@ namespace IrbisMoto
             //                string boldClose = "</span>";
 
             //                string nameBold = boldOpen + name + boldClose;
-                            
+
             //                for (int z = 0; rtbMiniText.Lines.Length > z; z++)
             //                {
             //                    if (rtbMiniText.Lines[z].ToString() == "")
@@ -785,108 +785,244 @@ namespace IrbisMoto
             //    }
             //}
 
-            //w = p.Workbook.Worksheets[4];
-            //q = w.Dimension.Rows;
+            w = p.Workbook.Worksheets[4];
+            q = w.Dimension.Rows;
+            string razdelSnegohod = null;
+            string podrazdel = null;
+            for (int i = 7; q > i; i++)
+            {
+                if (w.Cells[i, 1].Value == null)
+                {
+                    razdelSnegohod = (string)w.Cells[i, 2].Value;
+                    switch (razdelSnegohod)
+                    {
+                        case "гусеницы":
+                            podrazdel = "Гусеницы";
+                            break;
+                        case "снегоходы Буран":
+                            podrazdel = "Снегоходы Буран";
+                            break;
+                        case "снегоходы Тайга":
+                            podrazdel = "Снегоходы Тайга";
+                            break;
+                        case "снегоходы Dingo":
+                            podrazdel = "Снегоходы Dingo";
+                            break;
+                        case "мотобуксировщики Мухтар":
+                            podrazdel = "Мотобуксировщики Мухтар";
+                            break;
+                        default:
+                            podrazdel = "Разное";
+                            break;
 
-            //for (int i = 8; q > i; i++)
-            //{
-            //    if (w.Cells[i, 1].Value != null)
-            //    {
-            //        double articl = (double)w.Cells[i, 1].Value;
-            //        double quantity = (double)w.Cells[i, 9].Value;
-            //        double priceIrbisDiler = (double)w.Cells[i, 6].Value;
-            //        double actualPrice = Price(priceIrbisDiler);
-            //        string action = (string)w.Cells[i, 14].Value;
+                    }
+                }
+                else
+                {
+                    double articl = (double)w.Cells[i, 1].Value;
+                    double quantity = (double)w.Cells[i, 9].Value;
+                    double priceIrbisDiler = (double)w.Cells[i, 6].Value;
+                    double actualPrice = Price(priceIrbisDiler);
+                    string action = (string)w.Cells[i, 14].Value;
 
-            //        ExcelRange er = w.Cells[i, 2];
-            //        if (er.Hyperlink != null)
-            //        {
-            //            string urlImg = er.Hyperlink.ToString();
-            //            try
-            //            {
-            //                webClient.DownloadFile(urlImg, "pic\\" + articl + ".jpg");
-            //            }
-            //            catch
-            //            {
+                    ExcelRange er = w.Cells[i, 2];
+                    if (er.Hyperlink != null)
+                    {
+                        string urlImg = er.Hyperlink.ToString();
+                        try
+                        {
+                            webClient.DownloadFile(urlImg, "pic\\" + articl + ".jpg");
+                        }
+                        catch
+                        {
 
-            //            }
+                        }
 
-            //        }
+                    }
 
-            //        if (action != "")
-            //        {
-            //            switch (action)
-            //            {
-            //                case "ЛУЧШАЯ ЦЕНА!":
-            //                    action = "&markers[3]=1";
-            //                    break;
-            //                case "Новое поступление":
-            //                    action = "&markers[1]=1";
-            //                    break;
-            //                case "Новое постуление":
-            //                    action = "&markers[1]=1";
-            //                    break;
-            //                default:
-            //                    action = "";
-            //                    break;
-            //            }
-            //        }
+                    if (action != "")
+                    {
+                        switch (action)
+                        {
+                            case "ЛУЧШАЯ ЦЕНА!":
+                                action = "&markers[3]=1";
+                                break;
+                            case "Новое поступление":
+                                action = "&markers[1]=1";
+                                break;
+                            case "Новое постуление":
+                                action = "&markers[1]=1";
+                                break;
+                            case "Новинка":
+                                action = "&markers[1]=1";
+                                break;
+                            default:
+                                action = "";
+                                break;
+                        }
+                    }
 
-            //        if (quantity == 0)
-            //        {
-            //            otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
-            //            string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
-            //            if (urlTovar != "")
-            //            {
-            //                urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
-            //                List<string> tovarList = webRequest.arraySaveimage(urlTovar);
-            //                if (action != "")
-            //                {
-            //                    tovarList[39] = action;
-            //                    tovarList[9] = actualPrice.ToString();
-            //                    webRequest.saveImage(tovarList);
-            //                    editPrice++;
-            //                }
-            //                else
-            //                {
-            //                    webRequest.deleteProduct(tovarList);
-            //                    deleteTovar++;
-            //                }
-            //            }
-            //        }
-            //        else
-            //        {
-            //            otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
-            //            string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
-            //            if (urlTovar != "")
-            //            {
-            //                urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
-            //                List<string> tovarList = webRequest.arraySaveimage(urlTovar);
-            //                double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
-            //                if (actualPrice != priceBike18)
-            //                {
-            //                    tovarList[39] = action;
-            //                    tovarList[9] = actualPrice.ToString();
-            //                    webRequest.saveImage(tovarList);
-            //                    editPrice++;
-            //                }
-            //                else if (tovarList[39].ToString() != action)
-            //                {
-            //                    tovarList[39] = action;
-            //                    webRequest.saveImage(tovarList);
-            //                    editPrice++;
-            //                }
-            //            }
-            //            else
-            //            {
-            //                string name = (string)w.Cells[i, 3].Value;
-            //                string stock = (string)w.Cells[i, 14].Value;
-            //            }
-            //        }
-            //    }
+                    if (quantity == 0)
+                    {
+                        otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
+                        string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
+                        if (urlTovar != "")
+                        {
+                            urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
+                            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
+                            if (action != "")
+                            {
+                                tovarList[39] = action;
+                                tovarList[9] = actualPrice.ToString();
+                                webRequest.saveImage(tovarList);
+                                editPrice++;
+                            }
+                            else
+                            {
+                                webRequest.deleteProduct(tovarList);
+                                deleteTovar++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
+                        string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
+                        if (urlTovar != "")
+                        {
+                            urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
+                            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
+                            double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
+                            if (actualPrice != priceBike18)
+                            {
+                                tovarList[39] = action;
+                                tovarList[9] = actualPrice.ToString();
+                                webRequest.saveImage(tovarList);
+                                editPrice++;
+                            }
+                            else if (tovarList[39].ToString() != action)
+                            {
+                                tovarList[39] = action;
+                                webRequest.saveImage(tovarList);
+                                editPrice++;
+                            }
+                        }
+                        else
+                        {
+                            string name = (string)w.Cells[i, 3].Value;
+                            name = name.Replace("\"", "");
+                            string stock = (string)w.Cells[i, 14].Value;
 
 
-            //}
+
+
+                            string slug = chpu.vozvr(name);
+                            string razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => ";
+
+
+                            string minitext = null;
+                            string titleText = null;
+                            string descriptionText = null;
+                            string keywordsText = null;
+                            string fullText = null;
+                            string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
+
+                            string boldOpen = "<span style=\"\"font-weight: bold; font-weight: bold; \"\">";
+                            string boldClose = "</span>";
+
+                            string nameBold = boldOpen + name + boldClose;
+
+                            for (int z = 0; rtbMiniText.Lines.Length > z; z++)
+                            {
+                                if (rtbMiniText.Lines[z].ToString() == "")
+                                {
+                                    minitext += "<p><br /></p>";
+                                }
+                                else
+                                {
+                                    minitext += "<p>" + rtbMiniText.Lines[z].ToString() + "</p>";
+                                }
+                            }
+
+                            for (int z = 0; rtbFullText.Lines.Length > z; z++)
+                            {
+                                if (rtbFullText.Lines[z].ToString() == "")
+                                {
+                                    fullText += "<p><br /></p>";
+                                }
+                                else
+                                {
+                                    fullText += "<p>" + rtbFullText.Lines[z].ToString() + "</p>";
+                                }
+                            }
+
+                            titleText = tbTitle.Lines[0].ToString();
+                            descriptionText = tbDescription.Lines[0].ToString();
+                            keywordsText = tbKeywords.Lines[0].ToString();
+
+                            string discount = "<p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> Сделай ТРОЙНОЙ удар по нашим ценам! </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 1. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Скидки за отзывы о товарах!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 2. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Друзьям скидки и подарки!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 3. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Нашли дешевле!? 110% разницы Ваши!</a></span></p>";
+
+                            minitext = minitext.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
+
+                            minitext = minitext.Remove(minitext.LastIndexOf("<p>"));
+
+                            fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
+
+                            fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
+
+                            titleText = titleText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                            descriptionText = descriptionText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                            keywordsText = keywordsText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                            if (titleText.Length > 255)
+                            {
+                                titleText = titleText.Remove(255);
+                                titleText = titleText.Remove(titleText.LastIndexOf(" "));
+                            }
+                            if (descriptionText.Length > 200)
+                            {
+                                descriptionText = descriptionText.Remove(200);
+                                descriptionText = descriptionText.Remove(descriptionText.LastIndexOf(" "));
+                            }
+                            if (keywordsText.Length > 100)
+                            {
+                                keywordsText = keywordsText.Remove(100);
+                                keywordsText = keywordsText.Remove(keywordsText.LastIndexOf(" "));
+                            }
+                            if (slug.Length > 64)
+                            {
+                                slug = slug.Remove(64);
+                                slug = slug.Remove(slug.LastIndexOf(" "));
+                            }
+
+                            newProduct = new List<string>();
+                            newProduct.Add(""); //id
+                            newProduct.Add("\"" + articl + "\""); //артикул
+                            newProduct.Add("\"" + name + "\"");  //название
+                            newProduct.Add("\"" + actualPrice + "\""); //стоимость
+                            newProduct.Add("\"" + "" + "\""); //со скидкой
+                            newProduct.Add("\"" + razdel + "\""); //раздел товара
+                            newProduct.Add("\"" + "100" + "\""); //в наличии
+                            newProduct.Add("\"" + "0" + "\"");//поставка
+                            newProduct.Add("\"" + "1" + "\"");//срок поставки
+                            newProduct.Add("\"" + minitext + "\"");//краткий текст
+                            newProduct.Add("\"" + fullText + "\"");//полностью текст
+                            newProduct.Add("\"" + titleText + "\""); //заголовок страницы
+                            newProduct.Add("\"" + descriptionText + "\""); //описание
+                            newProduct.Add("\"" + keywordsText + "\"");//ключевые слова
+                            newProduct.Add("\"" + slug + "\""); //ЧПУ
+                            newProduct.Add(""); //с этим товаром покупают
+                            newProduct.Add("");   //рекламные метки
+                            newProduct.Add("\"" + "1" + "\"");  //показывать
+                            newProduct.Add("\"" + "0" + "\""); //удалить
+
+                            files.fileWriterCSV(newProduct, "naSite");
+                        }
+                    }
+                }
+            }
 
             //w = p.Workbook.Worksheets[5];
             //q = w.Dimension.Rows;
@@ -1018,9 +1154,7 @@ namespace IrbisMoto
                         int u = Convert.ToInt32(errstr) - 1;
                         string[] strslug3 = naSite[u].Split(';');
                         int slugint = strslug3.Length - 5;
-                        //MatchCollection strslug3 = new Regex("(?<=\\\";\\\").*?(?=\\\")").Matches(naSite[u]);
                         string strslug = strslug3[slugint].ToString();
-                        //методом подбора ищется ЧПУ
                         int slug = strslug.Length;
                         string strslug2 = strslug.Remove(slug - 2);
                         strslug2 += "1";
@@ -1032,9 +1166,9 @@ namespace IrbisMoto
                         string errstr = new Regex("(?<=errorLine\":).*?(?=,\")").Match(otvimg).ToString();
                         string[] naSite = File.ReadAllLines("naSite.csv", Encoding.GetEncoding(1251));
                         int u = Convert.ToInt32(errstr) - 1;
-                        MatchCollection strslug3 = new Regex("(?<=\\\";\\\").*?(?=\\\")").Matches(naSite[u]);
-                        string strslug = strslug3[12].ToString();
-                        //методом подбора ищется ЧПУ
+                        string[] strslug3 = naSite[u].Split(';');
+                        int slugint = strslug3.Length - 5;
+                        string strslug = strslug3[slugint].ToString();
                         int slug = strslug.Length;
                         string strslug2 = strslug.Remove(slug - 2);
                         strslug2 += "1";
