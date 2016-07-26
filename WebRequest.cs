@@ -93,8 +93,10 @@ namespace web
             return cooc;
         }
 
-        public string PostRequest(CookieContainer cookie, string nethouseTovar)
+        public string PostRequest(string nethouseTovar)
         {
+            CookieContainer cookie = new CookieContainer();
+            cookie = webCookieBike18();
             string otv = null;
             do
             {
@@ -134,10 +136,9 @@ namespace web
         internal List<string> arraySaveimage(string urlTovar)
         {
             WebRequest webRequest = new WebRequest();
-            CookieContainer cookie = webRequest.webCookieBike18();
             List <string> saveImage = new List<string>();
 
-            string otv = webRequest.PostRequest(cookie, urlTovar);
+            string otv = webRequest.PostRequest(urlTovar);
             if (otv != null)
             {
                 string productId = new Regex("(?<=<section class=\"comment\" id=\").*?(?=\">)").Match(otv).ToString();
@@ -165,7 +166,7 @@ namespace web
                     reklama = "&markers[1]=1";
                 }
 
-                otv = webRequest.PostRequest(cookie, "http://bike18.nethouse.ru/api/catalog/getproduct?id=" + productId);
+                otv = webRequest.PostRequest("http://bike18.nethouse.ru/api/catalog/getproduct?id=" + productId);
                 string slug = new Regex("(?<=\",\"slug\":\").*?(?=\")").Match(otv).ToString();
                 String discountCoast = new Regex("(?<=discountCost\":\").*?(?=\")").Match(otv).Value;
                 String serial = new Regex("(?<=serial\":\").*?(?=\")").Match(otv).Value;
@@ -180,7 +181,7 @@ namespace web
                 String customDays = new Regex("(?<=,\"customDays\":\").*?(?=\")").Match(otv).Value;
                 String isCustom = new Regex("(?<=\",\"isCustom\":).*?(?=,)").Match(otv).Value;
 
-                otv = webRequest.PostRequest(cookie, "http://bike18.nethouse.ru/api/catalog/productmedia?id=" + productId);
+                otv = webRequest.PostRequest("http://bike18.nethouse.ru/api/catalog/productmedia?id=" + productId);
                 String avatarId = new Regex("(?<=\"id\":\").*?(?=\")").Match(otv).Value;
                 String objektId = new Regex("(?<=\"objectId\":\").*?(?=\")").Match(otv).Value;
                 String timestamp = new Regex("(?<=\"timestamp\":\").*?(?=\")").Match(otv).Value;
@@ -287,9 +288,9 @@ namespace web
 
         internal void savePrice(CookieContainer cookie, string urlTovar, MatchCollection articl, double priceTrue, WebRequest webRequest)
         {
-            string otv = webRequest.PostRequest(cookie, urlTovar);
+            string otv = webRequest.PostRequest(urlTovar);
             string productId = new Regex("(?<=<section class=\"comment\" id=\").*?(?=\">)").Match(otv).ToString();
-            otv = webRequest.PostRequest(cookie, "http://bike18.nethouse.ru/api/catalog/getproduct?id=" + productId);
+            otv = webRequest.PostRequest("http://bike18.nethouse.ru/api/catalog/getproduct?id=" + productId);
         }
 
         internal void DeleteImage(CookieContainer cookie, string productId, string objectId, string type, string name, string desc, string alt, string priority)
@@ -509,7 +510,8 @@ namespace web
             req.ContentType = "multipart/form-data; boundary=---------------------------" + boundary;
             req.CookieContainer = cookie;
             req.Headers.Add("X-Requested-With", "XMLHttpRequest");
-            byte[] pic = File.ReadAllBytes("Pic\\" + articlProduct + ".jpg");
+            //Изменил папку
+            byte[] pic = File.ReadAllBytes("pic\\" + articlProduct + ".jpg");
             byte[] end = Encoding.ASCII.GetBytes("\r\n-----------------------------" + boundary + "\r\nContent-Disposition: form-data; name=\"_file\"\r\n\r\n" + articlProduct + ".jpg\r\n-----------------------------" + boundary + "--\r\n");
             byte[] ms1 = Encoding.ASCII.GetBytes("-----------------------------" + boundary + "\r\nContent-Disposition: form-data; name=\"file\"; filename=\"" + articlProduct + ".jpg\"\r\nContent-Type: image/jpeg\r\n\r\n");
             req.ContentLength = ms1.Length + pic.Length + end.Length;
