@@ -35,6 +35,7 @@
             this.tbKeywords = new System.Windows.Forms.TextBox();
             this.btnSaveTemplates = new System.Windows.Forms.Button();
             this.btnActual = new System.Windows.Forms.Button();
+            this.btnUpdateImage = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // rtbMiniText
@@ -94,11 +95,21 @@
             this.btnActual.UseVisualStyleBackColor = true;
             this.btnActual.Click += new System.EventHandler(this.btnActual_Click);
             // 
+            // btnUpdateImage
+            // 
+            this.btnUpdateImage.Location = new System.Drawing.Point(969, 83);
+            this.btnUpdateImage.Name = "btnUpdateImage";
+            this.btnUpdateImage.Size = new System.Drawing.Size(289, 49);
+            this.btnUpdateImage.TabIndex = 7;
+            this.btnUpdateImage.Text = "Обновить картинки";
+            this.btnUpdateImage.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1294, 450);
+            this.Controls.Add(this.btnUpdateImage);
             this.Controls.Add(this.btnActual);
             this.Controls.Add(this.btnSaveTemplates);
             this.Controls.Add(this.tbKeywords);
@@ -122,6 +133,7 @@
         private System.Windows.Forms.TextBox tbKeywords;
         private System.Windows.Forms.Button btnSaveTemplates;
         private System.Windows.Forms.Button btnActual;
+        private System.Windows.Forms.Button btnUpdateImage;
     }
 }
 
