@@ -1440,9 +1440,42 @@ namespace IrbisMoto
                         articl = articl.Trim();
                         if(File.Exists("pic\\" + articl + ".jpg"))
                         {
+                            CookieContainer cookie = webRequest.webCookieBike18();
                             string urlTovar = tovar[n].ToString().Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
+                            MatchCollection prId = new Regex("(?<=data-id=\").*?(?=\")").Matches(otv);
+                            int prodId = Convert.ToInt32(prId[0].ToString());
                             otv = webRequest.PostRequest(urlTovar);
-                            webRequest.downloadImage(articl);
+
+                            Image newImg = Image.FromFile("pic\\" + articl + ".jpg");
+                            double widthImg = newImg.Width;
+                            double heigthImg = newImg.Height;
+                            if (widthImg > heigthImg)
+                            {
+                                double dblx = widthImg * 0.9;
+                                if (dblx < heigthImg)
+                                {
+                                    heigthImg = heigthImg * 0.9;
+                                }
+                                else
+                                    widthImg = widthImg * 0.9;
+                            }
+                            else
+                            {
+                                double dblx = heigthImg * 0.9;
+                                if (dblx < widthImg)
+                                {
+                                    widthImg = widthImg * 0.9;
+                                }
+                                else
+                                    heigthImg = heigthImg * 0.9;
+                            }
+
+                            string otvimg = DownloadImages(articl);
+                            string urlSaveImg = new Regex("(?<=url\":\").*?(?=\")").Match(otvimg).Value.Replace("\\/", "%2F");
+                            string otvSave = SaveImages(urlSaveImg, prodId, widthImg, heigthImg);
+                            List<string> listProd = webRequest.arraySaveimage(urlTovar);
+                            listProd[3] = "10833347";
+                            webRequest.saveImage(listProd);
                         }
                     }
                 }
@@ -1452,5 +1485,52 @@ namespace IrbisMoto
 
             otv = webRequest.getRequest("http://bike18.ru/products/category/2182755");
         }
+
+        public string DownloadImages(string artProd)
+        {
+            CookieContainer cookie = webRequest.webCookieBike18();
+            string epoch = (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds.ToString().Replace(",", "");
+            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("http://bike18.nethouse.ru/putimg?fileapi" + epoch);
+            req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
+            req.Method = "POST";
+            req.ContentType = "multipart/form-data; boundary=---------------------------12709277337355";
+            req.CookieContainer = cookie;
+            req.Headers.Add("X-Requested-With", "XMLHttpRequest");
+            byte[] pic = File.ReadAllBytes("Pic\\" + artProd + ".jpg");
+            byte[] end = Encoding.ASCII.GetBytes("\r\n-----------------------------12709277337355\r\nContent-Disposition: form-data; name=\"_files\"\r\n\r\n" + artProd + ".jpg\r\n-----------------------------12709277337355--\r\n");
+            byte[] ms1 = Encoding.ASCII.GetBytes("-----------------------------12709277337355\r\nContent-Disposition: form-data; name=\"files\"; filename=\"" + artProd + ".jpg\"\r\nContent-Type: image/jpeg\r\n\r\n");
+            req.ContentLength = ms1.Length + pic.Length + end.Length;
+            Stream stre1 = req.GetRequestStream();
+            stre1.Write(ms1, 0, ms1.Length);
+            stre1.Write(pic, 0, pic.Length);
+            stre1.Write(end, 0, end.Length);
+            stre1.Close();
+            HttpWebResponse resimg = (HttpWebResponse)req.GetResponse();
+            StreamReader ressrImg = new StreamReader(resimg.GetResponseStream());
+            string otvimg = ressrImg.ReadToEnd();
+            return otvimg;
+        }
+
+        public string SaveImages(string urlSaveImg, int prodId, double widthImg, double heigthImg)
+        {
+            CookieContainer cookie = webRequest.webCookieBike18();
+            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("http://bike18.nethouse.ru/api/catalog/save-image");
+            req.Accept = "application/json, text/plain, */*";
+            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
+            req.Method = "POST";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.CookieContainer = cookie;
+            byte[] saveImg = Encoding.ASCII.GetBytes("url=" + urlSaveImg + "&id=0&type=4&objectId=" + prodId + "&imgCrop[x]=0&imgCrop[y]=0&imgCrop[width]=" + widthImg + "&imgCrop[height]=" + heigthImg + "&imageId=0&iObjectId=" + prodId + "&iImageType=4&replacePhoto=0");
+            req.ContentLength = saveImg.Length;
+            Stream srSave = req.GetRequestStream();
+            srSave.Write(saveImg, 0, saveImg.Length);
+            srSave.Close();
+            HttpWebResponse resSave = (HttpWebResponse)req.GetResponse();
+            StreamReader ressrSave = new StreamReader(resSave.GetResponseStream());
+            string otvSave = ressrSave.ReadToEnd();
+            return otvSave;
+        }
+
     }
 }
