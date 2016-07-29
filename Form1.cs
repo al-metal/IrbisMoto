@@ -189,6 +189,8 @@ namespace IrbisMoto
                 double priceIrbisDiler = (double)w.Cells[i, 6].Value;
                 double actualPrice = Price(priceIrbisDiler);
                 string action = (string)w.Cells[i, 14].Value;
+                string name = (string)w.Cells[i, 3].Value;
+                name = name.Replace("\"", "");
 
                 ExcelRange er = w.Cells[i, 2];
                 if (er.Hyperlink != null)
@@ -206,36 +208,71 @@ namespace IrbisMoto
                 }
 
                 if (action != "")
-                {
-                    switch (action)
-                    {
-                        case "ЛУЧШАЯ ЦЕНА!":
-                            action = "&markers[3]=1";
-                            break;
-                        case "Новое поступление":
-                            action = "&markers[1]=1";
-                            break;
-                        case "Новое постуление":
-                            action = "&markers[1]=1";
-                            break;
-                        default:
-                            action = "";
-                            break;
-                    }
-                }
+                    action = actionText(action);
+
+                otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
+                string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
+                urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
+                List<string> tovarList = webRequest.arraySaveimage(urlTovar);
+
+                string slug = chpu.vozvr(name);
+                int space = name.IndexOf(" ");
+                string strRazdel = name.Remove(space, name.Length - space);
+
+                string razdel = irbisZapchastiRazdel(strRazdel);
+
+                string miniText = null;
+                string titleText = null;
+                string descriptionText = null;
+                string keywordsText = null;
+                string fullText = null;
+                string discount = null;
+                string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
+
+                string boldOpen = "<span style=\"font-weight: bold; font-weight: bold; \">";
+                string boldClose = "</span>";
+
+                string nameBold = boldOpen + name + boldClose;
+
+                miniText = miniTextTemplate();
+                fullText = fullTextTemplate();
+                titleText = tbTitle.Lines[0].ToString();
+                descriptionText = tbDescription.Lines[0].ToString();
+                keywordsText = tbKeywords.Lines[0].ToString();
+                discount = discountTemplate();
+
+                miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
+                miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
+
+                fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
+                fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
+
+                titleText = titleText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                descriptionText = descriptionText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                keywordsText = keywordsText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                titleText = textRemove(titleText, 255);
+                descriptionText = textRemove(descriptionText, 200);
+                keywordsText = textRemove(keywordsText, 100);
+                slug = textRemove(slug, 64);
 
                 if (quantity == 0)
                 {
-                    otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
-                    string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
                     if (urlTovar != "")
                     {
-                        urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
-                        List<string> tovarList = webRequest.arraySaveimage(urlTovar);
                         if (action != "")
                         {
                             tovarList[39] = action;
                             tovarList[9] = actualPrice.ToString();
+                            tovarList[1] = slug;
+                            tovarList[7] = miniText;
+                            tovarList[8] = fullText;
+                            tovarList[11] = descriptionText;
+                            tovarList[12] = keywordsText;
+                            tovarList[13] = titleText;
+                            tovarList[3] = "10833347";
                             webRequest.saveImage(tovarList);
                             editPrice++;
                         }
@@ -248,516 +285,55 @@ namespace IrbisMoto
                 }
                 else
                 {
-                    otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
-                    string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
                     if (urlTovar != "")
                     {
-                        urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
-                        List<string> tovarList = webRequest.arraySaveimage(urlTovar);
                         double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
                         if (actualPrice != priceBike18)
                         {
                             tovarList[39] = action;
                             tovarList[9] = actualPrice.ToString();
+                            tovarList[1] = slug;
+                            tovarList[7] = miniText;
+                            tovarList[8] = fullText;
+                            tovarList[11] = descriptionText;
+                            tovarList[12] = keywordsText;
+                            tovarList[13] = titleText;
+                            tovarList[3] = "10833347";
                             webRequest.saveImage(tovarList);
                             editPrice++;
                         }
                         else if (tovarList[39].ToString() != action)
                         {
                             tovarList[39] = action;
+                            tovarList[1] = slug;
+                            tovarList[7] = miniText;
+                            tovarList[8] = fullText;
+                            tovarList[11] = descriptionText;
+                            tovarList[12] = keywordsText;
+                            tovarList[13] = titleText;
+                            tovarList[3] = "10833347";
+                            webRequest.saveImage(tovarList);
+                            editPrice++;
+                        }
+                        else
+                        {
+                            tovarList[1] = slug;
+                            tovarList[7] = miniText;
+                            tovarList[8] = fullText;
+                            tovarList[11] = descriptionText;
+                            tovarList[12] = keywordsText;
+                            tovarList[13] = titleText;
+                            tovarList[3] = "10833347";
                             webRequest.saveImage(tovarList);
                             editPrice++;
                         }
                     }
                     else
                     {
-                        string name = (string)w.Cells[i, 3].Value;
-                        name = name.Replace("\"", "");
                         string stock = (string)w.Cells[i, 14].Value;
                         bool kioshi = name.Contains("KIYOSHI");
                         if (!kioshi)
                         {
-                            string slug = chpu.vozvr(name);
-                            string razdel = "Запчасти и расходники => Каталог запчастей IRBIS => ";
-                            int space = name.IndexOf(" ");
-                            string strRazdel = name.Remove(space, name.Length - space);
-                            switch (strRazdel)
-                            {
-                                case "Аккумуляторная":
-                                    razdel = razdel + "Аккумуляторы";
-                                    break;
-                                case "Амортизатор":
-                                    razdel = razdel + "Амортизаторы";
-                                    break;
-                                case "Амортизаторы":
-                                    razdel = razdel + "Амортизаторы";
-                                    break;
-                                case "Багажник":
-                                    razdel = razdel + "Багажники";
-                                    break;
-                                case "Бак":
-                                    razdel = razdel + "Баки масляные, топливные, системы охлаждения";
-                                    break;
-                                case "Барабан":
-                                    razdel = razdel + "Блоки переключения, бендиксы, барабаны";
-                                    break;
-                                case "Бачок":
-                                    razdel = razdel + "Баки масляные, топливные, системы охлаждения";
-                                    break;
-                                case "Бендикс":
-                                    razdel = razdel + "Блоки переключения, бендиксы, барабаны";
-                                    break;
-                                case "Блок":
-                                    razdel = razdel + "Блоки переключения, бендиксы, барабаны";
-                                    break;
-                                case "Блоки":
-                                    razdel = razdel + "Блоки переключения, бендиксы, барабаны";
-                                    break;
-                                case "Болты":
-                                    razdel = razdel + "Болты, буксы";
-                                    break;
-                                case "Вал":
-                                    razdel = razdel + "Валы";
-                                    break;
-                                case "Валы":
-                                    razdel = razdel + "Валы";
-                                    break;
-                                case "Вариатор":
-                                    razdel = razdel + "Вариаторы";
-                                    break;
-                                case "Вентиль":
-                                    razdel = razdel + "Вентили";
-                                    break;
-                                case "Вилка":
-                                    razdel = razdel + "Вилки переключения передач";
-                                    break;
-                                case "Втулка":
-                                    razdel = razdel + "Втулки";
-                                    break;
-                                case "Генератор":
-                                    razdel = razdel + "Генераторы в сборе";
-                                    break;
-                                case "Глушитель":
-                                    razdel = razdel + "Глушители";
-                                    break;
-                                case "Головка":
-                                    razdel = razdel + "Головки цилиндра";
-                                    break;
-                                case "грузики":
-                                    razdel = razdel + "Грузики вариатора";
-                                    break;
-                                case "Датчик":
-                                    razdel = razdel + "Датчики";
-                                    break;
-                                case "Двигатель":
-                                    razdel = razdel + "Двигатели в сборе";
-                                    break;
-                                case "Демпфер":
-                                    razdel = razdel + "Демпферы";
-                                    break;
-                                case "Демпферные":
-                                    razdel = razdel + "Демпферы";
-                                    break;
-                                case "Диск":
-                                    razdel = razdel + "Колесные диски";
-                                    break;
-                                case "Диски":
-                                    razdel = razdel + "Диски сцепления";
-                                    break;
-                                case "Жгут":
-                                    razdel = razdel + "Жгуты проводов";
-                                    break;
-                                case "Замков":
-                                    razdel = razdel + "Замки";
-                                    break;
-                                case "Замок":
-                                    razdel = razdel + "Замки";
-                                    break;
-                                case "Защита":
-                                    razdel = razdel + "Защита двигателя";
-                                    break;
-                                case "Звезда":
-                                    razdel = razdel + "Звезды";
-                                    break;
-                                case "Зубчатый":
-                                    razdel = razdel + "Зубчатые сектора";
-                                    break;
-                                case "Камера":
-                                    razdel = razdel + "Камеры";
-                                    break;
-                                case "Индикатор":
-                                    razdel = razdel + "Индикаторы";
-                                    break;
-                                case "Карбюратор":
-                                    razdel = razdel + "Карбюраторы";
-                                    break;
-                                case "Катушка":
-                                    razdel = razdel + "Катушки зажигания";
-                                    break;
-                                case "Клапан":
-                                    razdel = razdel + "Клапаны";
-                                    break;
-                                case "Клапаны":
-                                    razdel = razdel + "Клапаны";
-                                    break;
-                                case "Клипса":
-                                    razdel = razdel + "Клипсы";
-                                    break;
-                                case "Кнопка":
-                                    razdel = razdel + "Кнопки";
-                                    break;
-                                case "Кнопки":
-                                    razdel = razdel + "Кнопки";
-                                    break;
-                                case "Кожух":
-                                    razdel = razdel + "Кожухи";
-                                    break;
-                                case "Коллектор":
-                                    razdel = razdel + "Коллекторы";
-                                    break;
-                                case "Колодки":
-                                    razdel = razdel + "Тормозные колодки";
-                                    break;
-                                case "Колпачок":
-                                    razdel = razdel + "Свечные колпачки";
-                                    break;
-                                case "Кольца":
-                                    razdel = razdel + "Кольца";
-                                    break;
-                                case "Кольцо":
-                                    razdel = razdel + "Кольца";
-                                    break;
-                                case "Коммутатор":
-                                    razdel = razdel + "Коммутаторы";
-                                    break;
-                                case "Коромысла":
-                                    razdel = razdel + "Коромысла";
-                                    break;
-                                case "Корпус":
-                                    razdel = razdel + "Корпуса картеров, предохранителей";
-                                    break;
-                                case "Кран":
-                                    razdel = razdel + "Топливные краны";
-                                    break;
-                                case "Крепление":
-                                    razdel = razdel + "Крепления и кронштейны";
-                                    break;
-                                case "Кронштейн":
-                                    razdel = razdel + "Крепления и кронштейны";
-                                    break;
-                                case "Крыло":
-                                    razdel = razdel + "Крылья";
-                                    break;
-                                case "Крыльчатка":
-                                    razdel = razdel + "Крыльчатки";
-                                    break;
-                                case "Крышка":
-                                    razdel = razdel + "Крышки";
-                                    break;
-                                case "Лампа":
-                                    razdel = razdel + "Лампы";
-                                    break;
-                                case "Машинка":
-                                    razdel = razdel + "Тормозные машинки";
-                                    break;
-                                case "Мембрана":
-                                    razdel = razdel + "Мембраны карбюратора";
-                                    break;
-                                case "Муфта":
-                                    razdel = razdel + "Обгонные муфты";
-                                    break;
-                                case "Наконечник":
-                                    razdel = razdel + "Наконечники рулевой тяги";
-                                    break;
-                                case "Направляющие":
-                                    razdel = razdel + "Направляющие цепи";
-                                    break;
-                                case "Насос":
-                                    razdel = razdel + "Насосы";
-                                    break;
-                                case "Натяжитель":
-                                    razdel = razdel + "Натяжители цепи";
-                                    break;
-                                case "Обтекатели":
-                                    razdel = razdel + "Обтекатели";
-                                    break;
-                                case "Обтекатель":
-                                    razdel = razdel + "Обтекатели";
-                                    break;
-                                case "Опора":
-                                    razdel = razdel + "Опоры";
-                                    break;
-                                case "Ось":
-                                    razdel = razdel + "Оси";
-                                    break;
-                                case "Палец":
-                                    razdel = razdel + "Поршневые пальцы";
-                                    break;
-                                case "Панель":
-                                    razdel = razdel + "Панели приборов";
-                                    break;
-                                case "Патрубок":
-                                    razdel = razdel + "Патрубки";
-                                    break;
-                                case "Педаль":
-                                    razdel = razdel + "Педали тормоза";
-                                    break;
-                                case "Пластик":
-                                    razdel = razdel + "Пластик";
-                                    break;
-                                case "Подножка":
-                                    razdel = razdel + "Подножки";
-                                    break;
-                                case "Подножки":
-                                    razdel = razdel + "Подножки";
-                                    break;
-                                case "Подшипник":
-                                    razdel = razdel + "Подшипники";
-                                    break;
-                                case "Подшипники":
-                                    razdel = razdel + "Подшипники";
-                                    break;
-                                case "Поршневой":
-                                    razdel = razdel + "Поршни";
-                                    break;
-                                case "Привод":
-                                    razdel = razdel + "Приводы спидометра";
-                                    break;
-                                case "Прокладка":
-                                    razdel = razdel + "Прокладки";
-                                    break;
-                                case "Прокладки":
-                                    razdel = razdel + "Прокладки";
-                                    break;
-                                case "Пружина":
-                                    razdel = razdel + "Пружины";
-                                    break;
-                                case "Пружины":
-                                    razdel = razdel + "Пружины";
-                                    break;
-                                case "Радиатор":
-                                    razdel = razdel + "Радиаторы";
-                                    break;
-                                case "Рама":
-                                    razdel = razdel + "Рамы";
-                                    break;
-                                case "Реле":
-                                    razdel = razdel + "Реле";
-                                    break;
-                                case "Реле-регулятор":
-                                    razdel = razdel + "Реле";
-                                    break;
-                                case "Ремень":
-                                    razdel = razdel + "Ремни вариатора";
-                                    break;
-                                case "Ремкомплект":
-                                    razdel = razdel + "Ремкомплекты карбюраторов";
-                                    break;
-                                case "Решетка":
-                                    razdel = razdel + "Решетки";
-                                    break;
-                                case "Ролик":
-                                    razdel = razdel + "Ролики натяжителя цепи";
-                                    break;
-                                case "Ротор":
-                                    razdel = razdel + "Роторы";
-                                    break;
-                                case "Руль":
-                                    razdel = razdel + "Рули";
-                                    break;
-                                case "Ручка":
-                                    razdel = razdel + "Ручки, рычаги";
-                                    break;
-                                case "Ручки":
-                                    razdel = razdel + "Ручки, рычаги";
-                                    break;
-                                case "Рычаг":
-                                    razdel = razdel + "Ручки, рычаги";
-                                    break;
-                                case "Рычаги":
-                                    razdel = razdel + "Ручки, рычаги";
-                                    break;
-                                case "Сайлентблок":
-                                    razdel = razdel + "Сайлентблоки, сальники";
-                                    break;
-                                case "Сальник":
-                                    razdel = razdel + "Сайлентблоки, сальники";
-                                    break;
-                                case "Сальники":
-                                    razdel = razdel + "Сайлентблоки, сальники";
-                                    break;
-                                case "Свеча":
-                                    razdel = razdel + "Свечи зажигания";
-                                    break;
-                                case "Сигнал":
-                                    razdel = razdel + "Звуковые сигналы";
-                                    break;
-                                case "Сиденье":
-                                    razdel = razdel + "Сиденья";
-                                    break;
-                                case "Спица":
-                                    razdel = razdel + "Спицы";
-                                    break;
-                                case "Стартер":
-                                    razdel = razdel + "Статоры генератора";
-                                    break;
-                                case "Статор":
-                                    razdel = razdel + "Статоры генератора";
-                                    break;
-                                case "Ступица":
-                                    razdel = razdel + "Ступицы";
-                                    break;
-                                case "Суппорт":
-                                    razdel = razdel + "Суппорты";
-                                    break;
-                                case "Сцепление":
-                                    razdel = razdel + "Сцепление в сборе";
-                                    break;
-                                case "Толкатель":
-                                    razdel = razdel + "Толкатели";
-                                    break;
-                                case "Тормоз":
-                                    razdel = razdel + "Тормоза";
-                                    break;
-                                case "Траверса":
-                                    razdel = razdel + "Траверсы";
-                                    break;
-                                case "Трос":
-                                    razdel = razdel + "Тросы";
-                                    break;
-                                case "Турбина":
-                                    razdel = razdel + "Трубки, турбины";
-                                    break;
-                                case "Тяга":
-                                    razdel = razdel + "Тяги";
-                                    break;
-                                case "Указатели":
-                                    razdel = razdel + "Указатели поворотов";
-                                    break;
-                                case "Успокоитель":
-                                    razdel = razdel + "Успокоители цепи";
-                                    break;
-                                case "Фара":
-                                    razdel = razdel + "Фары";
-                                    break;
-                                case "Фильтр":
-                                    razdel = razdel + "Фильтры";
-                                    break;
-                                case "Фильтрующий":
-                                    razdel = razdel + "Фильтры";
-                                    break;
-                                case "Фонарь":
-                                    razdel = razdel + "Фары";
-                                    break;
-                                case "Цапфа":
-                                    razdel = razdel + "Цапфы";
-                                    break;
-                                case "Цепь":
-                                    razdel = razdel + "Цепи";
-                                    break;
-                                case "Цилиндро-поршневая":
-                                    razdel = razdel + "ЦПГ";
-                                    break;
-                                case "Шестерни":
-                                    razdel = razdel + "Шестерни и шайбы";
-                                    break;
-                                case "Шестерня":
-                                    razdel = razdel + "Шестерни и шайбы";
-                                    break;
-                                case "Шина":
-                                    razdel = razdel + "Шины";
-                                    break;
-                                case "Шланг":
-                                    razdel = razdel + "Шланги";
-                                    break;
-                                case "Электроклапан":
-                                    razdel = razdel + "Электроклапана карбюраторов";
-                                    break;
-                                case "Электростартер":
-                                    razdel = razdel + "Электростартеры";
-                                    break;
-                                default:
-                                    razdel = razdel + "Разное";
-                                    break;
-                            }
-
-                            string minitext = null;
-                            string titleText = null;
-                            string descriptionText = null;
-                            string keywordsText = null;
-                            string fullText = null;
-                            string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
-
-                            string boldOpen = "<span style=\"\"font-weight: bold; font-weight: bold; \"\">";
-                            string boldClose = "</span>";
-
-                            string nameBold = boldOpen + name + boldClose;
-
-                            for (int z = 0; rtbMiniText.Lines.Length > z; z++)
-                            {
-                                if (rtbMiniText.Lines[z].ToString() == "")
-                                {
-                                    minitext += "<p><br /></p>";
-                                }
-                                else
-                                {
-                                    minitext += "<p>" + rtbMiniText.Lines[z].ToString() + "</p>";
-                                }
-                            }
-
-                            for (int z = 0; rtbFullText.Lines.Length > z; z++)
-                            {
-                                if (rtbFullText.Lines[z].ToString() == "")
-                                {
-                                    fullText += "<p><br /></p>";
-                                }
-                                else
-                                {
-                                    fullText += "<p>" + rtbFullText.Lines[z].ToString() + "</p>";
-                                }
-                            }
-
-                            titleText = tbTitle.Lines[0].ToString();
-                            descriptionText = tbDescription.Lines[0].ToString();
-                            keywordsText = tbKeywords.Lines[0].ToString();
-
-                            string discount = "<p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> Сделай ТРОЙНОЙ удар по нашим ценам! </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 1. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Скидки за отзывы о товарах!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 2. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Друзьям скидки и подарки!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 3. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Нашли дешевле!? 110% разницы Ваши!</a></span></p>";
-
-                            minitext = minitext.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
-
-                            minitext = minitext.Remove(minitext.LastIndexOf("<p>"));
-
-                            fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
-
-                            fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
-
-                            titleText = titleText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                            descriptionText = descriptionText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                            keywordsText = keywordsText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                            if (titleText.Length > 255)
-                            {
-                                titleText = titleText.Remove(255);
-                                titleText = titleText.Remove(titleText.LastIndexOf(" "));
-                            }
-                            if (descriptionText.Length > 200)
-                            {
-                                descriptionText = descriptionText.Remove(200);
-                                descriptionText = descriptionText.Remove(descriptionText.LastIndexOf(" "));
-                            }
-                            if (keywordsText.Length > 100)
-                            {
-                                keywordsText = keywordsText.Remove(100);
-                                keywordsText = keywordsText.Remove(keywordsText.LastIndexOf(" "));
-                            }
-                            if (slug.Length > 64)
-                            {
-                                slug = slug.Remove(64);
-                                slug = slug.Remove(slug.LastIndexOf(" "));
-                            }
-
                             newProduct = new List<string>();
                             newProduct.Add(""); //id
                             newProduct.Add("\"" + articl + "\""); //артикул
@@ -768,7 +344,7 @@ namespace IrbisMoto
                             newProduct.Add("\"" + "100" + "\""); //в наличии
                             newProduct.Add("\"" + "0" + "\"");//поставка
                             newProduct.Add("\"" + "1" + "\"");//срок поставки
-                            newProduct.Add("\"" + minitext + "\"");//краткий текст
+                            newProduct.Add("\"" + miniText + "\"");//краткий текст
                             newProduct.Add("\"" + fullText + "\"");//полностью текст
                             newProduct.Add("\"" + titleText + "\""); //заголовок страницы
                             newProduct.Add("\"" + descriptionText + "\""); //описание
@@ -824,6 +400,8 @@ namespace IrbisMoto
                     double priceIrbisDiler = (double)w.Cells[i, 6].Value;
                     double actualPrice = Price(priceIrbisDiler);
                     string action = (string)w.Cells[i, 14].Value;
+                    string name = (string)w.Cells[i, 3].Value;
+                    name = name.Replace("\"", "");
 
                     ExcelRange er = w.Cells[i, 2];
                     if (er.Hyperlink != null)
@@ -862,18 +440,69 @@ namespace IrbisMoto
                         }
                     }
 
+                    otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
+                    string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
+                    urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
+                    List<string> tovarList = webRequest.arraySaveimage(urlTovar);
+
+                    string slug = chpu.vozvr(name);
+                    string razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => " + podrazdel;
+
+
+                    string miniText = null;
+                    string titleText = null;
+                    string descriptionText = null;
+                    string keywordsText = null;
+                    string fullText = null;
+                    string discount = null;
+                    string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
+
+                    string boldOpen = "<span style=\"font-weight: bold; font-weight: bold; \">";
+                    string boldClose = "</span>";
+
+                    string nameBold = boldOpen + name + boldClose;
+
+                    miniText = miniTextTemplate();
+                    fullText = fullTextTemplate();
+                    titleText = tbTitle.Lines[0].ToString();
+                    descriptionText = tbDescription.Lines[0].ToString();
+                    keywordsText = tbKeywords.Lines[0].ToString();
+                    discount = discountTemplate();
+
+                    miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
+
+                    miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
+
+                    fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
+
+                    fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
+
+                    titleText = titleText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                    descriptionText = descriptionText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                    keywordsText = keywordsText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                    titleText = textRemove(titleText, 255);
+                    descriptionText = textRemove(descriptionText, 200);
+                    keywordsText = textRemove(keywordsText, 100);
+                    slug = textRemove(slug, 64);
+
                     if (quantity == 0)
                     {
-                        otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
-                        string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
                         if (urlTovar != "")
-                        {
-                            urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
-                            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
+                        { 
                             if (action != "")
                             {
                                 tovarList[39] = action;
                                 tovarList[9] = actualPrice.ToString();
+                                tovarList[1] = slug;
+                                tovarList[7] = miniText;
+                                tovarList[8] = fullText;
+                                tovarList[11] = descriptionText;
+                                tovarList[12] = keywordsText;
+                                tovarList[13] = titleText;
+                                tovarList[3] = "10833347";
                                 webRequest.saveImage(tovarList);
                                 editPrice++;
                             }
@@ -886,116 +515,52 @@ namespace IrbisMoto
                     }
                     else
                     {
-                        otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
-                        string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
                         if (urlTovar != "")
                         {
-                            urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
-                            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
                             double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
                             if (actualPrice != priceBike18)
                             {
                                 tovarList[39] = action;
                                 tovarList[9] = actualPrice.ToString();
+                                tovarList[1] = slug;
+                                tovarList[7] = miniText;
+                                tovarList[8] = fullText;
+                                tovarList[11] = descriptionText;
+                                tovarList[12] = keywordsText;
+                                tovarList[13] = titleText;
+                                tovarList[3] = "10833347";
                                 webRequest.saveImage(tovarList);
                                 editPrice++;
                             }
                             else if (tovarList[39].ToString() != action)
                             {
                                 tovarList[39] = action;
+                                tovarList[1] = slug;
+                                tovarList[7] = miniText;
+                                tovarList[8] = fullText;
+                                tovarList[11] = descriptionText;
+                                tovarList[12] = keywordsText;
+                                tovarList[13] = titleText;
+                                tovarList[3] = "10833347";
+                                webRequest.saveImage(tovarList);
+                                editPrice++;
+                            }
+                            else
+                            {
+                                tovarList[1] = slug;
+                                tovarList[7] = miniText;
+                                tovarList[8] = fullText;
+                                tovarList[11] = descriptionText;
+                                tovarList[12] = keywordsText;
+                                tovarList[13] = titleText;
+                                tovarList[3] = "10833347";
                                 webRequest.saveImage(tovarList);
                                 editPrice++;
                             }
                         }
                         else
-                        {
-                            string name = (string)w.Cells[i, 3].Value;
-                            name = name.Replace("\"", "");
+                        {                           
                             string stock = (string)w.Cells[i, 14].Value;
-
-
-
-
-                            string slug = chpu.vozvr(name);
-                            string razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => " + podrazdel;
-
-
-                            string minitext = null;
-                            string titleText = null;
-                            string descriptionText = null;
-                            string keywordsText = null;
-                            string fullText = null;
-                            string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
-
-                            string boldOpen = "<span style=\"\"font-weight: bold; font-weight: bold; \"\">";
-                            string boldClose = "</span>";
-
-                            string nameBold = boldOpen + name + boldClose;
-
-                            for (int z = 0; rtbMiniText.Lines.Length > z; z++)
-                            {
-                                if (rtbMiniText.Lines[z].ToString() == "")
-                                {
-                                    minitext += "<p><br /></p>";
-                                }
-                                else
-                                {
-                                    minitext += "<p>" + rtbMiniText.Lines[z].ToString() + "</p>";
-                                }
-                            }
-
-                            for (int z = 0; rtbFullText.Lines.Length > z; z++)
-                            {
-                                if (rtbFullText.Lines[z].ToString() == "")
-                                {
-                                    fullText += "<p><br /></p>";
-                                }
-                                else
-                                {
-                                    fullText += "<p>" + rtbFullText.Lines[z].ToString() + "</p>";
-                                }
-                            }
-
-                            titleText = tbTitle.Lines[0].ToString();
-                            descriptionText = tbDescription.Lines[0].ToString();
-                            keywordsText = tbKeywords.Lines[0].ToString();
-
-                            string discount = "<p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> Сделай ТРОЙНОЙ удар по нашим ценам! </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 1. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Скидки за отзывы о товарах!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 2. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Друзьям скидки и подарки!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 3. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Нашли дешевле!? 110% разницы Ваши!</a></span></p>";
-
-                            minitext = minitext.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
-
-                            minitext = minitext.Remove(minitext.LastIndexOf("<p>"));
-
-                            fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
-
-                            fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
-
-                            titleText = titleText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                            descriptionText = descriptionText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                            keywordsText = keywordsText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                            if (titleText.Length > 255)
-                            {
-                                titleText = titleText.Remove(255);
-                                titleText = titleText.Remove(titleText.LastIndexOf(" "));
-                            }
-                            if (descriptionText.Length > 200)
-                            {
-                                descriptionText = descriptionText.Remove(200);
-                                descriptionText = descriptionText.Remove(descriptionText.LastIndexOf(" "));
-                            }
-                            if (keywordsText.Length > 100)
-                            {
-                                keywordsText = keywordsText.Remove(100);
-                                keywordsText = keywordsText.Remove(keywordsText.LastIndexOf(" "));
-                            }
-                            if (slug.Length > 64)
-                            {
-                                slug = slug.Remove(64);
-                                slug = slug.Remove(slug.LastIndexOf(" "));
-                            }
 
                             newProduct = new List<string>();
                             newProduct.Add(""); //id
@@ -1007,7 +572,7 @@ namespace IrbisMoto
                             newProduct.Add("\"" + "100" + "\""); //в наличии
                             newProduct.Add("\"" + "0" + "\"");//поставка
                             newProduct.Add("\"" + "1" + "\"");//срок поставки
-                            newProduct.Add("\"" + minitext + "\"");//краткий текст
+                            newProduct.Add("\"" + miniText + "\"");//краткий текст
                             newProduct.Add("\"" + fullText + "\"");//полностью текст
                             newProduct.Add("\"" + titleText + "\""); //заголовок страницы
                             newProduct.Add("\"" + descriptionText + "\""); //описание
@@ -1023,7 +588,6 @@ namespace IrbisMoto
                     }
                 }
             }
-
 
             string razdelkiyoshi = null;
             podrazdel = null;
@@ -1096,6 +660,51 @@ namespace IrbisMoto
                     double priceIrbisDiler = (double)w.Cells[i, 7].Value;
                     double actualPrice = Price(priceIrbisDiler);
                     string action = (string)w.Cells[i, 14].Value;
+                    string name = (string)w.Cells[i, 3].Value;
+                    name = name.Replace("\"", "").Replace("\n", "");
+
+                    string slug = chpu.vozvr(name);
+                    string razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => " + podrazdel;
+
+
+                    string miniText = null;
+                    string titleText = null;
+                    string descriptionText = null;
+                    string keywordsText = null;
+                    string fullText = null;
+                    string discount = null;
+                    string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
+
+                    string boldOpen = "<span style=\"font-weight: bold; font-weight: bold; \">";
+                    string boldClose = "</span>";
+
+                    string nameBold = boldOpen + name + boldClose;
+
+                    miniText = miniTextTemplate();
+                    fullText = fullTextTemplate();
+                    titleText = tbTitle.Lines[0].ToString();
+                    descriptionText = tbDescription.Lines[0].ToString();
+                    keywordsText = tbKeywords.Lines[0].ToString();
+                    discount = discountTemplate();
+
+                    miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
+
+                    miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
+
+                    fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
+
+                    fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
+
+                    titleText = titleText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                    descriptionText = descriptionText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                    keywordsText = keywordsText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                    titleText = textRemove(titleText, 255);
+                    descriptionText = textRemove(descriptionText, 200);
+                    keywordsText = textRemove(keywordsText, 100);
+                    slug = textRemove(slug, 64);
 
                     ExcelRange er = w.Cells[i, 1];
                     if (er.Hyperlink != null)
@@ -1143,6 +752,13 @@ namespace IrbisMoto
                             {
                                 tovarList[39] = action;
                                 tovarList[9] = actualPrice.ToString();
+                                tovarList[1] = slug;
+                                tovarList[7] = miniText;
+                                tovarList[8] = fullText;
+                                tovarList[11] = descriptionText;
+                                tovarList[12] = keywordsText;
+                                tovarList[13] = titleText;
+                                tovarList[3] = "10833347";
                                 webRequest.saveImage(tovarList);
                                 editPrice++;
                             }
@@ -1166,108 +782,46 @@ namespace IrbisMoto
                             {
                                 tovarList[39] = action;
                                 tovarList[9] = actualPrice.ToString();
+                                tovarList[1] = slug;
+                                tovarList[7] = miniText;
+                                tovarList[8] = fullText;
+                                tovarList[11] = descriptionText;
+                                tovarList[12] = keywordsText;
+                                tovarList[13] = titleText;
+                                tovarList[3] = "10833347";
                                 webRequest.saveImage(tovarList);
                                 editPrice++;
                             }
                             else if (tovarList[39].ToString() != action)
                             {
                                 tovarList[39] = action;
+                                tovarList[1] = slug;
+                                tovarList[7] = miniText;
+                                tovarList[8] = fullText;
+                                tovarList[11] = descriptionText;
+                                tovarList[12] = keywordsText;
+                                tovarList[13] = titleText;
+                                tovarList[3] = "10833347";
+                                webRequest.saveImage(tovarList);
+                                editPrice++;
+                            }
+                            else
+                            {
+                                tovarList[1] = slug;
+                                tovarList[7] = miniText;
+                                tovarList[8] = fullText;
+                                tovarList[11] = descriptionText;
+                                tovarList[12] = keywordsText;
+                                tovarList[13] = titleText;
+                                tovarList[3] = "10833347";
                                 webRequest.saveImage(tovarList);
                                 editPrice++;
                             }
                         }
                         else
                         {
-                            string name = (string)w.Cells[i, 3].Value;
-                            name = name.Replace("\"", "").Replace("\n", "");
                             string stock = (string)w.Cells[i, 14].Value;
-
-
-
-
-
-
-                            string slug = chpu.vozvr(name);
-                            string razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => " + podrazdel;
-
-
-                            string minitext = null;
-                            string titleText = null;
-                            string descriptionText = null;
-                            string keywordsText = null;
-                            string fullText = null;
-                            string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
-
-                            string boldOpen = "<span style=\"\"font-weight: bold; font-weight: bold; \"\">";
-                            string boldClose = "</span>";
-
-                            string nameBold = boldOpen + name + boldClose;
-
-                            for (int z = 0; rtbMiniText.Lines.Length > z; z++)
-                            {
-                                if (rtbMiniText.Lines[z].ToString() == "")
-                                {
-                                    minitext += "<p><br /></p>";
-                                }
-                                else
-                                {
-                                    minitext += "<p>" + rtbMiniText.Lines[z].ToString() + "</p>";
-                                }
-                            }
-
-                            for (int z = 0; rtbFullText.Lines.Length > z; z++)
-                            {
-                                if (rtbFullText.Lines[z].ToString() == "")
-                                {
-                                    fullText += "<p><br /></p>";
-                                }
-                                else
-                                {
-                                    fullText += "<p>" + rtbFullText.Lines[z].ToString() + "</p>";
-                                }
-                            }
-
-                            titleText = tbTitle.Lines[0].ToString();
-                            descriptionText = tbDescription.Lines[0].ToString();
-                            keywordsText = tbKeywords.Lines[0].ToString();
-
-                            string discount = "<p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> Сделай ТРОЙНОЙ удар по нашим ценам! </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 1. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Скидки за отзывы о товарах!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 2. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Друзьям скидки и подарки!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 3. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Нашли дешевле!? 110% разницы Ваши!</a></span></p>";
-
-                            minitext = minitext.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
-
-                            minitext = minitext.Remove(minitext.LastIndexOf("<p>"));
-
-                            fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
-
-                            fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
-
-                            titleText = titleText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                            descriptionText = descriptionText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                            keywordsText = keywordsText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                            if (titleText.Length > 255)
-                            {
-                                titleText = titleText.Remove(255);
-                                titleText = titleText.Remove(titleText.LastIndexOf(" "));
-                            }
-                            if (descriptionText.Length > 200)
-                            {
-                                descriptionText = descriptionText.Remove(200);
-                                descriptionText = descriptionText.Remove(descriptionText.LastIndexOf(" "));
-                            }
-                            if (keywordsText.Length > 100)
-                            {
-                                keywordsText = keywordsText.Remove(100);
-                                keywordsText = keywordsText.Remove(keywordsText.LastIndexOf(" "));
-                            }
-                            if (slug.Length > 64)
-                            {
-                                slug = slug.Remove(64);
-                                slug = slug.Remove(slug.LastIndexOf(" "));
-                            }
-
+                            
                             newProduct = new List<string>();
                             newProduct.Add(""); //id
                             newProduct.Add("\"" + articl + "\""); //артикул
@@ -1278,7 +832,7 @@ namespace IrbisMoto
                             newProduct.Add("\"" + "100" + "\""); //в наличии
                             newProduct.Add("\"" + "0" + "\"");//поставка
                             newProduct.Add("\"" + "1" + "\"");//срок поставки
-                            newProduct.Add("\"" + minitext + "\"");//краткий текст
+                            newProduct.Add("\"" + miniText + "\"");//краткий текст
                             newProduct.Add("\"" + fullText + "\"");//полностью текст
                             newProduct.Add("\"" + titleText + "\""); //заголовок страницы
                             newProduct.Add("\"" + descriptionText + "\""); //описание
@@ -1348,6 +902,42 @@ namespace IrbisMoto
             }
 
             MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
+        }
+
+        private string actionText(string action)
+        {
+            switch (action)
+            {
+                case "ЛУЧШАЯ ЦЕНА!":
+                    action = "&markers[3]=1";
+                    break;
+                case "Новое поступление":
+                    action = "&markers[1]=1";
+                    break;
+                case "Новое постуление":
+                    action = "&markers[1]=1";
+                    break;
+                default:
+                    action = "";
+                    break;
+            }
+            return action;
+        }
+
+        private string textRemove(string text, int count)
+        {
+            if (text.Length > count)
+            {
+                text = text.Remove(count);
+                text = text.Remove(text.LastIndexOf(" "));
+            }
+            return text;
+        }
+
+        private string discountTemplate()
+        {
+            string disount = "<p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> Сделай ТРОЙНОЙ удар по нашим ценам! </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 1. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Скидки за отзывы о товарах!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 2. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Друзьям скидки и подарки!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 3. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Нашли дешевле!? 110% разницы Ваши!</a></span></p>";
+            return disount;
         }
 
         public double Price(double priceDiler)
@@ -1534,6 +1124,445 @@ namespace IrbisMoto
             StreamReader ressrSave = new StreamReader(resSave.GetResponseStream());
             string otvSave = ressrSave.ReadToEnd();
             return otvSave;
+        }
+
+        public string irbisZapchastiRazdel(string strRazdel)
+        {
+            string razdel = "Запчасти и расходники => Каталог запчастей IRBIS => ";
+            switch (strRazdel)
+            {
+                case "Аккумуляторная":
+                    razdel = razdel + "Аккумуляторы";
+                    break;
+                case "Амортизатор":
+                    razdel = razdel + "Амортизаторы";
+                    break;
+                case "Амортизаторы":
+                    razdel = razdel + "Амортизаторы";
+                    break;
+                case "Багажник":
+                    razdel = razdel + "Багажники";
+                    break;
+                case "Бак":
+                    razdel = razdel + "Баки масляные, топливные, системы охлаждения";
+                    break;
+                case "Барабан":
+                    razdel = razdel + "Блоки переключения, бендиксы, барабаны";
+                    break;
+                case "Бачок":
+                    razdel = razdel + "Баки масляные, топливные, системы охлаждения";
+                    break;
+                case "Бендикс":
+                    razdel = razdel + "Блоки переключения, бендиксы, барабаны";
+                    break;
+                case "Блок":
+                    razdel = razdel + "Блоки переключения, бендиксы, барабаны";
+                    break;
+                case "Блоки":
+                    razdel = razdel + "Блоки переключения, бендиксы, барабаны";
+                    break;
+                case "Болты":
+                    razdel = razdel + "Болты, буксы";
+                    break;
+                case "Вал":
+                    razdel = razdel + "Валы";
+                    break;
+                case "Валы":
+                    razdel = razdel + "Валы";
+                    break;
+                case "Вариатор":
+                    razdel = razdel + "Вариаторы";
+                    break;
+                case "Вентиль":
+                    razdel = razdel + "Вентили";
+                    break;
+                case "Вилка":
+                    razdel = razdel + "Вилки переключения передач";
+                    break;
+                case "Втулка":
+                    razdel = razdel + "Втулки";
+                    break;
+                case "Генератор":
+                    razdel = razdel + "Генераторы в сборе";
+                    break;
+                case "Глушитель":
+                    razdel = razdel + "Глушители";
+                    break;
+                case "Головка":
+                    razdel = razdel + "Головки цилиндра";
+                    break;
+                case "грузики":
+                    razdel = razdel + "Грузики вариатора";
+                    break;
+                case "Датчик":
+                    razdel = razdel + "Датчики";
+                    break;
+                case "Двигатель":
+                    razdel = razdel + "Двигатели в сборе";
+                    break;
+                case "Демпфер":
+                    razdel = razdel + "Демпферы";
+                    break;
+                case "Демпферные":
+                    razdel = razdel + "Демпферы";
+                    break;
+                case "Диск":
+                    razdel = razdel + "Колесные диски";
+                    break;
+                case "Диски":
+                    razdel = razdel + "Диски сцепления";
+                    break;
+                case "Жгут":
+                    razdel = razdel + "Жгуты проводов";
+                    break;
+                case "Замков":
+                    razdel = razdel + "Замки";
+                    break;
+                case "Замок":
+                    razdel = razdel + "Замки";
+                    break;
+                case "Защита":
+                    razdel = razdel + "Защита двигателя";
+                    break;
+                case "Звезда":
+                    razdel = razdel + "Звезды";
+                    break;
+                case "Зубчатый":
+                    razdel = razdel + "Зубчатые сектора";
+                    break;
+                case "Камера":
+                    razdel = razdel + "Камеры";
+                    break;
+                case "Индикатор":
+                    razdel = razdel + "Индикаторы";
+                    break;
+                case "Карбюратор":
+                    razdel = razdel + "Карбюраторы";
+                    break;
+                case "Катушка":
+                    razdel = razdel + "Катушки зажигания";
+                    break;
+                case "Клапан":
+                    razdel = razdel + "Клапаны";
+                    break;
+                case "Клапаны":
+                    razdel = razdel + "Клапаны";
+                    break;
+                case "Клипса":
+                    razdel = razdel + "Клипсы";
+                    break;
+                case "Кнопка":
+                    razdel = razdel + "Кнопки";
+                    break;
+                case "Кнопки":
+                    razdel = razdel + "Кнопки";
+                    break;
+                case "Кожух":
+                    razdel = razdel + "Кожухи";
+                    break;
+                case "Коллектор":
+                    razdel = razdel + "Коллекторы";
+                    break;
+                case "Колодки":
+                    razdel = razdel + "Тормозные колодки";
+                    break;
+                case "Колпачок":
+                    razdel = razdel + "Свечные колпачки";
+                    break;
+                case "Кольца":
+                    razdel = razdel + "Кольца";
+                    break;
+                case "Кольцо":
+                    razdel = razdel + "Кольца";
+                    break;
+                case "Коммутатор":
+                    razdel = razdel + "Коммутаторы";
+                    break;
+                case "Коромысла":
+                    razdel = razdel + "Коромысла";
+                    break;
+                case "Корпус":
+                    razdel = razdel + "Корпуса картеров, предохранителей";
+                    break;
+                case "Кран":
+                    razdel = razdel + "Топливные краны";
+                    break;
+                case "Крепление":
+                    razdel = razdel + "Крепления и кронштейны";
+                    break;
+                case "Кронштейн":
+                    razdel = razdel + "Крепления и кронштейны";
+                    break;
+                case "Крыло":
+                    razdel = razdel + "Крылья";
+                    break;
+                case "Крыльчатка":
+                    razdel = razdel + "Крыльчатки";
+                    break;
+                case "Крышка":
+                    razdel = razdel + "Крышки";
+                    break;
+                case "Лампа":
+                    razdel = razdel + "Лампы";
+                    break;
+                case "Машинка":
+                    razdel = razdel + "Тормозные машинки";
+                    break;
+                case "Мембрана":
+                    razdel = razdel + "Мембраны карбюратора";
+                    break;
+                case "Муфта":
+                    razdel = razdel + "Обгонные муфты";
+                    break;
+                case "Наконечник":
+                    razdel = razdel + "Наконечники рулевой тяги";
+                    break;
+                case "Направляющие":
+                    razdel = razdel + "Направляющие цепи";
+                    break;
+                case "Насос":
+                    razdel = razdel + "Насосы";
+                    break;
+                case "Натяжитель":
+                    razdel = razdel + "Натяжители цепи";
+                    break;
+                case "Обтекатели":
+                    razdel = razdel + "Обтекатели";
+                    break;
+                case "Обтекатель":
+                    razdel = razdel + "Обтекатели";
+                    break;
+                case "Опора":
+                    razdel = razdel + "Опоры";
+                    break;
+                case "Ось":
+                    razdel = razdel + "Оси";
+                    break;
+                case "Палец":
+                    razdel = razdel + "Поршневые пальцы";
+                    break;
+                case "Панель":
+                    razdel = razdel + "Панели приборов";
+                    break;
+                case "Патрубок":
+                    razdel = razdel + "Патрубки";
+                    break;
+                case "Педаль":
+                    razdel = razdel + "Педали тормоза";
+                    break;
+                case "Пластик":
+                    razdel = razdel + "Пластик";
+                    break;
+                case "Подножка":
+                    razdel = razdel + "Подножки";
+                    break;
+                case "Подножки":
+                    razdel = razdel + "Подножки";
+                    break;
+                case "Подшипник":
+                    razdel = razdel + "Подшипники";
+                    break;
+                case "Подшипники":
+                    razdel = razdel + "Подшипники";
+                    break;
+                case "Поршневой":
+                    razdel = razdel + "Поршни";
+                    break;
+                case "Привод":
+                    razdel = razdel + "Приводы спидометра";
+                    break;
+                case "Прокладка":
+                    razdel = razdel + "Прокладки";
+                    break;
+                case "Прокладки":
+                    razdel = razdel + "Прокладки";
+                    break;
+                case "Пружина":
+                    razdel = razdel + "Пружины";
+                    break;
+                case "Пружины":
+                    razdel = razdel + "Пружины";
+                    break;
+                case "Радиатор":
+                    razdel = razdel + "Радиаторы";
+                    break;
+                case "Рама":
+                    razdel = razdel + "Рамы";
+                    break;
+                case "Реле":
+                    razdel = razdel + "Реле";
+                    break;
+                case "Реле-регулятор":
+                    razdel = razdel + "Реле";
+                    break;
+                case "Ремень":
+                    razdel = razdel + "Ремни вариатора";
+                    break;
+                case "Ремкомплект":
+                    razdel = razdel + "Ремкомплекты карбюраторов";
+                    break;
+                case "Решетка":
+                    razdel = razdel + "Решетки";
+                    break;
+                case "Ролик":
+                    razdel = razdel + "Ролики натяжителя цепи";
+                    break;
+                case "Ротор":
+                    razdel = razdel + "Роторы";
+                    break;
+                case "Руль":
+                    razdel = razdel + "Рули";
+                    break;
+                case "Ручка":
+                    razdel = razdel + "Ручки, рычаги";
+                    break;
+                case "Ручки":
+                    razdel = razdel + "Ручки, рычаги";
+                    break;
+                case "Рычаг":
+                    razdel = razdel + "Ручки, рычаги";
+                    break;
+                case "Рычаги":
+                    razdel = razdel + "Ручки, рычаги";
+                    break;
+                case "Сайлентблок":
+                    razdel = razdel + "Сайлентблоки, сальники";
+                    break;
+                case "Сальник":
+                    razdel = razdel + "Сайлентблоки, сальники";
+                    break;
+                case "Сальники":
+                    razdel = razdel + "Сайлентблоки, сальники";
+                    break;
+                case "Свеча":
+                    razdel = razdel + "Свечи зажигания";
+                    break;
+                case "Сигнал":
+                    razdel = razdel + "Звуковые сигналы";
+                    break;
+                case "Сиденье":
+                    razdel = razdel + "Сиденья";
+                    break;
+                case "Спица":
+                    razdel = razdel + "Спицы";
+                    break;
+                case "Стартер":
+                    razdel = razdel + "Статоры генератора";
+                    break;
+                case "Статор":
+                    razdel = razdel + "Статоры генератора";
+                    break;
+                case "Ступица":
+                    razdel = razdel + "Ступицы";
+                    break;
+                case "Суппорт":
+                    razdel = razdel + "Суппорты";
+                    break;
+                case "Сцепление":
+                    razdel = razdel + "Сцепление в сборе";
+                    break;
+                case "Толкатель":
+                    razdel = razdel + "Толкатели";
+                    break;
+                case "Тормоз":
+                    razdel = razdel + "Тормоза";
+                    break;
+                case "Траверса":
+                    razdel = razdel + "Траверсы";
+                    break;
+                case "Трос":
+                    razdel = razdel + "Тросы";
+                    break;
+                case "Турбина":
+                    razdel = razdel + "Трубки, турбины";
+                    break;
+                case "Тяга":
+                    razdel = razdel + "Тяги";
+                    break;
+                case "Указатели":
+                    razdel = razdel + "Указатели поворотов";
+                    break;
+                case "Успокоитель":
+                    razdel = razdel + "Успокоители цепи";
+                    break;
+                case "Фара":
+                    razdel = razdel + "Фары";
+                    break;
+                case "Фильтр":
+                    razdel = razdel + "Фильтры";
+                    break;
+                case "Фильтрующий":
+                    razdel = razdel + "Фильтры";
+                    break;
+                case "Фонарь":
+                    razdel = razdel + "Фары";
+                    break;
+                case "Цапфа":
+                    razdel = razdel + "Цапфы";
+                    break;
+                case "Цепь":
+                    razdel = razdel + "Цепи";
+                    break;
+                case "Цилиндро-поршневая":
+                    razdel = razdel + "ЦПГ";
+                    break;
+                case "Шестерни":
+                    razdel = razdel + "Шестерни и шайбы";
+                    break;
+                case "Шестерня":
+                    razdel = razdel + "Шестерни и шайбы";
+                    break;
+                case "Шина":
+                    razdel = razdel + "Шины";
+                    break;
+                case "Шланг":
+                    razdel = razdel + "Шланги";
+                    break;
+                case "Электроклапан":
+                    razdel = razdel + "Электроклапана карбюраторов";
+                    break;
+                case "Электростартер":
+                    razdel = razdel + "Электростартеры";
+                    break;
+                default:
+                    razdel = razdel + "Разное";
+                    break;
+            }
+            return razdel;
+        }
+
+        public string miniTextTemplate()
+        {
+            string miniText = null;
+            for (int z = 0; rtbMiniText.Lines.Length > z; z++)
+            {
+                if (rtbMiniText.Lines[z].ToString() == "")
+                {
+                    miniText += "<p><br /></p>";
+                }
+                else
+                {
+                    miniText += "<p>" + rtbMiniText.Lines[z].ToString() + "</p>";
+                }
+            }
+            return miniText;
+        }
+
+        private string fullTextTemplate()
+        {
+            string fullText = null;
+            for (int z = 0; rtbFullText.Lines.Length > z; z++)
+            {
+                if (rtbFullText.Lines[z].ToString() == "")
+                {
+                    fullText += "<p><br /></p>";
+                }
+                else
+                {
+                    fullText += "<p>" + rtbFullText.Lines[z].ToString() + "</p>";
+                }
+            }
+            return fullText;
         }
 
     }
