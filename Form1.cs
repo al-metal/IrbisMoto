@@ -26,6 +26,7 @@ namespace IrbisMoto
         int editPrice = 0;
         WebClient webClient = new WebClient();
         FileEdit files = new FileEdit();
+        List<string> allTovar = new List<string>();
 
         public Form1()
         {
@@ -150,30 +151,8 @@ namespace IrbisMoto
 
         private void btnActual_Click(object sender, EventArgs e)
         {
-            File.Delete("naSite.csv");
-
+            newFileNaSite();
             List<string> newProduct = new List<string>();
-            newProduct.Add("id");                                                                               //id
-            newProduct.Add("Артикул *");                                                 //артикул
-            newProduct.Add("Название товара *");                                          //название
-            newProduct.Add("Стоимость товара *");                                    //стоимость
-            newProduct.Add("Стоимость со скидкой");                                       //со скидкой
-            newProduct.Add("Раздел товара *");                                         //раздел товара
-            newProduct.Add("Товар в наличии *");                                                    //в наличии
-            newProduct.Add("Поставка под заказ *");                                                 //поставка
-            newProduct.Add("Срок поставки (дни) *");                                           //срок поставки
-            newProduct.Add("Краткий текст");                                 //краткий текст
-            newProduct.Add("Текст полностью");                                          //полностью текст
-            newProduct.Add("Заголовок страницы (title)");                               //заголовок страницы
-            newProduct.Add("Описание страницы (description)");                                 //описание
-            newProduct.Add("Ключевые слова страницы (keywords)");                                 //ключевые слова
-            newProduct.Add("ЧПУ страницы (slug)");                                   //ЧПУ
-            newProduct.Add("С этим товаром покупают");                              //с этим товаром покупают
-            newProduct.Add("Рекламные метки");
-            newProduct.Add("Показывать на сайте *");                                           //показывать
-            newProduct.Add("Удалить *");                                    //удалить
-            files.fileWriterCSV(newProduct, "naSite");
-
             FileInfo file = new FileInfo("Прайс.xlsx");
             ExcelPackage p = new ExcelPackage(file);
             ExcelWorksheet w = p.Workbook.Worksheets[3];
@@ -185,6 +164,7 @@ namespace IrbisMoto
                     break;
 
                 double articl = (double)w.Cells[i, 1].Value;
+                allTovarInFile(articl);
                 double quantity = (double)w.Cells[i, 9].Value;
                 double priceIrbisDiler = (double)w.Cells[i, 6].Value;
                 double actualPrice = Price(priceIrbisDiler);
@@ -398,6 +378,7 @@ namespace IrbisMoto
                 else
                 {
                     double articl = (double)w.Cells[i, 1].Value;
+                    allTovarInFile(articl);
                     double quantity = (double)w.Cells[i, 9].Value;
                     double priceIrbisDiler = (double)w.Cells[i, 6].Value;
                     double actualPrice = Price(priceIrbisDiler);
@@ -421,26 +402,7 @@ namespace IrbisMoto
                     }
 
                     if (action != "")
-                    {
-                        switch (action)
-                        {
-                            case "ЛУЧШАЯ ЦЕНА!":
-                                action = "&markers[3]=1";
-                                break;
-                            case "Новое поступление":
-                                action = "&markers[1]=1";
-                                break;
-                            case "Новое постуление":
-                                action = "&markers[1]=1";
-                                break;
-                            case "Новинка":
-                                action = "&markers[1]=1";
-                                break;
-                            default:
-                                action = "";
-                                break;
-                        }
-                    }
+                        action = actionText(action);
 
                     otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
                     string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
@@ -659,6 +621,7 @@ namespace IrbisMoto
                 {
 
                     double articl = (double)w.Cells[i, 2].Value;
+                    allTovarInFile(articl);
                     double quantity = (double)w.Cells[i, 10].Value;
                     double priceIrbisDiler = (double)w.Cells[i, 7].Value;
                     double actualPrice = Price(priceIrbisDiler);
@@ -725,23 +688,7 @@ namespace IrbisMoto
                     }
 
                     if (action != "")
-                    {
-                        switch (action)
-                        {
-                            case "ЛУЧШАЯ ЦЕНА!":
-                                action = "&markers[3]=1";
-                                break;
-                            case "Новое поступление":
-                                action = "&markers[1]=1";
-                                break;
-                            case "Новое постуление":
-                                action = "&markers[1]=1";
-                                break;
-                            default:
-                                action = "";
-                                break;
-                        }
-                    }
+                        action = actionText(action);
 
                     if (quantity == 0)
                     {
@@ -905,6 +852,39 @@ namespace IrbisMoto
             }
 
             MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
+        }
+
+        private void allTovarInFile(double articl)
+        {
+            allTovar.Add(articl.ToString());
+            files.fileWriterCSV(allTovar, "allTovar.csv");
+        }
+
+        private void newFileNaSite()
+        {
+            File.Delete("naSite.csv");
+
+            List<string> newProduct = new List<string>();
+            newProduct.Add("id");                                                                               //id
+            newProduct.Add("Артикул *");                                                 //артикул
+            newProduct.Add("Название товара *");                                          //название
+            newProduct.Add("Стоимость товара *");                                    //стоимость
+            newProduct.Add("Стоимость со скидкой");                                       //со скидкой
+            newProduct.Add("Раздел товара *");                                         //раздел товара
+            newProduct.Add("Товар в наличии *");                                                    //в наличии
+            newProduct.Add("Поставка под заказ *");                                                 //поставка
+            newProduct.Add("Срок поставки (дни) *");                                           //срок поставки
+            newProduct.Add("Краткий текст");                                 //краткий текст
+            newProduct.Add("Текст полностью");                                          //полностью текст
+            newProduct.Add("Заголовок страницы (title)");                               //заголовок страницы
+            newProduct.Add("Описание страницы (description)");                                 //описание
+            newProduct.Add("Ключевые слова страницы (keywords)");                                 //ключевые слова
+            newProduct.Add("ЧПУ страницы (slug)");                                   //ЧПУ
+            newProduct.Add("С этим товаром покупают");                              //с этим товаром покупают
+            newProduct.Add("Рекламные метки");
+            newProduct.Add("Показывать на сайте *");                                           //показывать
+            newProduct.Add("Удалить *");                                    //удалить
+            files.fileWriterCSV(newProduct, "naSite");
         }
 
         private string actionText(string action)
