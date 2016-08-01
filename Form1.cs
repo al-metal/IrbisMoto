@@ -851,7 +851,37 @@ namespace IrbisMoto
                 while (trueOtv != "2");
             }
 
-            MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
+            otv = webRequest.getRequest("http://bike18.ru/products/category/1183836");
+            MatchCollection razdelSite = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
+            string[] allprod = File.ReadAllLines("allTovar.csv");
+            for (int i = 0; razdelSite.Count > i; i++)
+            {
+                otv = webRequest.getRequest(razdelSite[i].ToString() + "/page/all");
+                MatchCollection product = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Matches(otv);
+                for (int n = 0; product.Count > n; n++)
+                {
+                    otv = webRequest.getRequest(product[n].ToString());
+                    string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</title><)").Match(otv).ToString().Trim();
+                    foreach(string str in allprod)
+                    {
+                        bool b = false;
+                        if(artProd == str)
+                        {
+                            b = true;
+                        }
+                        if (!b)
+                        {
+                            string urlTovar = product[n].ToString();
+                            urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
+                            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
+                            deleteTovar++;
+                        }
+                    }
+                }
+            }
+
+
+                MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
         }
 
         private void allTovarInFile(double articl)
