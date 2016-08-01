@@ -213,7 +213,7 @@ namespace IrbisMoto
                 otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
                 string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
                 urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
-                List<string> tovarList = webRequest.arraySaveimage(urlTovar);
+                
 
                 string slug = chpu.vozvr(name);
                 int space = name.IndexOf(" ");
@@ -262,6 +262,7 @@ namespace IrbisMoto
                 {
                     if (urlTovar != "")
                     {
+                        List<string> tovarList = webRequest.arraySaveimage(urlTovar);
                         if (action != "")
                         {
                             tovarList[39] = action;
@@ -287,6 +288,7 @@ namespace IrbisMoto
                 {
                     if (urlTovar != "")
                     {
+                        List<string> tovarList = webRequest.arraySaveimage(urlTovar);
                         double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
                         if (actualPrice != priceBike18)
                         {
@@ -443,7 +445,6 @@ namespace IrbisMoto
                     otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
                     string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
                     urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
-                    List<string> tovarList = webRequest.arraySaveimage(urlTovar);
 
                     string slug = chpu.vozvr(name);
                     string razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => " + podrazdel;
@@ -491,7 +492,8 @@ namespace IrbisMoto
                     if (quantity == 0)
                     {
                         if (urlTovar != "")
-                        { 
+                        {
+                            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
                             if (action != "")
                             {
                                 tovarList[39] = action;
@@ -517,6 +519,7 @@ namespace IrbisMoto
                     {
                         if (urlTovar != "")
                         {
+                            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
                             double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
                             if (actualPrice != priceBike18)
                             {
