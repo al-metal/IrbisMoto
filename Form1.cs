@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using Bike18;
+using OfficeOpenXml;
 using RacerMotors;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,7 @@ namespace IrbisMoto
         WebClient webClient = new WebClient();
         FileEdit files = new FileEdit();
         List<string> allTovar = new List<string>();
+        nethouse nethouse = new nethouse();
 
         public Form1()
         {
@@ -154,6 +156,8 @@ namespace IrbisMoto
             Properties.Settings.Default.login = tbLogin.Text;
             Properties.Settings.Default.password = tbPassword.Text;
             Properties.Settings.Default.Save();
+
+            CookieContainer cookie = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
 
             newFileNaSite();
             List<string> newProduct = new List<string>();
