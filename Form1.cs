@@ -168,6 +168,8 @@ namespace IrbisMoto
 
             FileInfo file = new FileInfo("Прайс.xlsx");
             ExcelPackage p = new ExcelPackage(file);
+
+            #region Раздел запчасти
             ExcelWorksheet w = p.Workbook.Worksheets[3];
             int q = w.Dimension.Rows;
 
@@ -352,6 +354,9 @@ namespace IrbisMoto
                 }
             }
 
+            #endregion
+
+            #region Запчасти для снегоходов
             w = p.Workbook.Worksheets[4];
             q = w.Dimension.Rows;
             string razdelSnegohod = null;
@@ -506,7 +511,7 @@ namespace IrbisMoto
                             }
                         }
                         else
-                        {                           
+                        {
                             string stock = (string)w.Cells[i, 14].Value;
 
                             newProduct = new List<string>();
@@ -535,7 +540,9 @@ namespace IrbisMoto
                     }
                 }
             }
+            #endregion
 
+            #region Запчасти KIYOSHI
             string razdelkiyoshi = null;
             podrazdel = null;
             w = p.Workbook.Worksheets[5];
@@ -695,7 +702,7 @@ namespace IrbisMoto
                         else
                         {
                             string stock = (string)w.Cells[i, 14].Value;
-                            
+
                             newProduct = new List<string>();
                             newProduct.Add(""); //id
                             newProduct.Add("\"" + articl + "\""); //артикул
@@ -721,9 +728,8 @@ namespace IrbisMoto
                         }
                     }
                 }
-
-
             }
+            #endregion
 
             #region uploadInSIte
             System.Threading.Thread.Sleep(20000);
@@ -788,10 +794,10 @@ namespace IrbisMoto
                 {
                     otv = webRequest.getRequest(product[n].ToString());
                     string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</title><)").Match(otv).ToString().Trim();
-                    foreach(string str in allprod)
+                    foreach (string str in allprod)
                     {
                         bool b = false;
-                        if(artProd == str)
+                        if (artProd == str)
                         {
                             b = true;
                         }
@@ -805,7 +811,7 @@ namespace IrbisMoto
                     }
                 }
             }
-                MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
+            MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
         }
 
         private string irbisKiyoshiRazdel(string razdelkiyoshi)
@@ -1013,19 +1019,19 @@ namespace IrbisMoto
             int countUpdateImage = 0;
             otv = webRequest.getRequest("http://bike18.ru/products/category/1183836");
             MatchCollection razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
-            for(int i = 0; razdel.Count > i; i++)
+            for (int i = 0; razdel.Count > i; i++)
             {
                 otv = webRequest.getRequest(razdel[i].ToString() + "/page/all");
                 MatchCollection tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                for(int n = 0; tovar.Count > n; n++)
+                for (int n = 0; tovar.Count > n; n++)
                 {
                     otv = webRequest.getRequest(tovar[n].ToString());
                     string urlImageTovar = new Regex("(?<=class=\"avatar-view \"><link rel=\"image_src\" href=\").*?(?=\">)").Match(otv).ToString();
-                    if(urlImageTovar == "")
+                    if (urlImageTovar == "")
                     {
                         string articl = new Regex("(?<= Артикул:)[\\w\\W]*?(?=</div>)").Match(otv).ToString();
                         articl = articl.Trim();
-                        if(File.Exists("pic\\" + articl + ".jpg"))
+                        if (File.Exists("pic\\" + articl + ".jpg"))
                         {
                             CookieContainer cookie = webRequest.webCookieBike18();
                             string urlTovar = tovar[n].ToString().Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
