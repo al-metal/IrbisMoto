@@ -36,6 +36,8 @@
             this.btnSaveTemplates = new System.Windows.Forms.Button();
             this.btnActual = new System.Windows.Forms.Button();
             this.btnUpdateImage = new System.Windows.Forms.Button();
+            this.tbLogin = new System.Windows.Forms.TextBox();
+            this.tbPassword = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // rtbMiniText
@@ -105,11 +107,28 @@
             this.btnUpdateImage.UseVisualStyleBackColor = true;
             this.btnUpdateImage.Click += new System.EventHandler(this.btnUpdateImage_Click);
             // 
+            // tbLogin
+            // 
+            this.tbLogin.Location = new System.Drawing.Point(969, 151);
+            this.tbLogin.Name = "tbLogin";
+            this.tbLogin.Size = new System.Drawing.Size(100, 20);
+            this.tbLogin.TabIndex = 8;
+            // 
+            // tbPassword
+            // 
+            this.tbPassword.Location = new System.Drawing.Point(1075, 151);
+            this.tbPassword.Name = "tbPassword";
+            this.tbPassword.Size = new System.Drawing.Size(100, 20);
+            this.tbPassword.TabIndex = 9;
+            this.tbPassword.UseSystemPasswordChar = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1294, 450);
+            this.Controls.Add(this.tbPassword);
+            this.Controls.Add(this.tbLogin);
             this.Controls.Add(this.btnUpdateImage);
             this.Controls.Add(this.btnActual);
             this.Controls.Add(this.btnSaveTemplates);
@@ -120,6 +139,7 @@
             this.Controls.Add(this.rtbMiniText);
             this.Name = "Form1";
             this.Text = "Irbis Moto";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -135,6 +155,8 @@
         private System.Windows.Forms.Button btnSaveTemplates;
         private System.Windows.Forms.Button btnActual;
         private System.Windows.Forms.Button btnUpdateImage;
+        private System.Windows.Forms.TextBox tbLogin;
+        private System.Windows.Forms.TextBox tbPassword;
     }
 }
 

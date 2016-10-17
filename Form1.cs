@@ -151,6 +151,10 @@ namespace IrbisMoto
 
         private void btnActual_Click(object sender, EventArgs e)
         {
+            Properties.Settings.Default.login = tbLogin.Text;
+            Properties.Settings.Default.password = tbPassword.Text;
+            Properties.Settings.Default.Save();
+
             newFileNaSite();
             List<string> newProduct = new List<string>();
             FileInfo file = new FileInfo("Прайс.xlsx");
@@ -193,7 +197,6 @@ namespace IrbisMoto
                 otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
                 string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
                 urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
-                
 
                 string slug = chpu.vozvr(name);
                 int space = name.IndexOf(" ");
@@ -352,28 +355,6 @@ namespace IrbisMoto
                 if (w.Cells[i, 1].Value == null)
                 {
                     razdelSnegohod = (string)w.Cells[i, 2].Value;
-                    switch (razdelSnegohod)
-                    {
-                        case "гусеницы":
-                            podrazdel = "Гусеницы";
-                            break;
-                        case "снегоходы Буран":
-                            podrazdel = "Снегоходы Буран";
-                            break;
-                        case "снегоходы Тайга":
-                            podrazdel = "Снегоходы Тайга";
-                            break;
-                        case "снегоходы Dingo":
-                            podrazdel = "Снегоходы Dingo";
-                            break;
-                        case "мотобуксировщики Мухтар":
-                            podrazdel = "Мотобуксировщики Мухтар";
-                            break;
-                        default:
-                            podrazdel = "Разное";
-                            break;
-
-                    }
                 }
                 else
                 {
@@ -409,9 +390,7 @@ namespace IrbisMoto
                     urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
 
                     string slug = chpu.vozvr(name);
-                    string razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => " + podrazdel;
-
-
+                    string razdel = irbisSnegohod(razdelSnegohod);
                     string miniText = null;
                     string titleText = null;
                     string descriptionText = null;
@@ -564,58 +543,6 @@ namespace IrbisMoto
                 if (w.Cells[i, 2].Value == null)
                 {
                     razdelkiyoshi = (string)w.Cells[i, 1].Value;
-
-                    switch (razdelkiyoshi)
-                    {
-                        case "Амортизаторы":
-                            podrazdel = "Амортизаторы KIYOSHI";
-                            break;
-                        case "Воздушные фильтры нулевого сопротивления":
-                            podrazdel = "Воздушные фильтры KIYOSHI";
-                            break;
-                        case "Глушители спортивные":
-                            podrazdel = "Спортивные глушители KIYOSHI";
-                            break;
-                        case "Карбюраторы, жиклеры карбюраторов":
-                            podrazdel = "Карбюраторы, жиклеры карбюраторов KIYOSHI";
-                            break;
-                        case "Электрооборудование":
-                            podrazdel = "Электрооборудование KIYOSHI";
-                            break;
-                        case "Валы коленчатые":
-                            podrazdel = "Сцепления, барабаны, пружины сцепления KIYOSHI";
-                            break;
-                        case "Подшипники":
-                            podrazdel = "Подшипники KIYOSHI";
-                            break;
-                        case "Вариаторы, грузики вариатора":
-                            podrazdel = "Вариаторы, грузики вариатора KIYOSHI";
-                            break;
-                        case "Ремни вариатора":
-                            podrazdel = "Ремни вариатора KIYOSHI";
-                            break;
-                        case "Сцепления, барабаны, пружины сцепления":
-                            podrazdel = "Сцепления, барабаны, пружины сцепления KIYOSHI";
-                            break;
-                        case "Цилиндро-поршневые группы":
-                            podrazdel = "Цилиндро- поршневые группы KIYOSHI";
-                            break;
-                        case "Лепестковые клапаны":
-                            podrazdel = "Лепестковые клапаны KIYOSHI";
-                            break;
-                        case "Газораспределительный механизм":
-                            podrazdel = "Газораспределительный механизм KIYOSHI";
-                            break;
-                        case "Стайлинг":
-                            podrazdel = "Стайлинг KIYOSHI";
-                            break;
-                        case "Наклейки":
-                            podrazdel = "Стайлинг KIYOSHI";
-                            break;
-                        default:
-                            break;
-                    }
-
                 }
                 else
                 {
@@ -630,9 +557,7 @@ namespace IrbisMoto
                     name = name.Replace("\"", "").Replace("\n", "");
 
                     string slug = chpu.vozvr(name);
-                    string razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => " + podrazdel;
-
-
+                    string razdel = irbisKiyoshiRazdel(razdelkiyoshi);
                     string miniText = null;
                     string titleText = null;
                     string descriptionText = null;
@@ -684,7 +609,6 @@ namespace IrbisMoto
                         {
 
                         }
-
                     }
 
                     if (action != "")
@@ -882,6 +806,92 @@ namespace IrbisMoto
 
 
                 MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
+        }
+
+        private string irbisKiyoshiRazdel(string razdelkiyoshi)
+        {
+            string podrazdel = "";
+            switch (razdelkiyoshi)
+            {
+                case "Амортизаторы":
+                    podrazdel = "Амортизаторы KIYOSHI";
+                    break;
+                case "Воздушные фильтры нулевого сопротивления":
+                    podrazdel = "Воздушные фильтры KIYOSHI";
+                    break;
+                case "Глушители спортивные":
+                    podrazdel = "Спортивные глушители KIYOSHI";
+                    break;
+                case "Карбюраторы, жиклеры карбюраторов":
+                    podrazdel = "Карбюраторы, жиклеры карбюраторов KIYOSHI";
+                    break;
+                case "Электрооборудование":
+                    podrazdel = "Электрооборудование KIYOSHI";
+                    break;
+                case "Валы коленчатые":
+                    podrazdel = "Сцепления, барабаны, пружины сцепления KIYOSHI";
+                    break;
+                case "Подшипники":
+                    podrazdel = "Подшипники KIYOSHI";
+                    break;
+                case "Вариаторы, грузики вариатора":
+                    podrazdel = "Вариаторы, грузики вариатора KIYOSHI";
+                    break;
+                case "Ремни вариатора":
+                    podrazdel = "Ремни вариатора KIYOSHI";
+                    break;
+                case "Сцепления, барабаны, пружины сцепления":
+                    podrazdel = "Сцепления, барабаны, пружины сцепления KIYOSHI";
+                    break;
+                case "Цилиндро-поршневые группы":
+                    podrazdel = "Цилиндро- поршневые группы KIYOSHI";
+                    break;
+                case "Лепестковые клапаны":
+                    podrazdel = "Лепестковые клапаны KIYOSHI";
+                    break;
+                case "Газораспределительный механизм":
+                    podrazdel = "Газораспределительный механизм KIYOSHI";
+                    break;
+                case "Стайлинг":
+                    podrazdel = "Стайлинг KIYOSHI";
+                    break;
+                case "Наклейки":
+                    podrazdel = "Стайлинг KIYOSHI";
+                    break;
+                default:
+                    break;
+            }
+
+            string razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => " + podrazdel;
+            return razdel;
+        }
+
+        private string irbisSnegohod(string razdelSnegohod)
+        {
+            string podrazdel = "";
+            switch (razdelSnegohod)
+            {
+                case "гусеницы":
+                    podrazdel = "Гусеницы";
+                    break;
+                case "снегоходы Буран":
+                    podrazdel = "Снегоходы Буран";
+                    break;
+                case "снегоходы Тайга":
+                    podrazdel = "Снегоходы Тайга";
+                    break;
+                case "снегоходы Dingo":
+                    podrazdel = "Снегоходы Dingo";
+                    break;
+                case "мотобуксировщики Мухтар":
+                    podrazdel = "Мотобуксировщики Мухтар";
+                    break;
+                default:
+                    podrazdel = "Разное";
+                    break;
+            }
+            string razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => " + podrazdel;
+            return razdel;
         }
 
         private void allTovarInFile(double articl)
@@ -1578,5 +1588,10 @@ namespace IrbisMoto
             return fullText;
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            tbLogin.Text = Properties.Settings.Default.login;
+            tbPassword.Text = Properties.Settings.Default.password;
+        }
     }
 }
