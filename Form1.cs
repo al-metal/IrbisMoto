@@ -159,8 +159,10 @@ namespace IrbisMoto
 
             CookieContainer cookie = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
 
-            newFileNaSite();
+            File.Delete("naSite.csv");
+            nethouse.NewListUploadinBike18("naSite");
             List<string> newProduct = new List<string>();
+
             FileInfo file = new FileInfo("Прайс.xlsx");
             ExcelPackage p = new ExcelPackage(file);
             ExcelWorksheet w = p.Workbook.Worksheets[3];
@@ -904,33 +906,6 @@ namespace IrbisMoto
             files.fileWriterCSV(allTovar, "allTovar.csv");
         }
 
-        private void newFileNaSite()
-        {
-            File.Delete("naSite.csv");
-
-            List<string> newProduct = new List<string>();
-            newProduct.Add("id");                                                                               //id
-            newProduct.Add("Артикул *");                                                 //артикул
-            newProduct.Add("Название товара *");                                          //название
-            newProduct.Add("Стоимость товара *");                                    //стоимость
-            newProduct.Add("Стоимость со скидкой");                                       //со скидкой
-            newProduct.Add("Раздел товара *");                                         //раздел товара
-            newProduct.Add("Товар в наличии *");                                                    //в наличии
-            newProduct.Add("Поставка под заказ *");                                                 //поставка
-            newProduct.Add("Срок поставки (дни) *");                                           //срок поставки
-            newProduct.Add("Краткий текст");                                 //краткий текст
-            newProduct.Add("Текст полностью");                                          //полностью текст
-            newProduct.Add("Заголовок страницы (title)");                               //заголовок страницы
-            newProduct.Add("Описание страницы (description)");                                 //описание
-            newProduct.Add("Ключевые слова страницы (keywords)");                                 //ключевые слова
-            newProduct.Add("ЧПУ страницы (slug)");                                   //ЧПУ
-            newProduct.Add("С этим товаром покупают");                              //с этим товаром покупают
-            newProduct.Add("Рекламные метки");
-            newProduct.Add("Показывать на сайте *");                                           //показывать
-            newProduct.Add("Удалить *");                                    //удалить
-            files.fileWriterCSV(newProduct, "naSite");
-        }
-
         private string actionText(string action)
         {
             switch (action)
@@ -1599,3 +1574,4 @@ namespace IrbisMoto
         }
     }
 }
+//проект на 1600 строк

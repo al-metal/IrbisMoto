@@ -33,7 +33,7 @@ namespace Bike18
             return cookie;
         }
 
-        internal List<string> GetProductList(CookieContainer cookie, string urlTovar)
+        public List<string> GetProductList(CookieContainer cookie, string urlTovar)
         {
             List<string> listTovar = new List<string>();
             string otv = webRequest.PostRequest(cookie, urlTovar);
@@ -187,7 +187,7 @@ namespace Bike18
             return listTovar;
         }
 
-        internal void DeleteProduct(CookieContainer cookie, List<string> getProduct)
+        public void DeleteProduct(CookieContainer cookie, List<string> getProduct)
         {
             HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("http://bike18.nethouse.ru/api/catalog/deleteproduct");
             req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
@@ -204,7 +204,7 @@ namespace Bike18
             StreamReader ressr1 = new StreamReader(res1.GetResponseStream());
         }
 
-        internal void DeleteProduct(CookieContainer cookie, string url)
+        public void DeleteProduct(CookieContainer cookie, string url)
         {
             List<string> getProduct = GetProductList(cookie, url);
             HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("http://bike18.nethouse.ru/api/catalog/deleteproduct");
@@ -222,7 +222,7 @@ namespace Bike18
             StreamReader ressr1 = new StreamReader(res1.GetResponseStream());
         }
 
-        internal void WriteFileInCSV(List<string> newProduct, string nameFile)
+        public void WriteFileInCSV(List<string> newProduct, string nameFile)
         {
             StreamWriter newProductcsv = new StreamWriter(nameFile + ".csv", true, Encoding.GetEncoding("windows-1251"));
             int count = newProduct.Count - 1;
@@ -236,7 +236,7 @@ namespace Bike18
             newProductcsv.Close();
         }
 
-        internal int ReturnPrice(double priceTovar, double discount)
+        public int ReturnPrice(double priceTovar, double discount)
         {
             priceTovar = priceTovar - (priceTovar * discount);
             priceTovar = Math.Round(priceTovar);
@@ -245,7 +245,7 @@ namespace Bike18
             return price;
         }
 
-        internal string SaveTovar(CookieContainer cookie, List<string> getProduct)
+        public string SaveTovar(CookieContainer cookie, List<string> getProduct)
         {
             string otv = "";
             HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("http://bike18.nethouse.ru/api/catalog/saveproduct");
@@ -279,7 +279,7 @@ namespace Bike18
             return otv;
         }
 
-        internal void UploadCSVInBike18(CookieContainer cookie, string nameFile)
+        public void UploadCSVInBike18(CookieContainer cookie, string nameFile)
         {
             string trueOtv = null;
             do
@@ -357,7 +357,7 @@ namespace Bike18
             return otvimg;
         }
 
-        private void ErrCHPUUploadInBike18(string otvimg)
+        public void ErrCHPUUploadInBike18(string otvimg)
         {
             string errstr = new Regex("(?<=errorLine\":).*?(?=,\")").Match(otvimg).ToString();
             string[] naSite = File.ReadAllLines("naSite.csv", Encoding.GetEncoding(1251));
@@ -383,7 +383,7 @@ namespace Bike18
             File.WriteAllLines("naSite.csv", naSite, Encoding.GetEncoding(1251));
         }
 
-        private int ReturnCountAdd()
+        public int ReturnCountAdd()
         {
             if (addCount == 99)
                 addCount = 0;
@@ -391,7 +391,7 @@ namespace Bike18
             return addCount;
         }
 
-        private List<string> NewListUploadinBike18(string nameFile)
+        public void NewListUploadinBike18(string nameFile)
         {
             List<string> newProduct = new List<string>();
             newProduct.Add("id");                                                                               //id
@@ -414,7 +414,6 @@ namespace Bike18
             newProduct.Add("Показывать на сайте *");                                           //показывать
             newProduct.Add("Удалить *");                                    //удалить
             WriteFileInCSV(newProduct, nameFile);
-            return newProduct;
         }
 
         public string DownloadImages(CookieContainer cookie, string artProd)
@@ -461,7 +460,7 @@ namespace Bike18
             return otvSave;
         }
 
-        private string alsoBuyTovars(List<string> tovarList)
+        public string alsoBuyTovars(List<string> tovarList)
         {
             string name = tovarList[4].ToString();
             string otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + name);
