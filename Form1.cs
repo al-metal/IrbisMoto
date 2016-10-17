@@ -22,13 +22,16 @@ namespace IrbisMoto
     {
         web.WebRequest webRequest = new web.WebRequest();
         CHPU chpu = new CHPU();
-        string otv = null;
-        int deleteTovar = 0;
-        int editPrice = 0;
         WebClient webClient = new WebClient();
         FileEdit files = new FileEdit();
         List<string> allTovar = new List<string>();
         nethouse nethouse = new nethouse();
+
+        string boldOpen = "<span style=\"font-weight: bold; font-weight: bold; \">";
+        string boldClose = "</span>";
+        string otv = null;
+        int deleteTovar = 0;
+        int editPrice = 0;
 
         public Form1()
         {
@@ -174,7 +177,7 @@ namespace IrbisMoto
                     break;
 
                 double articl = (double)w.Cells[i, 1].Value;
-                allTovarInFile(articl);
+                allTovarInFile(articl);         //?????????????????????????????
                 double quantity = (double)w.Cells[i, 9].Value;
                 double priceIrbisDiler = (double)w.Cells[i, 6].Value;
                 double actualPrice = Price(priceIrbisDiler);
@@ -197,7 +200,7 @@ namespace IrbisMoto
 
                 }
 
-                if (action != "")
+                if (action != null)
                     action = actionText(action);
 
                 otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
@@ -217,9 +220,6 @@ namespace IrbisMoto
                 string fullText = null;
                 string discount = null;
                 string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
-
-                string boldOpen = "<span style=\"font-weight: bold; font-weight: bold; \">";
-                string boldClose = "</span>";
 
                 string nameBold = boldOpen + name + boldClose;
 
@@ -405,9 +405,6 @@ namespace IrbisMoto
                     string discount = null;
                     string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
 
-                    string boldOpen = "<span style=\"font-weight: bold; font-weight: bold; \">";
-                    string boldClose = "</span>";
-
                     string nameBold = boldOpen + name + boldClose;
 
                     miniText = miniTextTemplate();
@@ -572,9 +569,6 @@ namespace IrbisMoto
                     string discount = null;
                     string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
 
-                    string boldOpen = "<span style=\"font-weight: bold; font-weight: bold; \">";
-                    string boldClose = "</span>";
-
                     string nameBold = boldOpen + name + boldClose;
 
                     miniText = miniTextTemplate();
@@ -731,6 +725,7 @@ namespace IrbisMoto
 
             }
 
+            #region uploadInSIte
             System.Threading.Thread.Sleep(20000);
             string trueOtv = null;
             string[] naSite1 = File.ReadAllLines("naSite.csv", Encoding.GetEncoding(1251));
@@ -780,6 +775,7 @@ namespace IrbisMoto
                 }
                 while (trueOtv != "2");
             }
+            #endregion
 
             otv = webRequest.getRequest("http://bike18.ru/products/category/1183836");
             MatchCollection razdelSite = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
@@ -809,8 +805,6 @@ namespace IrbisMoto
                     }
                 }
             }
-
-
                 MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
         }
 
