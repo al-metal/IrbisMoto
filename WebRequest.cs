@@ -93,10 +93,9 @@ namespace web
             return cooc;
         }
 
-        public string PostRequest(string nethouseTovar)
+        public string PostRequest(CookieContainer cookie, string nethouseTovar)
         {
-            CookieContainer cookie = new CookieContainer();
-            cookie = webCookieBike18();
+
             string otv = null;
             do
             {
@@ -135,10 +134,11 @@ namespace web
 
         internal List<string> arraySaveimage(string urlTovar)
         {
+            CookieContainer cookie = webCookieBike18();
             WebRequest webRequest = new WebRequest();
             List <string> saveImage = new List<string>();
 
-            string otv = webRequest.PostRequest(urlTovar);
+            string otv = webRequest.PostRequest(cookie, urlTovar);
             if (otv != null)
             {
                 string productId = new Regex("(?<=<section class=\"comment\" id=\").*?(?=\">)").Match(otv).ToString();
@@ -166,7 +166,7 @@ namespace web
                     reklama = "&markers[1]=1";
                 }
 
-                otv = webRequest.PostRequest("http://bike18.nethouse.ru/api/catalog/getproduct?id=" + productId);
+                otv = webRequest.PostRequest(cookie, "http://bike18.nethouse.ru/api/catalog/getproduct?id=" + productId);
                 string slug = new Regex("(?<=\",\"slug\":\").*?(?=\")").Match(otv).ToString();
                 String discountCoast = new Regex("(?<=discountCost\":\").*?(?=\")").Match(otv).Value;
                 String serial = new Regex("(?<=serial\":\").*?(?=\")").Match(otv).Value;
@@ -181,7 +181,7 @@ namespace web
                 String customDays = new Regex("(?<=,\"customDays\":\").*?(?=\")").Match(otv).Value;
                 String isCustom = new Regex("(?<=\",\"isCustom\":).*?(?=,)").Match(otv).Value;
 
-                otv = webRequest.PostRequest("http://bike18.nethouse.ru/api/catalog/productmedia?id=" + productId);
+                otv = webRequest.PostRequest(cookie, "http://bike18.nethouse.ru/api/catalog/productmedia?id=" + productId);
                 String avatarId = new Regex("(?<=\"id\":\").*?(?=\")").Match(otv).Value;
                 String objektId = new Regex("(?<=\"objectId\":\").*?(?=\")").Match(otv).Value;
                 String timestamp = new Regex("(?<=\"timestamp\":\").*?(?=\")").Match(otv).Value;
@@ -288,9 +288,9 @@ namespace web
 
         internal void savePrice(CookieContainer cookie, string urlTovar, MatchCollection articl, double priceTrue, WebRequest webRequest)
         {
-            string otv = webRequest.PostRequest(urlTovar);
+            string otv = webRequest.PostRequest(cookie, urlTovar);
             string productId = new Regex("(?<=<section class=\"comment\" id=\").*?(?=\">)").Match(otv).ToString();
-            otv = webRequest.PostRequest("http://bike18.nethouse.ru/api/catalog/getproduct?id=" + productId);
+            otv = webRequest.PostRequest(cookie, "http://bike18.nethouse.ru/api/catalog/getproduct?id=" + productId);
         }
 
         internal void DeleteImage(CookieContainer cookie, string productId, string objectId, string type, string name, string desc, string alt, string priority)
