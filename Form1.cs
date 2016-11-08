@@ -27,11 +27,12 @@ namespace IrbisMoto
         List<string> allTovar = new List<string>();
         nethouse nethouse = new nethouse();
 
-        string boldOpen = "<span style=\"font-weight: bold; font-weight: bold; \">";
+        string boldOpen = "<span style=\"\"font-weight: bold; font-weight: bold; \"\">";
         string boldClose = "</span>";
         string otv = null;
         int deleteTovar = 0;
         int editPrice = 0;
+        int addCount = 0;
 
         public Form1()
         {
@@ -204,10 +205,11 @@ namespace IrbisMoto
 
                 if (action != null)
                     action = actionText(action);
+                else
+                    action = "";
 
                 otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
                 string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
-                urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
 
                 string slug = chpu.vozvr(name);
                 int space = name.IndexOf(" ");
@@ -249,118 +251,72 @@ namespace IrbisMoto
                 keywordsText = textRemove(keywordsText, 100);
                 slug = textRemove(slug, 64);
 
-                if (quantity == 0)
+                if (urlTovar == "")
                 {
-                    if (urlTovar != "")
+                    string stock = (string)w.Cells[i, 14].Value;
+                    bool kioshi = name.Contains("KIYOSHI");
+                    if (!kioshi)
                     {
-                        List<string> tovarList = webRequest.arraySaveimage(urlTovar);
-                        if (action != "")
-                        {
-                            tovarList[39] = action;
-                            tovarList[9] = actualPrice.ToString();
-                            tovarList[1] = slug;
-                            tovarList[7] = miniText;
-                            tovarList[8] = fullText;
-                            tovarList[11] = descriptionText;
-                            tovarList[12] = keywordsText;
-                            tovarList[13] = titleText;
-                            tovarList[3] = "10833347";
-                            webRequest.saveImage(tovarList);
-                            editPrice++;
-                        }
-                        else
-                        {
-                            webRequest.deleteProduct(tovarList);
-                            deleteTovar++;
-                        }
+                        newProduct = new List<string>();
+                        newProduct.Add("");                                 //id
+                        newProduct.Add("\"" + articl + "\"");               //артикул
+                        newProduct.Add("\"" + name + "\"");                 //название
+                        newProduct.Add("\"" + actualPrice + "\"");          //стоимость
+                        newProduct.Add("\"" + "" + "\"");                   //со скидкой
+                        newProduct.Add("\"" + razdel + "\"");               //раздел товара
+                        newProduct.Add("\"" + "100" + "\"");                //в наличии
+                        newProduct.Add("\"" + "0" + "\"");                  //поставка
+                        newProduct.Add("\"" + "1" + "\"");                  //срок поставки
+                        newProduct.Add("\"" + miniText + "\"");             //краткий текст
+                        newProduct.Add("\"" + fullText + "\"");             //полностью текст
+                        newProduct.Add("\"" + titleText + "\"");            //заголовок страницы
+                        newProduct.Add("\"" + descriptionText + "\"");      //описание
+                        newProduct.Add("\"" + keywordsText + "\"");         //ключевые слова
+                        newProduct.Add("\"" + slug + "\"");                 //ЧПУ
+                        newProduct.Add("");                                 //с этим товаром покупают
+                        newProduct.Add("");                                 //рекламные метки
+                        newProduct.Add("\"" + "1" + "\"");                  //показывать
+                        newProduct.Add("\"" + "0" + "\"");                  //удалить
+
+                        files.fileWriterCSV(newProduct, "naSite");
                     }
                 }
                 else
                 {
-                    if (urlTovar != "")
+                    List<string> tovarList = nethouse.GetProductList(cookie, urlTovar);
+                    if (quantity == 0)
                     {
-                        List<string> tovarList = webRequest.arraySaveimage(urlTovar);
-                        double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
-                        if (actualPrice != priceBike18)
-                        {
-                            tovarList[39] = action;
-                            tovarList[9] = actualPrice.ToString();
-                            tovarList[1] = slug;
-                            tovarList[7] = miniText;
-                            tovarList[8] = fullText;
-                            tovarList[11] = descriptionText;
-                            tovarList[12] = keywordsText;
-                            tovarList[13] = titleText;
-                            tovarList[3] = "10833347";
-                            webRequest.saveImage(tovarList);
-                            editPrice++;
-                        }
-                        else if (tovarList[39].ToString() != action)
-                        {
-                            tovarList[39] = action;
-                            tovarList[1] = slug;
-                            tovarList[7] = miniText;
-                            tovarList[8] = fullText;
-                            tovarList[11] = descriptionText;
-                            tovarList[12] = keywordsText;
-                            tovarList[13] = titleText;
-                            tovarList[3] = "10833347";
-                            webRequest.saveImage(tovarList);
-                            editPrice++;
-                        }
-                        else
-                        {
-                            tovarList[1] = slug;
-                            tovarList[7] = miniText;
-                            tovarList[8] = fullText;
-                            tovarList[11] = descriptionText;
-                            tovarList[12] = keywordsText;
-                            tovarList[13] = titleText;
-                            tovarList[3] = "10833347";
-                            webRequest.saveImage(tovarList);
-                            editPrice++;
-                        }
+                        if (action == "")
+                            tovarList[43] = "0";
                     }
                     else
                     {
-                        string stock = (string)w.Cells[i, 14].Value;
-                        bool kioshi = name.Contains("KIYOSHI");
-                        if (!kioshi)
-                        {
-                            newProduct = new List<string>();
-                            newProduct.Add(""); //id
-                            newProduct.Add("\"" + articl + "\""); //артикул
-                            newProduct.Add("\"" + name + "\"");  //название
-                            newProduct.Add("\"" + actualPrice + "\""); //стоимость
-                            newProduct.Add("\"" + "" + "\""); //со скидкой
-                            newProduct.Add("\"" + razdel + "\""); //раздел товара
-                            newProduct.Add("\"" + "100" + "\""); //в наличии
-                            newProduct.Add("\"" + "0" + "\"");//поставка
-                            newProduct.Add("\"" + "1" + "\"");//срок поставки
-                            newProduct.Add("\"" + miniText + "\"");//краткий текст
-                            newProduct.Add("\"" + fullText + "\"");//полностью текст
-                            newProduct.Add("\"" + titleText + "\""); //заголовок страницы
-                            newProduct.Add("\"" + descriptionText + "\""); //описание
-                            newProduct.Add("\"" + keywordsText + "\"");//ключевые слова
-                            newProduct.Add("\"" + slug + "\""); //ЧПУ
-                            newProduct.Add(""); //с этим товаром покупают
-                            newProduct.Add("");   //рекламные метки
-                            newProduct.Add("\"" + "1" + "\"");  //показывать
-                            newProduct.Add("\"" + "0" + "\""); //удалить
+                        double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
 
-                            files.fileWriterCSV(newProduct, "naSite");
+                        if (actualPrice != priceBike18)
+                        {
+                            tovarList[9] = actualPrice.ToString();
+                            editPrice++;
                         }
                     }
+                    tovarList[39] = action;
+                    tovarList[1] = slug;
+                    tovarList[7] = miniText;
+                    tovarList[8] = fullText;
+                    tovarList[11] = descriptionText;
+                    tovarList[12] = keywordsText;
+                    tovarList[13] = titleText;
+                    tovarList[3] = "10833347";
+
+                    nethouse.SaveTovar(cookie, tovarList);
                 }
             }
-
             #endregion
 
             #region Запчасти для снегоходов
             w = p.Workbook.Worksheets[4];
             q = w.Dimension.Rows;
             string razdelSnegohod = null;
-            string podrazdel = null;
             for (int i = 7; q > i; i++)
             {
                 if (w.Cells[i, 1].Value == null)
@@ -398,7 +354,6 @@ namespace IrbisMoto
 
                     otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
                     string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
-                    urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
 
                     string slug = chpu.vozvr(name);
                     string razdel = irbisSnegohod(razdelSnegohod);
@@ -438,105 +393,63 @@ namespace IrbisMoto
                     keywordsText = textRemove(keywordsText, 100);
                     slug = textRemove(slug, 64);
 
-                    if (quantity == 0)
+
+                    if (urlTovar == "")
                     {
-                        if (urlTovar != "")
-                        {
-                            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
-                            if (action != "")
-                            {
-                                tovarList[39] = action;
-                                tovarList[9] = actualPrice.ToString();
-                                tovarList[1] = slug;
-                                tovarList[7] = miniText;
-                                tovarList[8] = fullText;
-                                tovarList[11] = descriptionText;
-                                tovarList[12] = keywordsText;
-                                tovarList[13] = titleText;
-                                tovarList[3] = "10833347";
-                                webRequest.saveImage(tovarList);
-                                editPrice++;
-                            }
-                            else
-                            {
-                                webRequest.deleteProduct(tovarList);
-                                deleteTovar++;
-                            }
-                        }
+                        string stock = (string)w.Cells[i, 14].Value;
+                        
+                        newProduct = new List<string>();
+                        newProduct.Add("");                                 //id
+                        newProduct.Add("\"" + articl + "\"");               //артикул
+                        newProduct.Add("\"" + name + "\"");                 //название
+                        newProduct.Add("\"" + actualPrice + "\"");          //стоимость
+                        newProduct.Add("\"" + "" + "\"");                   //со скидкой
+                        newProduct.Add("\"" + razdel + "\"");               //раздел товара
+                        newProduct.Add("\"" + "100" + "\"");                //в наличии
+                        newProduct.Add("\"" + "0" + "\"");                  //поставка
+                        newProduct.Add("\"" + "1" + "\"");                  //срок поставки
+                        newProduct.Add("\"" + miniText + "\"");             //краткий текст
+                        newProduct.Add("\"" + fullText + "\"");             //полностью текст
+                        newProduct.Add("\"" + titleText + "\"");            //заголовок страницы
+                        newProduct.Add("\"" + descriptionText + "\"");      //описание
+                        newProduct.Add("\"" + keywordsText + "\"");         //ключевые слова
+                        newProduct.Add("\"" + slug + "\"");                 //ЧПУ
+                        newProduct.Add("");                                 //с этим товаром покупают
+                        newProduct.Add("");                                 //рекламные метки
+                        newProduct.Add("\"" + "1" + "\"");                  //показывать
+                        newProduct.Add("\"" + "0" + "\"");                  //удалить
+
+                        files.fileWriterCSV(newProduct, "naSite");
+
                     }
                     else
                     {
-                        if (urlTovar != "")
+                        List<string> tovarList = nethouse.GetProductList(cookie, urlTovar);
+                        if (quantity == 0)
                         {
-                            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
-                            double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
-                            if (actualPrice != priceBike18)
-                            {
-                                tovarList[39] = action;
-                                tovarList[9] = actualPrice.ToString();
-                                tovarList[1] = slug;
-                                tovarList[7] = miniText;
-                                tovarList[8] = fullText;
-                                tovarList[11] = descriptionText;
-                                tovarList[12] = keywordsText;
-                                tovarList[13] = titleText;
-                                tovarList[3] = "10833347";
-                                webRequest.saveImage(tovarList);
-                                editPrice++;
-                            }
-                            else if (tovarList[39].ToString() != action)
-                            {
-                                tovarList[39] = action;
-                                tovarList[1] = slug;
-                                tovarList[7] = miniText;
-                                tovarList[8] = fullText;
-                                tovarList[11] = descriptionText;
-                                tovarList[12] = keywordsText;
-                                tovarList[13] = titleText;
-                                tovarList[3] = "10833347";
-                                webRequest.saveImage(tovarList);
-                                editPrice++;
-                            }
-                            else
-                            {
-                                tovarList[1] = slug;
-                                tovarList[7] = miniText;
-                                tovarList[8] = fullText;
-                                tovarList[11] = descriptionText;
-                                tovarList[12] = keywordsText;
-                                tovarList[13] = titleText;
-                                tovarList[3] = "10833347";
-                                webRequest.saveImage(tovarList);
-                                editPrice++;
-                            }
+                            if (action == "")
+                                tovarList[43] = "0";
                         }
                         else
                         {
-                            string stock = (string)w.Cells[i, 14].Value;
+                            double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
 
-                            newProduct = new List<string>();
-                            newProduct.Add(""); //id
-                            newProduct.Add("\"" + articl + "\""); //артикул
-                            newProduct.Add("\"" + name + "\"");  //название
-                            newProduct.Add("\"" + actualPrice + "\""); //стоимость
-                            newProduct.Add("\"" + "" + "\""); //со скидкой
-                            newProduct.Add("\"" + razdel + "\""); //раздел товара
-                            newProduct.Add("\"" + "100" + "\""); //в наличии
-                            newProduct.Add("\"" + "0" + "\"");//поставка
-                            newProduct.Add("\"" + "1" + "\"");//срок поставки
-                            newProduct.Add("\"" + miniText + "\"");//краткий текст
-                            newProduct.Add("\"" + fullText + "\"");//полностью текст
-                            newProduct.Add("\"" + titleText + "\""); //заголовок страницы
-                            newProduct.Add("\"" + descriptionText + "\""); //описание
-                            newProduct.Add("\"" + keywordsText + "\"");//ключевые слова
-                            newProduct.Add("\"" + slug + "\""); //ЧПУ
-                            newProduct.Add(""); //с этим товаром покупают
-                            newProduct.Add("");   //рекламные метки
-                            newProduct.Add("\"" + "1" + "\"");  //показывать
-                            newProduct.Add("\"" + "0" + "\""); //удалить
-
-                            files.fileWriterCSV(newProduct, "naSite");
+                            if (actualPrice != priceBike18)
+                            {
+                                tovarList[9] = actualPrice.ToString();
+                                editPrice++;
+                            }
                         }
+                        tovarList[39] = action;
+                        tovarList[1] = slug;
+                        tovarList[7] = miniText;
+                        tovarList[8] = fullText;
+                        tovarList[11] = descriptionText;
+                        tovarList[12] = keywordsText;
+                        tovarList[13] = titleText;
+                        tovarList[3] = "10833347";
+
+                        nethouse.SaveTovar(cookie, tovarList);
                     }
                 }
             }
@@ -544,7 +457,6 @@ namespace IrbisMoto
 
             #region Запчасти KIYOSHI
             string razdelkiyoshi = null;
-            podrazdel = null;
             w = p.Workbook.Worksheets[5];
             q = w.Dimension.Rows;
 
@@ -621,111 +533,65 @@ namespace IrbisMoto
                     if (action != "")
                         action = actionText(action);
 
-                    if (quantity == 0)
+                    otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
+                    string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
+
+                    if (urlTovar == "")
                     {
-                        otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
-                        string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
-                        if (urlTovar != "")
-                        {
-                            urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
-                            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
-                            if (action != "")
-                            {
-                                tovarList[39] = action;
-                                tovarList[9] = actualPrice.ToString();
-                                tovarList[1] = slug;
-                                tovarList[7] = miniText;
-                                tovarList[8] = fullText;
-                                tovarList[11] = descriptionText;
-                                tovarList[12] = keywordsText;
-                                tovarList[13] = titleText;
-                                tovarList[3] = "10833347";
-                                webRequest.saveImage(tovarList);
-                                editPrice++;
-                            }
-                            else
-                            {
-                                webRequest.deleteProduct(tovarList);
-                                deleteTovar++;
-                            }
-                        }
+                        string stock = (string)w.Cells[i, 14].Value;
+
+                        newProduct = new List<string>();
+                        newProduct.Add("");                                 //id
+                        newProduct.Add("\"" + articl + "\"");               //артикул
+                        newProduct.Add("\"" + name + "\"");                 //название
+                        newProduct.Add("\"" + actualPrice + "\"");          //стоимость
+                        newProduct.Add("\"" + "" + "\"");                   //со скидкой
+                        newProduct.Add("\"" + razdel + "\"");               //раздел товара
+                        newProduct.Add("\"" + "100" + "\"");                //в наличии
+                        newProduct.Add("\"" + "0" + "\"");                  //поставка
+                        newProduct.Add("\"" + "1" + "\"");                  //срок поставки
+                        newProduct.Add("\"" + miniText + "\"");             //краткий текст
+                        newProduct.Add("\"" + fullText + "\"");             //полностью текст
+                        newProduct.Add("\"" + titleText + "\"");            //заголовок страницы
+                        newProduct.Add("\"" + descriptionText + "\"");      //описание
+                        newProduct.Add("\"" + keywordsText + "\"");         //ключевые слова
+                        newProduct.Add("\"" + slug + "\"");                 //ЧПУ
+                        newProduct.Add("");                                 //с этим товаром покупают
+                        newProduct.Add("");                                 //рекламные метки
+                        newProduct.Add("\"" + "1" + "\"");                  //показывать
+                        newProduct.Add("\"" + "0" + "\"");                  //удалить
+
+                        files.fileWriterCSV(newProduct, "naSite");
+
                     }
                     else
                     {
-                        otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
-                        string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
-                        if (urlTovar != "")
+                        List<string> tovarList = nethouse.GetProductList(cookie, urlTovar);
+                        if (quantity == 0)
                         {
-                            urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
-                            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
-                            double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
-                            if (actualPrice != priceBike18)
-                            {
-                                tovarList[39] = action;
-                                tovarList[9] = actualPrice.ToString();
-                                tovarList[1] = slug;
-                                tovarList[7] = miniText;
-                                tovarList[8] = fullText;
-                                tovarList[11] = descriptionText;
-                                tovarList[12] = keywordsText;
-                                tovarList[13] = titleText;
-                                tovarList[3] = "10833347";
-                                webRequest.saveImage(tovarList);
-                                editPrice++;
-                            }
-                            else if (tovarList[39].ToString() != action)
-                            {
-                                tovarList[39] = action;
-                                tovarList[1] = slug;
-                                tovarList[7] = miniText;
-                                tovarList[8] = fullText;
-                                tovarList[11] = descriptionText;
-                                tovarList[12] = keywordsText;
-                                tovarList[13] = titleText;
-                                tovarList[3] = "10833347";
-                                webRequest.saveImage(tovarList);
-                                editPrice++;
-                            }
-                            else
-                            {
-                                tovarList[1] = slug;
-                                tovarList[7] = miniText;
-                                tovarList[8] = fullText;
-                                tovarList[11] = descriptionText;
-                                tovarList[12] = keywordsText;
-                                tovarList[13] = titleText;
-                                tovarList[3] = "10833347";
-                                webRequest.saveImage(tovarList);
-                                editPrice++;
-                            }
+                            if (action == "")
+                                tovarList[43] = "0";
                         }
                         else
                         {
-                            string stock = (string)w.Cells[i, 14].Value;
+                            double priceBike18 = Convert.ToDouble(tovarList[9].ToString());
 
-                            newProduct = new List<string>();
-                            newProduct.Add(""); //id
-                            newProduct.Add("\"" + articl + "\""); //артикул
-                            newProduct.Add("\"" + name + "\"");  //название
-                            newProduct.Add("\"" + actualPrice + "\""); //стоимость
-                            newProduct.Add("\"" + "" + "\""); //со скидкой
-                            newProduct.Add("\"" + razdel + "\""); //раздел товара
-                            newProduct.Add("\"" + "100" + "\""); //в наличии
-                            newProduct.Add("\"" + "0" + "\"");//поставка
-                            newProduct.Add("\"" + "1" + "\"");//срок поставки
-                            newProduct.Add("\"" + miniText + "\"");//краткий текст
-                            newProduct.Add("\"" + fullText + "\"");//полностью текст
-                            newProduct.Add("\"" + titleText + "\""); //заголовок страницы
-                            newProduct.Add("\"" + descriptionText + "\""); //описание
-                            newProduct.Add("\"" + keywordsText + "\"");//ключевые слова
-                            newProduct.Add("\"" + slug + "\""); //ЧПУ
-                            newProduct.Add(""); //с этим товаром покупают
-                            newProduct.Add("");   //рекламные метки
-                            newProduct.Add("\"" + "1" + "\"");  //показывать
-                            newProduct.Add("\"" + "0" + "\""); //удалить
-
-                            files.fileWriterCSV(newProduct, "naSite");
+                            if (actualPrice != priceBike18)
+                            {
+                                tovarList[9] = actualPrice.ToString();
+                                editPrice++;
+                            }
                         }
+                        tovarList[39] = action;
+                        tovarList[1] = slug;
+                        tovarList[7] = miniText;
+                        tovarList[8] = fullText;
+                        tovarList[11] = descriptionText;
+                        tovarList[12] = keywordsText;
+                        tovarList[13] = titleText;
+                        tovarList[3] = "10833347";
+
+                        nethouse.SaveTovar(cookie, tovarList);
                     }
                 }
             }
@@ -739,12 +605,12 @@ namespace IrbisMoto
             {
                 do
                 {
-                    string otvimg = DownloadNaSite();
+                    string otvimg = DownloadNaSite(cookie);
                     string check = "{\"success\":true,\"imports\":{\"state\":1,\"errorCode\":0,\"errorLine\":0}}";
                     do
                     {
                         System.Threading.Thread.Sleep(2000);
-                        otvimg = ChekedLoading();
+                        otvimg = ChekedLoading(cookie);
                     }
                     while (otvimg == check);
 
@@ -759,8 +625,10 @@ namespace IrbisMoto
                         int slugint = strslug3.Length - 5;
                         string strslug = strslug3[slugint].ToString();
                         int slug = strslug.Length;
-                        string strslug2 = strslug.Remove(slug - 2);
-                        strslug2 += "1";
+                        int countAdd = ReturnCountAdd();
+                        int countDel = countAdd.ToString().Length;
+                        string strslug2 = strslug.Remove(slug - countDel);
+                        strslug2 += countAdd;
                         naSite[u] = naSite[u].Replace(strslug, strslug2);
                         File.WriteAllLines("naSite.csv", naSite, Encoding.GetEncoding(1251));
                     }
@@ -773,8 +641,11 @@ namespace IrbisMoto
                         int slugint = strslug3.Length - 5;
                         string strslug = strslug3[slugint].ToString();
                         int slug = strslug.Length;
-                        string strslug2 = strslug.Remove(slug - 2);
-                        strslug2 += "1";
+                        int countAdd = ReturnCountAdd();
+                        int countDel = countAdd.ToString().Length;
+                        string strslug2 = strslug.Remove(slug - countDel);
+                        strslug2 += countAdd;
+                        strslug2 = strslug2.Replace(" -", "-").Replace("?", "");
                         naSite[u] = naSite[u].Replace(strslug, strslug2);
                         File.WriteAllLines("naSite.csv", naSite, Encoding.GetEncoding(1251));
                     }
@@ -970,20 +841,19 @@ namespace IrbisMoto
             return actualPrice;
         }
 
-        public string DownloadNaSite()
+        public string DownloadNaSite(CookieContainer cookie)
         {
-            CookieContainer cookie = webRequest.webCookieBike18();
             string epoch = (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds.ToString().Replace(",", "");
             HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("http://bike18.nethouse.ru/api/export-import/import-from-csv?fileapi" + epoch);
-            req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
+            req.Accept = "*/*";
+            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36";
             req.Method = "POST";
-            req.ContentType = "multipart/form-data; boundary=---------------------------12709277337355";
+            req.ContentType = "multipart/form-data; boundary=----WebKitFormBoundaryVB016NRhkhMFanjn";
             req.CookieContainer = cookie;
             req.Headers.Add("X-Requested-With", "XMLHttpRequest");
             byte[] csv = File.ReadAllBytes("naSite.csv");
-            byte[] end = Encoding.ASCII.GetBytes("\r\n-----------------------------12709277337355\r\nContent-Disposition: form-data; name=\"_catalog_file\"\r\n\r\nnaSite.csv\r\n-----------------------------12709277337355--\r\n");
-            byte[] ms1 = Encoding.ASCII.GetBytes("-----------------------------12709277337355\r\nContent-Disposition: form-data; name=\"catalog_file\"; filename=\"naSite.csv\"\r\nContent-Type: text/csv\r\n\r\n");
+            byte[] end = Encoding.ASCII.GetBytes("\r\n------WebKitFormBoundaryVB016NRhkhMFanjn\r\nContent-Disposition: form-data; name=\"_catalog_file\"\r\n\r\nnaSite.csv\r\n------WebKitFormBoundaryVB016NRhkhMFanjn--\r\n");
+            byte[] ms1 = Encoding.ASCII.GetBytes("------WebKitFormBoundaryVB016NRhkhMFanjn\r\nContent-Disposition: form-data; name=\"catalog_file\"; filename=\"naSite.csv\"\r\nContent-Type: application/vnd.ms-excel\r\n\r\n");
             req.ContentLength = ms1.Length + csv.Length + end.Length;
             Stream stre1 = req.GetRequestStream();
             stre1.Write(ms1, 0, ms1.Length);
@@ -996,12 +866,11 @@ namespace IrbisMoto
             return otvimg;
         }
 
-        public string ChekedLoading()
+        public string ChekedLoading(CookieContainer cookie)
         {
-            CookieContainer cookie = webRequest.webCookieBike18();
             HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("http://bike18.nethouse.ru/api/export-import/check-import");
             req.Accept = "application/json, text/plain, */*";
-            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
+            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36";
             req.Method = "POST";
             req.ContentLength = 0;
             req.ContentType = "application/x-www-form-urlencoded";
@@ -1016,12 +885,18 @@ namespace IrbisMoto
 
         private void btnUpdateImage_Click(object sender, EventArgs e)
         {
+            Properties.Settings.Default.login = tbLogin.Text;
+            Properties.Settings.Default.password = tbPassword.Text;
+            Properties.Settings.Default.Save();
+
+            CookieContainer cookie = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
+
             int countUpdateImage = 0;
-            otv = webRequest.getRequest("http://bike18.ru/products/category/1183836");
+            otv = webRequest.getRequest("http://bike18.ru/products/category/katalog-zapchastey-irbis");
             MatchCollection razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
             for (int i = 0; razdel.Count > i; i++)
             {
-                otv = webRequest.getRequest(razdel[i].ToString() + "/page/all");
+                otv = webRequest.getRequest("http://bike18.ru" + razdel[i].ToString() + "/page/all");
                 MatchCollection tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*?(?=\" >)").Matches(otv);
                 for (int n = 0; tovar.Count > n; n++)
                 {
@@ -1033,69 +908,81 @@ namespace IrbisMoto
                         articl = articl.Trim();
                         if (File.Exists("pic\\" + articl + ".jpg"))
                         {
-                            CookieContainer cookie = webRequest.webCookieBike18();
                             string urlTovar = tovar[n].ToString().Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
-                            MatchCollection prId = new Regex("(?<=data-id=\").*?(?=\")").Matches(otv);
-                            int prodId = Convert.ToInt32(prId[0].ToString());
-                            otv = webRequest.PostRequest(urlTovar);
 
-                            Image newImg = Image.FromFile("pic\\" + articl + ".jpg");
-                            double widthImg = newImg.Width;
-                            double heigthImg = newImg.Height;
-                            if (widthImg > heigthImg)
-                            {
-                                double dblx = widthImg * 0.9;
-                                if (dblx < heigthImg)
-                                {
-                                    heigthImg = heigthImg * 0.9;
-                                }
-                                else
-                                    widthImg = widthImg * 0.9;
-                            }
-                            else
-                            {
-                                double dblx = heigthImg * 0.9;
-                                if (dblx < widthImg)
-                                {
-                                    widthImg = widthImg * 0.9;
-                                }
-                                else
-                                    heigthImg = heigthImg * 0.9;
-                            }
-
-                            string otvimg = DownloadImages(articl);
-                            string urlSaveImg = new Regex("(?<=url\":\").*?(?=\")").Match(otvimg).Value.Replace("\\/", "%2F");
-                            string otvSave = SaveImages(urlSaveImg, prodId, widthImg, heigthImg);
-                            List<string> listProd = webRequest.arraySaveimage(urlTovar);
-                            listProd[3] = "10833347";
-                            webRequest.saveImage(listProd);
+                            UploadImage(cookie, urlTovar);
                             countUpdateImage++;
                         }
                     }
                 }
             }
 
-            otv = webRequest.getRequest("http://bike18.ru/products/category/1289775");
+            otv = webRequest.getRequest("http://bike18.ru/products/category/katalog-zapchastey-kiyoshi");
+            razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
+            for (int i = 0; razdel.Count > i; i++)
+            {
+                otv = webRequest.getRequest("http://bike18.ru" + razdel[i].ToString() + "/page/all");
+                MatchCollection tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*?(?=\" >)").Matches(otv);
+                for (int n = 0; tovar.Count > n; n++)
+                {
+                    otv = webRequest.getRequest(tovar[n].ToString());
+                    string urlImageTovar = new Regex("(?<=class=\"avatar-view \"><link rel=\"image_src\" href=\").*?(?=\">)").Match(otv).ToString();
+                    if (urlImageTovar == "")
+                    {
+                        string articl = new Regex("(?<= Артикул:)[\\w\\W]*?(?=</div>)").Match(otv).ToString();
+                        articl = articl.Trim();
+                        if (File.Exists("pic\\" + articl + ".jpg"))
+                        {
+                            string urlTovar = tovar[n].ToString().Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
 
-            otv = webRequest.getRequest("http://bike18.ru/products/category/2182755");
+                            UploadImage(cookie, urlTovar);
+                            countUpdateImage++;
+                        }
+                    }
+                }
+            }
+
+            otv = webRequest.getRequest("http://bike18.ru/products/category/zapchasti-dlya-snegohodov-i-motobuksirovshchikov");
+            razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
+            for (int i = 0; razdel.Count > i; i++)
+            {
+                otv = webRequest.getRequest("http://bike18.ru" + razdel[i].ToString() + "/page/all");
+                MatchCollection tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*?(?=\" >)").Matches(otv);
+                for (int n = 0; tovar.Count > n; n++)
+                {
+                    otv = webRequest.getRequest(tovar[n].ToString());
+                    string urlImageTovar = new Regex("(?<=class=\"avatar-view \"><link rel=\"image_src\" href=\").*?(?=\">)").Match(otv).ToString();
+                    if (urlImageTovar == "")
+                    {
+                        string articl = new Regex("(?<= Артикул:)[\\w\\W]*?(?=</div>)").Match(otv).ToString();
+                        articl = articl.Trim();
+                        if (File.Exists("pic\\" + articl + ".jpg"))
+                        {
+                            string urlTovar = tovar[n].ToString().Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
+
+                            UploadImage(cookie, urlTovar);
+                            countUpdateImage++;
+                        }
+                    }
+                }
+            }
 
             MessageBox.Show("Обновлено картинок: " + countUpdateImage);
         }
 
-        public string DownloadImages(string artProd)
+        public string DownloadImages(CookieContainer cookie, string artProd)
         {
-            CookieContainer cookie = webRequest.webCookieBike18();
             string epoch = (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds.ToString().Replace(",", "");
             HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("http://bike18.nethouse.ru/putimg?fileapi" + epoch);
             req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
             req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
             req.Method = "POST";
-            req.ContentType = "multipart/form-data; boundary=---------------------------12709277337355";
+            req.ContentType = "multipart/form-data; boundary=----WebKitFormBoundaryo0JlTNvjDVaFBUOP";
             req.CookieContainer = cookie;
             req.Headers.Add("X-Requested-With", "XMLHttpRequest");
             byte[] pic = File.ReadAllBytes("Pic\\" + artProd + ".jpg");
-            byte[] end = Encoding.ASCII.GetBytes("\r\n-----------------------------12709277337355\r\nContent-Disposition: form-data; name=\"_file\"\r\n\r\n" + artProd + ".jpg\r\n-----------------------------12709277337355--\r\n");
-            byte[] ms1 = Encoding.ASCII.GetBytes("-----------------------------12709277337355\r\nContent-Disposition: form-data; name=\"file\"; filename=\"" + artProd + ".jpg\"\r\nContent-Type: image/jpeg\r\n\r\n");
+            byte[] end = Encoding.ASCII.GetBytes("\r\n------WebKitFormBoundaryo0JlTNvjDVaFBUOP\r\nContent-Disposition: form-data; name=\"_file\"\r\n\r\n" + artProd + ".jpg\r\n------WebKitFormBoundaryo0JlTNvjDVaFBUOP--\r\n");
+            byte[] ms1 = Encoding.ASCII.GetBytes("------WebKitFormBoundaryo0JlTNvjDVaFBUOP\r\nContent-Disposition: form-data; name=\"file\"; filename=\"" + artProd + "\".jpg\"\r\nContent-Type: image/jpeg\r\n\r\n");
             req.ContentLength = ms1.Length + pic.Length + end.Length;
             Stream stre1 = req.GetRequestStream();
             stre1.Write(ms1, 0, ms1.Length);
@@ -1571,6 +1458,104 @@ namespace IrbisMoto
         {
             tbLogin.Text = Properties.Settings.Default.login;
             tbPassword.Text = Properties.Settings.Default.password;
+        }
+
+        private void UploadImage(CookieContainer cookieBike18, string urlProduct)
+        {
+            string otv = null;
+            otv = webRequest.getRequest(urlProduct);
+            string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</title><)").Match(otv).ToString().Trim();
+            if (System.IO.File.Exists("Pic\\" + artProd + ".jpg"))
+            {
+
+                otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + artProd);
+
+                urlProduct = urlProduct.Replace("http://bike18.ru", "http://bike18.nethouse.ru");
+                otv = webRequest.PostRequest(cookieBike18, urlProduct);
+
+                MatchCollection prId = new Regex("(?<=data-id=\").*?(?=\")").Matches(otv);
+                string productId = prId[0].ToString();
+
+                Image newImg = Image.FromFile("Pic\\" + artProd + ".jpg");
+                double widthImg = newImg.Width;
+                double heigthImg = newImg.Height;
+                if (widthImg > heigthImg)
+                {
+                    double dblx = widthImg * 0.9;
+                    if (dblx < heigthImg)
+                    {
+                        heigthImg = heigthImg * 0.9;
+                    }
+                    else
+                        widthImg = widthImg * 0.9;
+                }
+                else
+                {
+                    double dblx = heigthImg * 0.9;
+                    if (dblx < widthImg)
+                    {
+                        widthImg = widthImg * 0.9;
+                    }
+                    else
+                        heigthImg = heigthImg * 0.9;
+                }
+
+                UploadImageInBike18(cookieBike18, artProd, productId, widthImg, heigthImg);
+
+                List<string> listProd = nethouse.GetProductList(cookieBike18, urlProduct);
+                listProd[3] = "10833347";
+
+                nethouse.SaveTovar(cookieBike18, listProd);
+            }
+        }
+
+        private void UploadImageInBike18(CookieContainer cookieBike18, string artProd, string productId, double widthImg, double heigthImg)
+        {
+            string epoch = (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds.ToString().Replace(",", "");
+            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("http://bike18.nethouse.ru/putimg?fileapi" + epoch);
+            req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
+            req.Method = "POST";
+            req.ContentType = "multipart/form-data; boundary=---------------------------12709277337355";
+            req.CookieContainer = cookieBike18;
+            req.Headers.Add("X-Requested-With", "XMLHttpRequest");
+            byte[] pic = File.ReadAllBytes("Pic\\" + artProd + ".jpg");
+            byte[] end = Encoding.ASCII.GetBytes("\r\n-----------------------------12709277337355\r\nContent-Disposition: form-data; name=\"_file\"\r\n\r\n" + artProd + ".jpg\r\n-----------------------------12709277337355--\r\n");
+            byte[] ms1 = Encoding.ASCII.GetBytes("-----------------------------12709277337355\r\nContent-Disposition: form-data; name=\"file\"; filename=\"" + artProd + ".jpg\"\r\nContent-Type: image/jpeg\r\n\r\n");
+            req.ContentLength = ms1.Length + pic.Length + end.Length;
+            Stream stre1 = req.GetRequestStream();
+            stre1.Write(ms1, 0, ms1.Length);
+            stre1.Write(pic, 0, pic.Length);
+            stre1.Write(end, 0, end.Length);
+            stre1.Close();
+            HttpWebResponse resimg = (HttpWebResponse)req.GetResponse();
+            StreamReader ressrImg = new StreamReader(resimg.GetResponseStream());
+            string otvimg = ressrImg.ReadToEnd();
+
+            string urlSaveImg = new Regex("(?<=url\":\").*?(?=\")").Match(otvimg).Value.Replace("\\/", "%2F");
+
+            req = (HttpWebRequest)HttpWebRequest.Create("http://bike18.nethouse.ru/api/catalog/save-image");
+            req.Accept = "application/json, text/plain, */*";
+            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
+            req.Method = "POST";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.CookieContainer = cookieBike18;
+            byte[] saveImg = Encoding.ASCII.GetBytes("url=" + urlSaveImg + "&id=0&type=4&objectId=" + productId + "&imgCrop[x]=0&imgCrop[y]=0&imgCrop[width]=" + widthImg + "&imgCrop[height]=" + heigthImg + "&imageId=0&iObjectId=" + productId + "&iImageType=4&replacePhoto=0");
+            req.ContentLength = saveImg.Length;
+            Stream srSave = req.GetRequestStream();
+            srSave.Write(saveImg, 0, saveImg.Length);
+            srSave.Close();
+            HttpWebResponse resSave = (HttpWebResponse)req.GetResponse();
+            StreamReader ressrSave = new StreamReader(resSave.GetResponseStream());
+            String otvSave = ressrSave.ReadToEnd();
+        }
+
+        private int ReturnCountAdd()
+        {
+            if (addCount == 99)
+                addCount = 0;
+            addCount++;
+            return addCount;
         }
     }
 }
