@@ -19,10 +19,11 @@ namespace Bike18
         {
             CookieContainer cookie = new CookieContainer();
             HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("https://nethouse.ru/signin");
-            req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
+            req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
+            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36";
             req.Method = "POST";
             req.ContentType = "application/x-www-form-urlencoded";
+            req.Headers.Add("Cache-Control", "max-age=0");
             req.CookieContainer = cookie;
             byte[] ms = Encoding.ASCII.GetBytes("login=" + login + "&password=" + password + "&quick_expire=0&submit=%D0%92%D0%BE%D0%B9%D1%82%D0%B8");
             req.ContentLength = ms.Length;
@@ -35,13 +36,16 @@ namespace Bike18
 
         public List<string> GetProductList(CookieContainer cookie, string urlTovar)
         {
+            if(!urlTovar.Contains("nethouse"))
+                urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
+
             List<string> listTovar = new List<string>();
             string otv = webRequest.PostRequest(cookie, urlTovar);
             if (otv != null)
             {
                 string productId = new Regex("(?<=<section class=\"comment\" id=\").*?(?=\">)").Match(otv).ToString();
-                String article = new Regex("(?<=Артикул:)[\\w\\W]*(?=</div><div><div class)").Match(otv).Value.Trim();
-                if (article.Length > 11)
+                String article = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div>)").Match(otv).Value.Trim();
+                if (article.Length > 15)
                 {
                     article = new Regex("(?<=Артикул:)[\\w\\W]*(?=</title>)").Match(otv).ToString().Trim();
                 }
