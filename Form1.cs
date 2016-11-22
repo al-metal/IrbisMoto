@@ -164,6 +164,7 @@ namespace IrbisMoto
             CookieContainer cookie = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
 
             File.Delete("naSite.csv");
+            File.Delete("allTovars");
             nethouse.NewListUploadinBike18("naSite");
             List<string> newProduct = new List<string>();
 
@@ -180,7 +181,7 @@ namespace IrbisMoto
                     break;
 
                 double articl = (double)w.Cells[i, 1].Value;
-                allTovarInFile(articl);         //?????????????????????????????
+                allTovarInFile(articl);
                 double quantity = (double)w.Cells[i, 9].Value;
                 double priceIrbisDiler = (double)w.Cells[i, 6].Value;
                 double actualPrice = Price(priceIrbisDiler);
@@ -608,7 +609,7 @@ namespace IrbisMoto
 
             otv = webRequest.getRequest("http://bike18.ru/products/category/1183836");
             MatchCollection razdelSite = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
-            string[] allprod = File.ReadAllLines("allTovar.csv");
+            string[] allprod = File.ReadAllLines("allTovars");
             for (int i = 0; razdelSite.Count > i; i++)
             {
                 otv = webRequest.getRequest(razdelSite[i].ToString() + "/page/all");
@@ -725,8 +726,10 @@ namespace IrbisMoto
 
         private void allTovarInFile(double articl)
         {
-            allTovar.Add(articl.ToString());
-            files.fileWriterCSV(allTovar, "allTovar.csv");
+            string article = articl.ToString();
+            StreamWriter sw = new StreamWriter("allTovars", true);
+            sw.WriteLine(article);
+            sw.Close();
         }
 
         private string actionText(string action)
