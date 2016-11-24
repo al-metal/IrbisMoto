@@ -397,7 +397,6 @@ namespace IrbisMoto
                     keywordsText = textRemove(keywordsText, 100);
                     slug = textRemove(slug, 64);
 
-
                     if (urlTovar == "")
                     {
                         string stock = (string)w.Cells[i, 14].Value;
@@ -424,7 +423,6 @@ namespace IrbisMoto
                         newProduct.Add("\"" + "0" + "\"");                  //удалить
 
                         files.fileWriterCSV(newProduct, "naSite");
-
                     }
                     else
                     {
@@ -433,6 +431,8 @@ namespace IrbisMoto
                         {
                             if (action == "")
                                 tovarList[43] = "0";
+                            else
+                                tovarList[43] = "100";
                         }
                         else
                         {
@@ -566,7 +566,6 @@ namespace IrbisMoto
                         newProduct.Add("\"" + "0" + "\"");                  //удалить
 
                         files.fileWriterCSV(newProduct, "naSite");
-
                     }
                     else
                     {
@@ -575,6 +574,8 @@ namespace IrbisMoto
                         {
                             if (action == "")
                                 tovarList[43] = "0";
+                            else
+                                tovarList[43] = "100";
                         }
                         else
                         {
