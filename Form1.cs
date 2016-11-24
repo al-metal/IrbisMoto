@@ -28,7 +28,7 @@ namespace IrbisMoto
         nethouse nethouse = new nethouse();
         httpRequest httpRequest = new httpRequest();
 
-        string boldOpen = "<span style=\"\"font-weight: bold; font-weight: bold; \"\">";
+        string boldOpen = "<span style=\"font-weight: bold; font-weight: bold; \">";
         string boldClose = "</span>";
         string otv = null;
         int deleteTovar = 0;
@@ -773,7 +773,7 @@ namespace IrbisMoto
 
         private string discountTemplate()
         {
-            string disount = "<p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> Сделай ТРОЙНОЙ удар по нашим ценам! </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 1. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Скидки за отзывы о товарах!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 2. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Друзьям скидки и подарки!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 3. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Нашли дешевле!? 110% разницы Ваши!</a></span></p>";
+            string disount = "<p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> Сделай ТРОЙНОЙ удар по нашим ценам! </span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 1. <a target=\"_blank\" href=\"http://bike18.ru/stock\"\"> Скидки за отзывы о товарах!</a> </span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 2. <a target=\"_blank\" href=\"http://bike18.ru/stock\"\"> Друзьям скидки и подарки!</a> </span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 3. <a target=\"_blank\" href=\"http://bike18.ru/stock\"\"> Нашли дешевле!? 110% разницы Ваши!</a></span></p>";
             return disount;
         }
 
