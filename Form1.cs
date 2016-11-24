@@ -289,6 +289,8 @@ namespace IrbisMoto
                     {
                         if (action == "")
                             tovarList[43] = "0";
+                        else
+                            tovarList[43] = "100";
                     }
                     else
                     {
@@ -300,6 +302,7 @@ namespace IrbisMoto
                             editPrice++;
                         }
                     }
+
                     tovarList[39] = action;
                     tovarList[1] = slug;
                     tovarList[7] = miniText;
@@ -743,6 +746,9 @@ namespace IrbisMoto
                     action = "&markers[1]=1";
                     break;
                 case "Новое постуление":
+                    action = "&markers[1]=1";
+                    break;
+                case "Новинка":
                     action = "&markers[1]=1";
                     break;
                 default:
