@@ -207,7 +207,7 @@ namespace Bike18
 
         public void DeleteProduct(CookieContainer cookie, List<string> getProduct)
         {
-            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("http://bike18.nethouse.ru/api/catalog/deleteproduct");
+            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("https://bike18.nethouse.ru/api/catalog/deleteproduct");
             req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
             req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
             req.Method = "POST";
@@ -220,12 +220,14 @@ namespace Bike18
             stre.Close();
             HttpWebResponse res1 = (HttpWebResponse)req.GetResponse();
             StreamReader ressr1 = new StreamReader(res1.GetResponseStream());
+            res1.Close();
+            ressr1.Close();
         }
 
         public void DeleteProduct(CookieContainer cookie, string url)
         {
             List<string> getProduct = GetProductList(cookie, url);
-            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("http://bike18.nethouse.ru/api/catalog/deleteproduct");
+            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("https://bike18.nethouse.ru/api/catalog/deleteproduct");
             req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
             req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
             req.Method = "POST";
@@ -238,6 +240,8 @@ namespace Bike18
             stre.Close();
             HttpWebResponse res1 = (HttpWebResponse)req.GetResponse();
             StreamReader ressr1 = new StreamReader(res1.GetResponseStream());
+            res1.Close();
+            ressr1.Close();
         }
 
         public void WriteFileInCSV(List<string> newProduct, string nameFile)

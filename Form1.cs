@@ -611,31 +611,33 @@ namespace IrbisMoto
             }
             #endregion
 
-            otv = webRequest.getRequest("http://bike18.ru/products/category/1183836");
+            otv = httpRequest.getRequest("http://bike18.ru/products/category/1183836");
             MatchCollection razdelSite = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
             string[] allprod = File.ReadAllLines("allTovars");
             for (int i = 0; razdelSite.Count > i; i++)
             {
-                otv = webRequest.getRequest(razdelSite[i].ToString() + "/page/all");
+                otv = httpRequest.getRequest(razdelSite[i].ToString() + "/page/all");
                 MatchCollection product = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Matches(otv);
                 for (int n = 0; product.Count > n; n++)
                 {
-                    otv = webRequest.getRequest(product[n].ToString());
+                    otv = httpRequest.getRequest(product[n].ToString());
                     string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</title><)").Match(otv).ToString().Trim();
+                    bool b = false;
+
                     foreach (string str in allprod)
                     {
-                        bool b = false;
                         if (artProd == str)
                         {
                             b = true;
+                            break;
                         }
-                        if (!b)
-                        {
-                            string urlTovar = product[n].ToString();
-                            urlTovar = urlTovar.Replace("http://bike18.ru/", "http://bike18.nethouse.ru/");
-                            List<string> tovarList = webRequest.arraySaveimage(urlTovar);
-                            deleteTovar++;
-                        }
+                    }
+
+                    if (!b)
+                    {
+                        string urlTovar = product[n].ToString();
+                        nethouse.DeleteProduct(cookie, urlTovar);
+                        deleteTovar++;
                     }
                 }
             }
@@ -1328,7 +1330,6 @@ namespace IrbisMoto
             tbLogin.Text = Properties.Settings.Default.login;
             tbPassword.Text = Properties.Settings.Default.password;
         }
-
     }
 }
 //проект на 1600 строк
