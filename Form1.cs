@@ -28,7 +28,7 @@ namespace IrbisMoto
         nethouse nethouse = new nethouse();
         httpRequest httpRequest = new httpRequest();
 
-        string boldOpen = "<span style=\"font-weight: bold; font-weight: bold; \">";
+        string boldOpen = "<span style=\"\"font-weight: bold; font-weight: bold;\"\">";
         string boldClose = "</span>";
         string otv = null;
         int deleteTovar = 0;
@@ -171,10 +171,11 @@ namespace IrbisMoto
             FileInfo file = new FileInfo("Прайс.xlsx");
             ExcelPackage p = new ExcelPackage(file);
 
-            #region Раздел запчасти
+
             ExcelWorksheet w = p.Workbook.Worksheets[3];
             int q = w.Dimension.Rows;
 
+            #region Раздел запчасти
             for (int i = 8; q > i; i++)
             {
                 if (w.Cells[i, 1].Value == null)
@@ -284,13 +285,31 @@ namespace IrbisMoto
                 }
                 else
                 {
-                    List<string> tovarList = nethouse.GetProductList(cookie, urlTovar);
+                    List<string> tovarList = new List<string>();
+                    bool izmen = false;
+                    bool del = false;
+                    tovarList = nethouse.GetProductList(cookie, urlTovar);
+                    if(tovarList.Count == 0)
+                    {
+                        continue;
+                    }
+                    string alsoBy = nethouse.alsoBuyTovars(tovarList);
+                    if (tovarList[43] != "100")
+                    {
+                        tovarList[43] = "100";
+                        izmen = true;
+                    }
+
                     if (quantity == 0)
                     {
                         if (action == "")
-                            tovarList[43] = "0";
+                        {
+                            nethouse.DeleteProduct(cookie, tovarList);
+                            del = true;
+                        }
                         else
                             tovarList[43] = "100";
+                        izmen = true;
                     }
                     else
                     {
@@ -303,7 +322,13 @@ namespace IrbisMoto
                         }
                     }
 
-                    tovarList[39] = action;
+                    if (tovarList[39] != action)
+                    {
+                        tovarList[39] = action;
+                        izmen = true;
+                    }
+
+                    tovarList[42] = alsoBy;
                     tovarList[1] = slug;
                     tovarList[7] = miniText;
                     tovarList[8] = fullText;
@@ -312,7 +337,8 @@ namespace IrbisMoto
                     tovarList[13] = titleText;
                     tovarList[3] = "10833347";
 
-                    nethouse.SaveTovar(cookie, tovarList);
+                    if (izmen & !del)
+                        nethouse.SaveTovar(cookie, tovarList);
                 }
             }
             #endregion
@@ -400,7 +426,7 @@ namespace IrbisMoto
                     if (urlTovar == "")
                     {
                         string stock = (string)w.Cells[i, 14].Value;
-                        
+
                         newProduct = new List<string>();
                         newProduct.Add("");                                 //id
                         newProduct.Add("\"" + articl + "\"");               //артикул
@@ -426,13 +452,26 @@ namespace IrbisMoto
                     }
                     else
                     {
+                        bool izmen = false;
+                        bool del = false;
                         List<string> tovarList = nethouse.GetProductList(cookie, urlTovar);
+                        string alsoBy = nethouse.alsoBuyTovars(tovarList);
+                        if (tovarList[43] != "100")
+                        {
+                            tovarList[43] = "100";
+                            izmen = true;
+                        }
+
                         if (quantity == 0)
                         {
                             if (action == "")
-                                tovarList[43] = "0";
+                            {
+                                nethouse.DeleteProduct(cookie, tovarList);
+                                del = true;
+                            }
                             else
                                 tovarList[43] = "100";
+                            izmen = true;
                         }
                         else
                         {
@@ -444,7 +483,14 @@ namespace IrbisMoto
                                 editPrice++;
                             }
                         }
-                        tovarList[39] = action;
+
+                        if (tovarList[39] != action)
+                        {
+                            tovarList[39] = action;
+                            izmen = true;
+                        }
+
+                        tovarList[42] = alsoBy;
                         tovarList[1] = slug;
                         tovarList[7] = miniText;
                         tovarList[8] = fullText;
@@ -453,7 +499,8 @@ namespace IrbisMoto
                         tovarList[13] = titleText;
                         tovarList[3] = "10833347";
 
-                        nethouse.SaveTovar(cookie, tovarList);
+                        if (izmen & !del)
+                            nethouse.SaveTovar(cookie, tovarList);
                     }
                 }
             }
@@ -569,13 +616,26 @@ namespace IrbisMoto
                     }
                     else
                     {
+                        bool izmen = false;
+                        bool del = false;
                         List<string> tovarList = nethouse.GetProductList(cookie, urlTovar);
+                        string alsoBy = nethouse.alsoBuyTovars(tovarList);
+                        if (tovarList[43] != "100")
+                        {
+                            tovarList[43] = "100";
+                            izmen = true;
+                        }
+
                         if (quantity == 0)
                         {
                             if (action == "")
-                                tovarList[43] = "0";
+                            {
+                                nethouse.DeleteProduct(cookie, tovarList);
+                                del = true;
+                            }
                             else
                                 tovarList[43] = "100";
+                            izmen = true;
                         }
                         else
                         {
@@ -587,7 +647,14 @@ namespace IrbisMoto
                                 editPrice++;
                             }
                         }
-                        tovarList[39] = action;
+
+                        if (tovarList[39] != action)
+                        {
+                            tovarList[39] = action;
+                            izmen = true;
+                        }
+
+                        tovarList[42] = alsoBy;
                         tovarList[1] = slug;
                         tovarList[7] = miniText;
                         tovarList[8] = fullText;
@@ -596,7 +663,8 @@ namespace IrbisMoto
                         tovarList[13] = titleText;
                         tovarList[3] = "10833347";
 
-                        nethouse.SaveTovar(cookie, tovarList);
+                        if (izmen & !del)
+                            nethouse.SaveTovar(cookie, tovarList);
                     }
                 }
             }
@@ -616,12 +684,13 @@ namespace IrbisMoto
             string[] allprod = File.ReadAllLines("allTovars");
             for (int i = 0; razdelSite.Count > i; i++)
             {
-                otv = httpRequest.getRequest(razdelSite[i].ToString() + "/page/all");
+                otv = httpRequest.getRequest("http://bike18.ru" + razdelSite[i].ToString() + "/page/all");
                 MatchCollection product = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Matches(otv);
                 for (int n = 0; product.Count > n; n++)
                 {
-                    otv = httpRequest.getRequest(product[n].ToString());
-                    string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</title><)").Match(otv).ToString().Trim();
+                    string urlTovar = product[n].ToString();
+                    otv = httpRequest.getRequest(urlTovar);
+                    string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString().Trim();
                     bool b = false;
 
                     foreach (string str in allprod)
@@ -635,7 +704,6 @@ namespace IrbisMoto
 
                     if (!b)
                     {
-                        string urlTovar = product[n].ToString();
                         nethouse.DeleteProduct(cookie, urlTovar);
                         deleteTovar++;
                     }
@@ -773,8 +841,8 @@ namespace IrbisMoto
 
         private string discountTemplate()
         {
-            string disount = "<p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> Сделай ТРОЙНОЙ удар по нашим ценам! </span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 1. <a target=\"_blank\" href=\"http://bike18.ru/stock\"\"> Скидки за отзывы о товарах!</a> </span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 2. <a target=\"_blank\" href=\"http://bike18.ru/stock\"\"> Друзьям скидки и подарки!</a> </span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 3. <a target=\"_blank\" href=\"http://bike18.ru/stock\"\"> Нашли дешевле!? 110% разницы Ваши!</a></span></p>";
-            return disount;
+            string discount = "<p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> Сделай ТРОЙНОЙ удар по нашим ценам! </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 1. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Скидки за отзывы о товарах!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 2. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Друзьям скидки и подарки!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 3. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Нашли дешевле!? 110% разницы Ваши!</a></span></p>";
+            return discount;
         }
 
         public double Price(double priceDiler)
