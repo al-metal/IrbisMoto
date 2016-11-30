@@ -41,6 +41,7 @@ namespace web
             String otv = ressr.ReadToEnd();
             res.GetResponseStream().Close();
             req.GetResponse().Close();
+            res.Close();
 
             return otv;
         }
