@@ -291,6 +291,9 @@ namespace IrbisMoto
                     tovarList = nethouse.GetProductList(cookie, urlTovar);
                     if(tovarList.Count == 0)
                     {
+                        StreamWriter sw = new StreamWriter("badUrl.csv", true, Encoding.GetEncoding(1251));
+                        sw.WriteLine(urlTovar);
+                        sw.Close();
                         continue;
                     }
                     string alsoBy = nethouse.alsoBuyTovars(tovarList);
@@ -452,9 +455,17 @@ namespace IrbisMoto
                     }
                     else
                     {
+                        List<string> tovarList = new List<string>();
                         bool izmen = false;
                         bool del = false;
-                        List<string> tovarList = nethouse.GetProductList(cookie, urlTovar);
+                        tovarList = nethouse.GetProductList(cookie, urlTovar);
+                        if (tovarList.Count == 0)
+                        {
+                            StreamWriter sw = new StreamWriter("badUrl.csv", true, Encoding.GetEncoding(1251));
+                            sw.WriteLine(urlTovar);
+                            sw.Close();
+                            continue;
+                        }
                         string alsoBy = nethouse.alsoBuyTovars(tovarList);
                         if (tovarList[43] != "100")
                         {
@@ -616,9 +627,17 @@ namespace IrbisMoto
                     }
                     else
                     {
+                        List<string> tovarList = new List<string>();
                         bool izmen = false;
                         bool del = false;
-                        List<string> tovarList = nethouse.GetProductList(cookie, urlTovar);
+                        tovarList = nethouse.GetProductList(cookie, urlTovar);
+                        if (tovarList.Count == 0)
+                        {
+                            StreamWriter sw = new StreamWriter("badUrl.csv", true, Encoding.GetEncoding(1251));
+                            sw.WriteLine(urlTovar);
+                            sw.Close();
+                            continue;
+                        }
                         string alsoBy = nethouse.alsoBuyTovars(tovarList);
                         if (tovarList[43] != "100")
                         {
