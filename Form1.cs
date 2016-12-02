@@ -191,20 +191,8 @@ namespace IrbisMoto
                 name = name.Replace("\"", "");
 
                 ExcelRange er = w.Cells[i, 2];
-                if (er.Hyperlink != null)
-                {
-                    string urlImg = er.Hyperlink.ToString();
-                    try
-                    {
-                        webClient.DownloadFile(urlImg, "pic\\" + articl + ".jpg");
-                    }
-                    catch
-                    {
-
-                    }
-
-                }
-
+                DownloadImages(er, articl);
+                
                 if (action != null)
                     action = actionText(action);
                 else
@@ -368,19 +356,7 @@ namespace IrbisMoto
                     name = name.Replace("\"", "");
 
                     ExcelRange er = w.Cells[i, 2];
-                    if (er.Hyperlink != null)
-                    {
-                        string urlImg = er.Hyperlink.ToString();
-                        try
-                        {
-                            webClient.DownloadFile(urlImg, "pic\\" + articl + ".jpg");
-                        }
-                        catch
-                        {
-
-                        }
-
-                    }
+                    DownloadImages(er, articl);
 
                     if (action != "")
                         action = actionText(action);
@@ -579,18 +555,7 @@ namespace IrbisMoto
                     slug = textRemove(slug, 64);
 
                     ExcelRange er = w.Cells[i, 1];
-                    if (er.Hyperlink != null)
-                    {
-                        string urlImg = er.Hyperlink.ToString();
-                        try
-                        {
-                            webClient.DownloadFile(urlImg, "pic\\" + articl + ".jpg");
-                        }
-                        catch
-                        {
-
-                        }
-                    }
+                    DownloadImages(er, articl);
 
                     if (action != "")
                         action = actionText(action);
@@ -709,6 +674,15 @@ namespace IrbisMoto
                 {
                     string urlTovar = product[n].ToString();
                     otv = httpRequest.getRequest(urlTovar);
+
+                    if(otv == "err")
+                    {
+                        StreamWriter s = new StreamWriter("badURL.txt", true);
+                        s.WriteLine(urlTovar);
+                        s.Close();
+                        continue;
+                    }
+
                     string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString().Trim();
                     bool b = false;
 
@@ -729,6 +703,22 @@ namespace IrbisMoto
                 }
             }
             MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
+        }
+
+        private void DownloadImages(ExcelRange er, double articl)
+        {
+            if (er.Hyperlink != null)
+            {
+                string urlImg = er.Hyperlink.ToString();
+                try
+                {
+                    webClient.DownloadFile(urlImg, "pic\\" + articl + ".jpg");
+                }
+                catch
+                {
+
+                }
+            }
         }
 
         private string irbisKiyoshiRazdel(string razdelkiyoshi)
