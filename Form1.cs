@@ -13,6 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using xNet.Net;
 using web;
 using Формирование_ЧПУ;
 
@@ -168,7 +169,34 @@ namespace IrbisMoto
             nethouse.NewListUploadinBike18("naSite");
             List<string> newProduct = new List<string>();
 
-            FileInfo file = new FileInfo("Прайс.xlsx");
+            CookieDictionary cooc = new CookieDictionary();
+
+            using (var request = new HttpRequest())
+            {
+                request.UserAgent = HttpHelper.RandomChromeUserAgent();
+                request.Cookies = cooc;
+                request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+                // Отправляем запрос.
+                HttpResponse response = request.Get("https://bike18.ru/");
+
+                int i = cooc.Count;
+                
+                
+                // Принимаем тело сообщения в виде текста.
+                string content = response.ToText();
+            }
+          
+
+            using (var request = new HttpRequest())
+            {
+                request.UserAgent = HttpHelper.RandomChromeUserAgent();
+                request.Cookies = cooc;
+                request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+                HttpResponse response = request.Get("bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=4627073800090");
+                otv = response.ToString();
+            }
+
+            FileInfo file = new FileInfo("Прайс-лист ТД Мегаполис 20.06.2017 Москва.xlsx");
             ExcelPackage p = new ExcelPackage(file);
 
 
@@ -198,6 +226,13 @@ namespace IrbisMoto
                 else
                     action = "";
 
+                using (var request = new HttpRequest())
+                {
+                    
+                    request.UserAgent = HttpHelper.RandomChromeUserAgent();
+                    HttpResponse response = request.Get("bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
+                    otv = response.ToString();
+                }
                 otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
                 string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
 
