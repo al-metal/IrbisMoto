@@ -38,13 +38,15 @@
             this.btnUpdateImage = new System.Windows.Forms.Button();
             this.tbLogin = new System.Windows.Forms.TextBox();
             this.tbPassword = new System.Windows.Forms.TextBox();
+            this.lblLogin = new System.Windows.Forms.Label();
+            this.lblPassword = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // rtbMiniText
             // 
             this.rtbMiniText.Location = new System.Drawing.Point(12, 12);
             this.rtbMiniText.Name = "rtbMiniText";
-            this.rtbMiniText.Size = new System.Drawing.Size(934, 159);
+            this.rtbMiniText.Size = new System.Drawing.Size(596, 159);
             this.rtbMiniText.TabIndex = 0;
             this.rtbMiniText.Text = "";
             // 
@@ -52,7 +54,7 @@
             // 
             this.rtbFullText.Location = new System.Drawing.Point(12, 191);
             this.rtbFullText.Name = "rtbFullText";
-            this.rtbFullText.Size = new System.Drawing.Size(934, 146);
+            this.rtbFullText.Size = new System.Drawing.Size(596, 146);
             this.rtbFullText.TabIndex = 1;
             this.rtbFullText.Text = "";
             // 
@@ -60,28 +62,28 @@
             // 
             this.tbTitle.Location = new System.Drawing.Point(12, 353);
             this.tbTitle.Name = "tbTitle";
-            this.tbTitle.Size = new System.Drawing.Size(934, 20);
+            this.tbTitle.Size = new System.Drawing.Size(596, 20);
             this.tbTitle.TabIndex = 2;
             // 
             // tbDescription
             // 
             this.tbDescription.Location = new System.Drawing.Point(12, 388);
             this.tbDescription.Name = "tbDescription";
-            this.tbDescription.Size = new System.Drawing.Size(934, 20);
+            this.tbDescription.Size = new System.Drawing.Size(596, 20);
             this.tbDescription.TabIndex = 3;
             // 
             // tbKeywords
             // 
             this.tbKeywords.Location = new System.Drawing.Point(12, 424);
             this.tbKeywords.Name = "tbKeywords";
-            this.tbKeywords.Size = new System.Drawing.Size(934, 20);
+            this.tbKeywords.Size = new System.Drawing.Size(596, 20);
             this.tbKeywords.TabIndex = 4;
             // 
             // btnSaveTemplates
             // 
-            this.btnSaveTemplates.Location = new System.Drawing.Point(986, 403);
+            this.btnSaveTemplates.Location = new System.Drawing.Point(614, 118);
             this.btnSaveTemplates.Name = "btnSaveTemplates";
-            this.btnSaveTemplates.Size = new System.Drawing.Size(296, 35);
+            this.btnSaveTemplates.Size = new System.Drawing.Size(206, 28);
             this.btnSaveTemplates.TabIndex = 5;
             this.btnSaveTemplates.Text = "Сохранить шаблон";
             this.btnSaveTemplates.UseVisualStyleBackColor = true;
@@ -89,9 +91,9 @@
             // 
             // btnActual
             // 
-            this.btnActual.Location = new System.Drawing.Point(969, 12);
+            this.btnActual.Location = new System.Drawing.Point(614, 12);
             this.btnActual.Name = "btnActual";
-            this.btnActual.Size = new System.Drawing.Size(290, 48);
+            this.btnActual.Size = new System.Drawing.Size(206, 27);
             this.btnActual.TabIndex = 6;
             this.btnActual.Text = "Актуализировать информацию";
             this.btnActual.UseVisualStyleBackColor = true;
@@ -99,9 +101,9 @@
             // 
             // btnUpdateImage
             // 
-            this.btnUpdateImage.Location = new System.Drawing.Point(969, 83);
+            this.btnUpdateImage.Location = new System.Drawing.Point(614, 45);
             this.btnUpdateImage.Name = "btnUpdateImage";
-            this.btnUpdateImage.Size = new System.Drawing.Size(289, 49);
+            this.btnUpdateImage.Size = new System.Drawing.Size(205, 28);
             this.btnUpdateImage.TabIndex = 7;
             this.btnUpdateImage.Text = "Обновить картинки";
             this.btnUpdateImage.UseVisualStyleBackColor = true;
@@ -109,24 +111,44 @@
             // 
             // tbLogin
             // 
-            this.tbLogin.Location = new System.Drawing.Point(969, 151);
+            this.tbLogin.Location = new System.Drawing.Point(614, 92);
             this.tbLogin.Name = "tbLogin";
             this.tbLogin.Size = new System.Drawing.Size(100, 20);
             this.tbLogin.TabIndex = 8;
             // 
             // tbPassword
             // 
-            this.tbPassword.Location = new System.Drawing.Point(1075, 151);
+            this.tbPassword.Location = new System.Drawing.Point(720, 92);
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.Size = new System.Drawing.Size(100, 20);
             this.tbPassword.TabIndex = 9;
             this.tbPassword.UseSystemPasswordChar = true;
             // 
+            // lblLogin
+            // 
+            this.lblLogin.AutoSize = true;
+            this.lblLogin.Location = new System.Drawing.Point(614, 76);
+            this.lblLogin.Name = "lblLogin";
+            this.lblLogin.Size = new System.Drawing.Size(38, 13);
+            this.lblLogin.TabIndex = 10;
+            this.lblLogin.Text = "Логин";
+            // 
+            // lblPassword
+            // 
+            this.lblPassword.AutoSize = true;
+            this.lblPassword.Location = new System.Drawing.Point(717, 76);
+            this.lblPassword.Name = "lblPassword";
+            this.lblPassword.Size = new System.Drawing.Size(45, 13);
+            this.lblPassword.TabIndex = 11;
+            this.lblPassword.Text = "Пароль";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1294, 450);
+            this.ClientSize = new System.Drawing.Size(833, 450);
+            this.Controls.Add(this.lblPassword);
+            this.Controls.Add(this.lblLogin);
             this.Controls.Add(this.tbPassword);
             this.Controls.Add(this.tbLogin);
             this.Controls.Add(this.btnUpdateImage);
@@ -157,6 +179,8 @@
         private System.Windows.Forms.Button btnUpdateImage;
         private System.Windows.Forms.TextBox tbLogin;
         private System.Windows.Forms.TextBox tbPassword;
+        private System.Windows.Forms.Label lblLogin;
+        private System.Windows.Forms.Label lblPassword;
     }
 }
 
