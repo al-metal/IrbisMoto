@@ -29,6 +29,8 @@ namespace IrbisMoto
         nethouse nethouse = new nethouse();
         httpRequest httpRequest = new httpRequest();
 
+        CookieContainer cooc = new CookieContainer();
+
         string boldOpen = "<span style=\"\"font-weight: bold; font-weight: bold;\"\">";
         string boldClose = "</span>";
         string otv = null;
@@ -169,36 +171,10 @@ namespace IrbisMoto
             nethouse.NewListUploadinBike18("naSite");
             List<string> newProduct = new List<string>();
 
-            CookieDictionary cooc = new CookieDictionary();
-
-            using (var request = new HttpRequest())
-            {
-                request.UserAgent = HttpHelper.RandomChromeUserAgent();
-                request.Cookies = cooc;
-                request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
-                // Отправляем запрос.
-                HttpResponse response = request.Get("https://bike18.ru/");
-
-                int i = cooc.Count;
-                
-                
-                // Принимаем тело сообщения в виде текста.
-                string content = response.ToText();
-            }
-          
-
-            using (var request = new HttpRequest())
-            {
-                request.UserAgent = HttpHelper.RandomChromeUserAgent();
-                request.Cookies = cooc;
-                request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
-                HttpResponse response = request.Get("bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=4627073800090");
-                otv = response.ToString();
-            }
-
-            FileInfo file = new FileInfo("Прайс-лист ТД Мегаполис 20.06.2017 Москва.xlsx");
+            cooc = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
+            
+            FileInfo file = new FileInfo("Прайс-лист ТД Мегаполис 07.07.2017 Москва.xlsx");
             ExcelPackage p = new ExcelPackage(file);
-
 
             ExcelWorksheet w = p.Workbook.Worksheets[3];
             int q = w.Dimension.Rows;
@@ -208,11 +184,20 @@ namespace IrbisMoto
             {
                 if (w.Cells[i, 1].Value == null)
                     break;
-
-                double articl = (double)w.Cells[i, 1].Value;
+                double articl;
+                try { articl = (double)w.Cells[i, 1].Value; }
+                catch
+                {
+                    continue;
+                }
                 allTovarInFile(articl);
                 double quantity = (double)w.Cells[i, 9].Value;
-                double priceIrbisDiler = (double)w.Cells[i, 6].Value;
+                double priceIrbisDiler;
+                try { priceIrbisDiler = (double)w.Cells[i, 6].Value; }
+                catch
+                {
+                    continue;
+                }
                 double actualPrice = Price(priceIrbisDiler);
                 string action = (string)w.Cells[i, 14].Value;
                 string name = (string)w.Cells[i, 3].Value;
@@ -220,64 +205,55 @@ namespace IrbisMoto
 
                 ExcelRange er = w.Cells[i, 2];
                 DownloadImages(er, articl);
-                
+
                 if (action != null)
                     action = actionText(action);
                 else
                     action = "";
 
-                using (var request = new HttpRequest())
+                string urlTovar = nethouse.searchTovar(name, articl.ToString());
+
+                if (urlTovar == null)
                 {
-                    
-                    request.UserAgent = HttpHelper.RandomChromeUserAgent();
-                    HttpResponse response = request.Get("bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
-                    otv = response.ToString();
-                }
-                otv = webRequest.getRequest("http://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + articl);
-                string urlTovar = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Match(otv).ToString();
+                    string slug = chpu.vozvr(name);
+                    int space = name.IndexOf(" ");
+                    string strRazdel = name.Remove(space, name.Length - space);
+                    string razdel = irbisZapchastiRazdel(strRazdel);
 
-                string slug = chpu.vozvr(name);
-                int space = name.IndexOf(" ");
-                string strRazdel = name.Remove(space, name.Length - space);
+                    string miniText = null;
+                    string titleText = null;
+                    string descriptionText = null;
+                    string keywordsText = null;
+                    string fullText = null;
+                    string discount = null;
+                    string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
 
-                string razdel = irbisZapchastiRazdel(strRazdel);
+                    string nameBold = boldOpen + name + boldClose;
 
-                string miniText = null;
-                string titleText = null;
-                string descriptionText = null;
-                string keywordsText = null;
-                string fullText = null;
-                string discount = null;
-                string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
+                    miniText = miniTextTemplate();
+                    fullText = fullTextTemplate();
+                    titleText = tbTitle.Lines[0].ToString();
+                    descriptionText = tbDescription.Lines[0].ToString();
+                    keywordsText = tbKeywords.Lines[0].ToString();
+                    discount = discountTemplate();
 
-                string nameBold = boldOpen + name + boldClose;
+                    miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
+                    miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
 
-                miniText = miniTextTemplate();
-                fullText = fullTextTemplate();
-                titleText = tbTitle.Lines[0].ToString();
-                descriptionText = tbDescription.Lines[0].ToString();
-                keywordsText = tbKeywords.Lines[0].ToString();
-                discount = discountTemplate();
+                    fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
+                    fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
 
-                miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
-                miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
+                    titleText = titleText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
 
-                fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
-                fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
+                    descriptionText = descriptionText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
 
-                titleText = titleText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+                    keywordsText = keywordsText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
 
-                descriptionText = descriptionText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+                    titleText = textRemove(titleText, 255);
+                    descriptionText = textRemove(descriptionText, 200);
+                    keywordsText = textRemove(keywordsText, 100);
+                    slug = textRemove(slug, 64);
 
-                keywordsText = keywordsText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                titleText = textRemove(titleText, 255);
-                descriptionText = textRemove(descriptionText, 200);
-                keywordsText = textRemove(keywordsText, 100);
-                slug = textRemove(slug, 64);
-
-                if (urlTovar == "")
-                {
                     string stock = (string)w.Cells[i, 14].Value;
                     bool kioshi = name.Contains("KIYOSHI");
                     if (!kioshi)
@@ -312,14 +288,20 @@ namespace IrbisMoto
                     bool izmen = false;
                     bool del = false;
                     tovarList = nethouse.GetProductList(cookie, urlTovar);
-                    if(tovarList.Count == 0)
+                    if (tovarList.Count == 0)
                     {
                         StreamWriter sw = new StreamWriter("badUrl.csv", true, Encoding.GetEncoding(1251));
                         sw.WriteLine(urlTovar);
                         sw.Close();
                         continue;
                     }
-                    string alsoBy = nethouse.alsoBuyTovars(tovarList);
+
+                    if (tovarList[42] == "&alsoBuy[0]=als")
+                    {
+                        tovarList[42] = nethouse.alsoBuyTovars(tovarList);
+                        izmen = true;
+                    }
+
                     if (tovarList[43] != "100")
                     {
                         tovarList[43] = "100";
@@ -345,6 +327,7 @@ namespace IrbisMoto
                         {
                             tovarList[9] = actualPrice.ToString();
                             editPrice++;
+                            izmen = true;
                         }
                     }
 
@@ -353,7 +336,7 @@ namespace IrbisMoto
                         tovarList[39] = action;
                         izmen = true;
                     }
-
+                    /*
                     tovarList[42] = alsoBy;
                     tovarList[1] = slug;
                     tovarList[7] = miniText;
@@ -361,7 +344,7 @@ namespace IrbisMoto
                     tovarList[11] = descriptionText;
                     tovarList[12] = keywordsText;
                     tovarList[13] = titleText;
-                    tovarList[3] = "10833347";
+                    tovarList[3] = "10833347";*/
 
                     if (izmen & !del)
                         nethouse.SaveTovar(cookie, tovarList);
@@ -527,7 +510,7 @@ namespace IrbisMoto
                 }
             }
             #endregion
-
+            /*
             #region Запчасти KIYOSHI
             string razdelkiyoshi = null;
             w = p.Workbook.Worksheets[5];
@@ -688,7 +671,7 @@ namespace IrbisMoto
                 }
             }
             #endregion
-
+            */
             #region uploadInSIte
             System.Threading.Thread.Sleep(20000);
             string[] naSite1 = File.ReadAllLines("naSite.csv", Encoding.GetEncoding(1251));
@@ -710,7 +693,7 @@ namespace IrbisMoto
                     string urlTovar = product[n].ToString();
                     otv = httpRequest.getRequest(urlTovar);
 
-                    if(otv == "err")
+                    if (otv == "err")
                     {
                         StreamWriter s = new StreamWriter("badURL.txt", true);
                         s.WriteLine(urlTovar);
@@ -1004,7 +987,7 @@ namespace IrbisMoto
             switch (strRazdel)
             {
                 case "Аккумуляторная":
-                    razdel = razdel + "Аккумуляторы";
+                    razdel = "Запчасти и расходники => Расходники для мототехники => Аккумуляторы";
                     break;
                 case "Амортизатор":
                     razdel = razdel + "Амортизаторы";
@@ -1097,7 +1080,7 @@ namespace IrbisMoto
                     razdel = razdel + "Защита двигателя";
                     break;
                 case "Звезда":
-                    razdel = razdel + "Звезды";
+                    razdel = "Запчасти и расходники => Расходники для мототехники => Звезды";
                     break;
                 case "Зубчатый":
                     razdel = razdel + "Зубчатые сектора";
@@ -1136,7 +1119,7 @@ namespace IrbisMoto
                     razdel = razdel + "Коллекторы";
                     break;
                 case "Колодки":
-                    razdel = razdel + "Тормозные колодки";
+                    razdel = "Запчасти и расходники => Расходники для мототехники => Тормозные колодки";
                     break;
                 case "Колпачок":
                     razdel = razdel + "Свечные колпачки";
@@ -1307,7 +1290,7 @@ namespace IrbisMoto
                     razdel = razdel + "Сайлентблоки, сальники";
                     break;
                 case "Свеча":
-                    razdel = razdel + "Свечи зажигания";
+                    razdel = "Запчасти и расходники => Расходники для мототехники => Свечи зажигания";
                     break;
                 case "Сигнал":
                     razdel = razdel + "Звуковые сигналы";
@@ -1361,10 +1344,10 @@ namespace IrbisMoto
                     razdel = razdel + "Фары";
                     break;
                 case "Фильтр":
-                    razdel = razdel + "Фильтры";
+                    razdel = "Запчасти и расходники => Расходники для мототехники => Фильтры";
                     break;
                 case "Фильтрующий":
-                    razdel = razdel + "Фильтры";
+                    razdel = "Запчасти и расходники => Расходники для мототехники => Фильтры";
                     break;
                 case "Фонарь":
                     razdel = razdel + "Фары";
@@ -1373,7 +1356,7 @@ namespace IrbisMoto
                     razdel = razdel + "Цапфы";
                     break;
                 case "Цепь":
-                    razdel = razdel + "Цепи";
+                    razdel = "Запчасти и расходники => Расходники для мототехники => Цепи";
                     break;
                 case "Цилиндро-поршневая":
                     razdel = razdel + "ЦПГ";
@@ -1385,7 +1368,7 @@ namespace IrbisMoto
                     razdel = razdel + "Шестерни и шайбы";
                     break;
                 case "Шина":
-                    razdel = razdel + "Шины";
+                    razdel = "Запчасти и расходники => Расходники для мототехники => Моторезина";
                     break;
                 case "Шланг":
                     razdel = razdel + "Шланги";
