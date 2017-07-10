@@ -40,6 +40,7 @@
             this.tbPassword = new System.Windows.Forms.TextBox();
             this.lblLogin = new System.Windows.Forms.Label();
             this.lblPassword = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // rtbMiniText
@@ -81,9 +82,9 @@
             // 
             // btnSaveTemplates
             // 
-            this.btnSaveTemplates.Location = new System.Drawing.Point(614, 118);
+            this.btnSaveTemplates.Location = new System.Drawing.Point(614, 151);
             this.btnSaveTemplates.Name = "btnSaveTemplates";
-            this.btnSaveTemplates.Size = new System.Drawing.Size(206, 28);
+            this.btnSaveTemplates.Size = new System.Drawing.Size(161, 28);
             this.btnSaveTemplates.TabIndex = 5;
             this.btnSaveTemplates.Text = "Сохранить шаблон";
             this.btnSaveTemplates.UseVisualStyleBackColor = true;
@@ -91,19 +92,19 @@
             // 
             // btnActual
             // 
-            this.btnActual.Location = new System.Drawing.Point(614, 12);
+            this.btnActual.Location = new System.Drawing.Point(613, 12);
             this.btnActual.Name = "btnActual";
-            this.btnActual.Size = new System.Drawing.Size(206, 27);
+            this.btnActual.Size = new System.Drawing.Size(162, 27);
             this.btnActual.TabIndex = 6;
-            this.btnActual.Text = "Актуализировать информацию";
+            this.btnActual.Text = "Запчасти";
             this.btnActual.UseVisualStyleBackColor = true;
             this.btnActual.Click += new System.EventHandler(this.btnActual_Click);
             // 
             // btnUpdateImage
             // 
-            this.btnUpdateImage.Location = new System.Drawing.Point(614, 45);
+            this.btnUpdateImage.Location = new System.Drawing.Point(614, 78);
             this.btnUpdateImage.Name = "btnUpdateImage";
-            this.btnUpdateImage.Size = new System.Drawing.Size(205, 28);
+            this.btnUpdateImage.Size = new System.Drawing.Size(161, 28);
             this.btnUpdateImage.TabIndex = 7;
             this.btnUpdateImage.Text = "Обновить картинки";
             this.btnUpdateImage.UseVisualStyleBackColor = true;
@@ -111,23 +112,23 @@
             // 
             // tbLogin
             // 
-            this.tbLogin.Location = new System.Drawing.Point(614, 92);
+            this.tbLogin.Location = new System.Drawing.Point(614, 125);
             this.tbLogin.Name = "tbLogin";
-            this.tbLogin.Size = new System.Drawing.Size(100, 20);
+            this.tbLogin.Size = new System.Drawing.Size(75, 20);
             this.tbLogin.TabIndex = 8;
             // 
             // tbPassword
             // 
-            this.tbPassword.Location = new System.Drawing.Point(720, 92);
+            this.tbPassword.Location = new System.Drawing.Point(700, 125);
             this.tbPassword.Name = "tbPassword";
-            this.tbPassword.Size = new System.Drawing.Size(100, 20);
+            this.tbPassword.Size = new System.Drawing.Size(75, 20);
             this.tbPassword.TabIndex = 9;
             this.tbPassword.UseSystemPasswordChar = true;
             // 
             // lblLogin
             // 
             this.lblLogin.AutoSize = true;
-            this.lblLogin.Location = new System.Drawing.Point(614, 76);
+            this.lblLogin.Location = new System.Drawing.Point(614, 109);
             this.lblLogin.Name = "lblLogin";
             this.lblLogin.Size = new System.Drawing.Size(38, 13);
             this.lblLogin.TabIndex = 10;
@@ -136,17 +137,27 @@
             // lblPassword
             // 
             this.lblPassword.AutoSize = true;
-            this.lblPassword.Location = new System.Drawing.Point(717, 76);
+            this.lblPassword.Location = new System.Drawing.Point(697, 109);
             this.lblPassword.Name = "lblPassword";
             this.lblPassword.Size = new System.Drawing.Size(45, 13);
             this.lblPassword.TabIndex = 11;
             this.lblPassword.Text = "Пароль";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(613, 45);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(162, 27);
+            this.button1.TabIndex = 12;
+            this.button1.Text = "Запчасти для снегоходов";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(833, 450);
+            this.ClientSize = new System.Drawing.Size(784, 450);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.lblPassword);
             this.Controls.Add(this.lblLogin);
             this.Controls.Add(this.tbPassword);
@@ -181,6 +192,7 @@
         private System.Windows.Forms.TextBox tbPassword;
         private System.Windows.Forms.Label lblLogin;
         private System.Windows.Forms.Label lblPassword;
+        private System.Windows.Forms.Button button1;
     }
 }
 
