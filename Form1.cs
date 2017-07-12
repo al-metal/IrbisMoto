@@ -172,7 +172,7 @@ namespace IrbisMoto
             List<string> newProduct = new List<string>();
 
             cooc = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
-            
+
             FileInfo file = new FileInfo("Прайс-лист ТД Мегаполис 07.07.2017 Москва.xlsx");
             ExcelPackage p = new ExcelPackage(file);
 
@@ -190,6 +190,7 @@ namespace IrbisMoto
                 {
                     continue;
                 }
+
                 allTovarInFile(articl);
                 double quantity = (double)w.Cells[i, 9].Value;
                 double priceIrbisDiler;
@@ -212,6 +213,8 @@ namespace IrbisMoto
                     action = "";
 
                 string urlTovar = nethouse.searchTovar(name, articl.ToString());
+                if (urlTovar == null)
+                    urlTovar = nethouse.searchTovar(name, "IRB_" + articl.ToString());
 
                 if (urlTovar == null)
                 {
