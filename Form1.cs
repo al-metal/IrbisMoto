@@ -31,11 +31,13 @@ namespace IrbisMoto
 
         CookieContainer cooc = new CookieContainer();
 
-        string boldOpen = "<span style=\"\"font-weight: bold; font-weight: bold;\"\">";
+        string boldOpen = "<span style=\"font-weight: bold; font-weight: bold;\">";
         string boldClose = "</span>";
         string otv = null;
         int deleteTovar = 0;
         int editPrice = 0;
+
+        bool chekedEditMiniText;
 
         public Form1()
         {
@@ -173,6 +175,8 @@ namespace IrbisMoto
 
             cooc = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
 
+            chekedEditMiniText = cbMiniText.Checked;
+
             FileInfo file = new FileInfo("Прайс-лист ТД Мегаполис 07.07.2017 Москва.xlsx");
             ExcelPackage p = new ExcelPackage(file);
 
@@ -297,6 +301,19 @@ namespace IrbisMoto
                         sw.WriteLine(urlTovar);
                         sw.Close();
                         continue;
+                    }
+
+                    if (chekedEditMiniText)
+                    {
+                        string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
+                        string nameBold = boldOpen + name + boldClose;
+                        string discount = discountTemplate();
+
+                        string miniText = miniTextTemplate();
+                        miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
+                        miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
+                        tovarList[7] = miniText;
+                        izmen = true;
                     }
 
                     if (tovarList[42] == "&alsoBuy[0]=als")
@@ -869,9 +886,9 @@ namespace IrbisMoto
             return text;
         }
 
-        private string discountTemplate()
+        private string discountTemplate()   
         {
-            string discount = "<p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> Сделай ТРОЙНОЙ удар по нашим ценам! </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 1. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Скидки за отзывы о товарах!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 2. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Друзьям скидки и подарки!</a> </span></p><p style=\"\"text-align: right;\"\"><span style=\"\"font -weight: bold; font-weight: bold;\"\"> 3. <a target=\"\"_blank\"\" href =\"\"http://bike18.ru/stock\"\"> Нашли дешевле!? 110% разницы Ваши!</a></span></p>";
+            string discount = "<p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 1. <a> Выгодные условия доставки по всей России!</a> </span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 2. <a> Нашли дешевле!? 110% разницы Ваши!</a> </span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 3. <a> Также обращайтесь в наш сервис центр в Ижевске!</a></span></p>";
             return discount;
         }
 

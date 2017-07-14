@@ -41,6 +41,7 @@
             this.lblLogin = new System.Windows.Forms.Label();
             this.lblPassword = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.cbMiniText = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // rtbMiniText
@@ -152,11 +153,22 @@
             this.button1.Text = "Запчасти для снегоходов";
             this.button1.UseVisualStyleBackColor = true;
             // 
+            // cbMiniText
+            // 
+            this.cbMiniText.AutoSize = true;
+            this.cbMiniText.Location = new System.Drawing.Point(614, 185);
+            this.cbMiniText.Name = "cbMiniText";
+            this.cbMiniText.Size = new System.Drawing.Size(170, 17);
+            this.cbMiniText.TabIndex = 13;
+            this.cbMiniText.Text = "Обновить краткое описание";
+            this.cbMiniText.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 450);
+            this.Controls.Add(this.cbMiniText);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.lblPassword);
             this.Controls.Add(this.lblLogin);
@@ -193,6 +205,7 @@
         private System.Windows.Forms.Label lblLogin;
         private System.Windows.Forms.Label lblPassword;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox cbMiniText;
     }
 }
 
