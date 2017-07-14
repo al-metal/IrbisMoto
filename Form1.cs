@@ -244,17 +244,17 @@ namespace IrbisMoto
                     keywordsText = tbKeywords.Lines[0].ToString();
                     discount = discountTemplate();
 
-                    miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
+                    miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
                     miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
 
-                    fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
+                    fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
                     fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
 
-                    titleText = titleText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+                    titleText = titleText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
 
-                    descriptionText = descriptionText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+                    descriptionText = descriptionText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
 
-                    keywordsText = keywordsText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+                    keywordsText = keywordsText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
 
                     titleText = textRemove(titleText, 255);
                     descriptionText = textRemove(descriptionText, 200);
@@ -310,9 +310,36 @@ namespace IrbisMoto
                         string discount = discountTemplate();
 
                         string miniText = miniTextTemplate();
-                        miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
+                        miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
                         miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
                         tovarList[7] = miniText;
+
+                        // Обновление СЕО
+
+                        string descriptionText = null;
+                        string keywordsText = null;
+                        string titleText = null;
+
+                        titleText = tbTitle.Lines[0].ToString();
+                        descriptionText = tbDescription.Lines[0].ToString();
+                        keywordsText = tbKeywords.Lines[0].ToString();
+
+                        titleText = titleText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                        descriptionText = descriptionText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                        keywordsText = keywordsText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                        titleText = textRemove(titleText, 255);
+                        descriptionText = textRemove(descriptionText, 200);
+                        keywordsText = textRemove(keywordsText, 100);
+
+                        tovarList[11] = descriptionText;
+                        tovarList[12] = keywordsText;
+                        tovarList[13] = titleText;
+
+                        // Обновление СЕО
+
                         izmen = true;
                     }
 
@@ -1360,19 +1387,19 @@ namespace IrbisMoto
                         keywordsText = tbKeywords.Lines[0].ToString();
                         discount = discountTemplate();
 
-                        miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
+                        miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("РАЗДЕЛ", razdelSnegohod).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
 
                         miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
 
-                        fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
+                        fullText = fullText.Replace("СКИДКА", discount).Replace("РАЗДЕЛ", razdelSnegohod).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
 
                         fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
 
-                        titleText = titleText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+                        titleText = titleText.Replace("СКИДКА", discount).Replace("РАЗДЕЛ", razdelSnegohod).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
 
-                        descriptionText = descriptionText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+                        descriptionText = descriptionText.Replace("СКИДКА", discount).Replace("РАЗДЕЛ", razdelSnegohod).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
 
-                        keywordsText = keywordsText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+                        keywordsText = keywordsText.Replace("СКИДКА", discount).Replace("РАЗДЕЛ", razdelSnegohod).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
 
                         titleText = textRemove(titleText, 255);
                         descriptionText = textRemove(descriptionText, 200);
@@ -1425,9 +1452,32 @@ namespace IrbisMoto
                             string discount = discountTemplate();
 
                             string miniText = miniTextTemplate();
-                            miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
+                            miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("РАЗДЕЛ", razdelSnegohod).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
                             miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
                             tovarList[7] = miniText;
+
+                            // Обновление СЕО
+
+                            string descriptionText = null;
+                            string keywordsText = null;
+                            string titleText = null;
+
+                            titleText = tbTitle.Lines[0].ToString();
+                            descriptionText = tbDescription.Lines[0].ToString();
+                            keywordsText = tbKeywords.Lines[0].ToString();
+
+                            titleText = titleText.Replace("СКИДКА", discount).Replace("РАЗДЕЛ", razdelSnegohod).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                            descriptionText = descriptionText.Replace("СКИДКА", discount).Replace("РАЗДЕЛ", razdelSnegohod).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                            keywordsText = keywordsText.Replace("СКИДКА", discount).Replace("РАЗДЕЛ", razdelSnegohod).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+                            titleText = textRemove(titleText, 255);
+                            descriptionText = textRemove(descriptionText, 200);
+                            keywordsText = textRemove(keywordsText, 100);
+
+                            // Обновление СЕО
+
                             izmen = true;
                         }
 
