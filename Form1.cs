@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using xNet.Net;
 using web;
 using Формирование_ЧПУ;
+using System.Threading;
 
 namespace IrbisMoto
 {
@@ -29,13 +30,19 @@ namespace IrbisMoto
         nethouse nethouse = new nethouse();
         httpRequest httpRequest = new httpRequest();
 
-        CookieContainer cooc = new CookieContainer();
+        Thread forms;
 
         string boldOpen = "<span style=\"font-weight: bold; font-weight: bold;\">";
         string boldClose = "</span>";
         string otv = null;
         int deleteTovar = 0;
         int editPrice = 0;
+        string minitextTemplate;
+        string fullTextTemplate;
+        string keywordsTextTemplate;
+        string titleTextTemplate;
+        string descriptionTextTemplate;
+        string discountTemplate;
 
         bool chekedEditMiniText;
 
@@ -166,14 +173,34 @@ namespace IrbisMoto
             Properties.Settings.Default.password = tbPassword.Text;
             Properties.Settings.Default.Save();
 
+            minitextTemplate = MiniTextTemplateStr();
+            fullTextTemplate = FullTextTemplateStr();
+            keywordsTextTemplate = tbKeywords.Lines[0].ToString();
+            titleTextTemplate = tbTitle.Lines[0].ToString();
+            descriptionTextTemplate = tbDescription.Lines[0].ToString();
+            discountTemplate = discountTemplateStr();
+
+            Thread tabl = new Thread(() => UpdateTovar());
+            forms = tabl;
+            forms.IsBackground = true;
+            forms.Start();
+        }
+
+        private void UpdateTovar()
+        {
+            ControlsFormEnabledFalse();
             CookieContainer cookie = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
+            if (cookie.Count == 1)
+            {
+                MessageBox.Show("Логин или пароль для сайта введены не верно", "Ошибка логина/пароля");
+                ControlsFormEnabledTrue();
+                return;
+            }
 
             File.Delete("naSite.csv");
             File.Delete("allTovars");
             nethouse.NewListUploadinBike18("naSite");
             List<string> newProduct = new List<string>();
-
-            cooc = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
 
             chekedEditMiniText = cbMiniText.Checked;
 
@@ -183,7 +210,7 @@ namespace IrbisMoto
             ExcelWorksheet w = p.Workbook.Worksheets[3];
             int q = w.Dimension.Rows;
             lblAll.Invoke(new Action(() => lblAll.Text = q.ToString()));
-            
+
             #region Раздел запчасти
             for (int i = 8; q > i; i++)
             {
@@ -229,22 +256,15 @@ namespace IrbisMoto
                     string strRazdel = name.Remove(space, name.Length - space);
                     string razdel = irbisZapchastiRazdel(strRazdel);
 
-                    string miniText = null;
-                    string titleText = null;
-                    string descriptionText = null;
-                    string keywordsText = null;
-                    string fullText = null;
-                    string discount = null;
+                    string miniText = minitextTemplate;
+                    string fullText = fullTextTemplate;
+                    string titleText = titleTextTemplate;
+                    string descriptionText = descriptionTextTemplate;
+                    string keywordsText = keywordsTextTemplate;
+                    string discount = discountTemplate;
                     string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
 
                     string nameBold = boldOpen + name + boldClose;
-
-                    miniText = miniTextTemplate();
-                    fullText = fullTextTemplate();
-                    titleText = tbTitle.Lines[0].ToString();
-                    descriptionText = tbDescription.Lines[0].ToString();
-                    keywordsText = tbKeywords.Lines[0].ToString();
-                    discount = discountTemplate();
 
                     miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
                     miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
@@ -309,9 +329,9 @@ namespace IrbisMoto
                     {
                         string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
                         string nameBold = boldOpen + name + boldClose;
-                        string discount = discountTemplate();
+                        string discount = discountTemplate;
 
-                        string miniText = miniTextTemplate();
+                        string miniText = minitextTemplate;
                         miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
                         miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
                         tovarList[7] = miniText;
@@ -441,6 +461,7 @@ namespace IrbisMoto
                 }
             }
             MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
+            ControlsFormEnabledTrue();
         }
 
         private void DownloadImages(ExcelRange er, double articl)
@@ -586,13 +607,13 @@ namespace IrbisMoto
             return text;
         }
 
-        private string discountTemplate()
+        private string discountTemplateStr()
         {
             string discount = "<p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 1. <a href=\"https://bike18.ru/oplata-dostavka\">Выгодные условия доставки по всей России!</a></span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 2. <a href=\"https://bike18.ru/stock\">Нашли дешевле!? 110% разницы Ваши!</a></span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 3. <a href=\"https://bike18.ru/service\">Также обращайтесь в наш сервис центр в Ижевске!</a></span></p>";
             return discount;
         }
 
-        public double Price(double priceDiler)
+        private double Price(double priceDiler)
         {
             double discount = 0;
             double actualPrice = 0;
@@ -701,7 +722,7 @@ namespace IrbisMoto
             MessageBox.Show("Обновлено картинок: " + countUpdateImage);
         }
 
-        public string irbisZapchastiRazdel(string strRazdel)
+        private string irbisZapchastiRazdel(string strRazdel)
         {
             string razdel = "Запчасти и расходники => Каталог запчастей IRBIS => ";
             switch (strRazdel)
@@ -1106,7 +1127,7 @@ namespace IrbisMoto
             return razdel;
         }
 
-        public string miniTextTemplate()
+        private string MiniTextTemplateStr()
         {
             string miniText = null;
             for (int z = 0; rtbMiniText.Lines.Length > z; z++)
@@ -1123,7 +1144,7 @@ namespace IrbisMoto
             return miniText;
         }
 
-        private string fullTextTemplate()
+        private string FullTextTemplateStr()
         {
             string fullText = null;
             for (int z = 0; rtbFullText.Lines.Length > z; z++)
@@ -1158,8 +1179,6 @@ namespace IrbisMoto
             File.Delete("allTovars");
             nethouse.NewListUploadinBike18("naSite");
             List<string> newProduct = new List<string>();
-
-            cooc = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
 
             chekedEditMiniText = cbMiniText.Checked;
 
@@ -1200,22 +1219,17 @@ namespace IrbisMoto
                     {
                         string slug = chpu.vozvr(name);
                         string razdel = irbisSnegohod(razdelSnegohod);
-                        string miniText = null;
-                        string titleText = null;
-                        string descriptionText = null;
-                        string keywordsText = null;
-                        string fullText = null;
-                        string discount = null;
+
                         string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
 
                         string nameBold = boldOpen + name + boldClose;
 
-                        miniText = miniTextTemplate();
-                        fullText = fullTextTemplate();
-                        titleText = tbTitle.Lines[0].ToString();
-                        descriptionText = tbDescription.Lines[0].ToString();
-                        keywordsText = tbKeywords.Lines[0].ToString();
-                        discount = discountTemplate();
+                        string miniText = minitextTemplate;
+                        string fullText = fullTextTemplate;
+                        string titleText = titleTextTemplate;
+                        string descriptionText = descriptionTextTemplate;
+                        string keywordsText = keywordsTextTemplate;
+                        string discount = discountTemplate;
 
                         miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("РАЗДЕЛ", razdelSnegohod).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
 
@@ -1279,9 +1293,9 @@ namespace IrbisMoto
                         {
                             string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
                             string nameBold = boldOpen + name + boldClose;
-                            string discount = discountTemplate();
+                            string discount = discountTemplate;
 
-                            string miniText = miniTextTemplate();
+                            string miniText = minitextTemplate;
                             miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("РАЗДЕЛ", razdelSnegohod).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
                             miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
                             tovarList[7] = miniText;
@@ -1351,13 +1365,45 @@ namespace IrbisMoto
                             tovarList[39] = action;
                             izmen = true;
                         }
-                        
+
                         if (izmen & !del)
                             nethouse.SaveTovar(cookie, tovarList);
 
                     }
                 }
             }
+        }
+
+        private void ControlsFormEnabledTrue()
+        {
+            btnActual.Invoke(new Action(() => btnActual.Enabled = true));
+            button1.Invoke(new Action(() => button1.Enabled = true));
+            btnSaveTemplates.Invoke(new Action(() => btnSaveTemplates.Enabled = true));
+            btnUpdateImage.Invoke(new Action(() => btnUpdateImage.Enabled = true));
+            rtbFullText.Invoke(new Action(() => rtbFullText.Enabled = true));
+            rtbMiniText.Invoke(new Action(() => rtbMiniText.Enabled = true));
+            tbDescription.Invoke(new Action(() => tbDescription.Enabled = true));
+            tbKeywords.Invoke(new Action(() => tbKeywords.Enabled = true));
+            tbLogin.Invoke(new Action(() => tbLogin.Enabled = true));
+            tbPassword.Invoke(new Action(() => tbPassword.Enabled = true));
+            tbTitle.Invoke(new Action(() => tbTitle.Enabled = true));
+            cbMiniText.Invoke(new Action(() => cbMiniText.Enabled = true));
+        }
+
+        private void ControlsFormEnabledFalse()
+        {
+            btnActual.Invoke(new Action(() => btnActual.Enabled = false));
+            button1.Invoke(new Action(() => button1.Enabled = false));
+            btnSaveTemplates.Invoke(new Action(() => btnSaveTemplates.Enabled = false));
+            btnUpdateImage.Invoke(new Action(() => btnUpdateImage.Enabled = false));
+            rtbFullText.Invoke(new Action(() => rtbFullText.Enabled = false));
+            rtbMiniText.Invoke(new Action(() => rtbMiniText.Enabled = false));
+            tbDescription.Invoke(new Action(() => tbDescription.Enabled = false));
+            tbKeywords.Invoke(new Action(() => tbKeywords.Enabled = false));
+            tbLogin.Invoke(new Action(() => tbLogin.Enabled = false));
+            tbPassword.Invoke(new Action(() => tbPassword.Enabled = false));
+            tbTitle.Invoke(new Action(() => tbTitle.Enabled = false));
+            cbMiniText.Invoke(new Action(() => cbMiniText.Enabled = false));
         }
     }
 }
