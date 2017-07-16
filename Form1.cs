@@ -32,7 +32,9 @@ namespace IrbisMoto
 
         Thread forms;
 
-        string boldOpen = "<span style=\"font-weight: bold; font-weight: bold;\">";
+        string boldOpenSite = "<span style=\"font-weight: bold; font-weight: bold;\">";
+        string boldOpenCSV = "<span style=\"\"font-weight: bold; font-weight: bold;\"\">";
+        string boldOpen;
         string boldClose = "</span>";
         string otv = null;
         int deleteTovar = 0;
@@ -251,6 +253,7 @@ namespace IrbisMoto
 
                 if (urlTovar == null)
                 {
+                    boldOpen = boldOpenCSV;
                     string slug = chpu.vozvr(name);
                     int space = name.IndexOf(" ");
                     string strRazdel = name.Remove(space, name.Length - space);
@@ -313,6 +316,7 @@ namespace IrbisMoto
                 }
                 else
                 {
+                    boldOpen = boldOpenSite;
                     List<string> tovarList = new List<string>();
                     bool izmen = false;
                     bool del = false;
