@@ -182,10 +182,12 @@ namespace IrbisMoto
 
             ExcelWorksheet w = p.Workbook.Worksheets[3];
             int q = w.Dimension.Rows;
-
+            lblAll.Invoke(new Action(() => lblAll.Text = q.ToString()));
+            
             #region Раздел запчасти
             for (int i = 8; q > i; i++)
             {
+                lblProduct.Invoke(new Action(() => lblProduct.Text = i.ToString()));
                 if (w.Cells[i, 1].Value == null)
                     break;
                 double articl;

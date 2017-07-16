@@ -42,6 +42,10 @@
             this.lblPassword = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.cbMiniText = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.lblAll = new System.Windows.Forms.Label();
+            this.lblProduct = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // rtbMiniText
@@ -164,11 +168,51 @@
             this.cbMiniText.Text = "Обновить краткое описание";
             this.cbMiniText.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(614, 205);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(82, 13);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "Всего позиций";
+            // 
+            // lblAll
+            // 
+            this.lblAll.AutoSize = true;
+            this.lblAll.Location = new System.Drawing.Point(702, 205);
+            this.lblAll.Name = "lblAll";
+            this.lblAll.Size = new System.Drawing.Size(13, 13);
+            this.lblAll.TabIndex = 15;
+            this.lblAll.Text = "0";
+            // 
+            // lblProduct
+            // 
+            this.lblProduct.AutoSize = true;
+            this.lblProduct.Location = new System.Drawing.Point(702, 218);
+            this.lblProduct.Name = "lblProduct";
+            this.lblProduct.Size = new System.Drawing.Size(13, 13);
+            this.lblProduct.TabIndex = 17;
+            this.lblProduct.Text = "0";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(614, 218);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(68, 13);
+            this.label4.TabIndex = 16;
+            this.label4.Text = "Обработано";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 450);
+            this.Controls.Add(this.lblProduct);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.lblAll);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.cbMiniText);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.lblPassword);
@@ -207,6 +251,10 @@
         private System.Windows.Forms.Label lblPassword;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox cbMiniText;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblAll;
+        private System.Windows.Forms.Label lblProduct;
+        private System.Windows.Forms.Label label4;
     }
 }
 
