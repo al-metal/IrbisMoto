@@ -264,7 +264,7 @@ namespace IrbisMoto
                     string titleText = titleTextTemplate;
                     string descriptionText = descriptionTextTemplate;
                     string keywordsText = keywordsTextTemplate;
-                    string discount = discountTemplate;
+                    string discount = discountTemplate.Replace("\"", "\"\"");
                     string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
 
                     string nameBold = boldOpen + name + boldClose;
