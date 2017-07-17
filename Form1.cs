@@ -369,12 +369,6 @@ namespace IrbisMoto
                         izmen = true;
                     }
 
-                    if (tovarList[42] == "&alsoBuy[0]=als")
-                    {
-                        tovarList[42] = nethouse.alsoBuyTovars(tovarList);
-                        izmen = true;
-                    }
-
                     if (tovarList[43] != "100")
                     {
                         tovarList[43] = "100";
@@ -411,7 +405,10 @@ namespace IrbisMoto
                     }
 
                     if (izmen & !del)
+                    {
+                        tovarList[42] = nethouse.alsoBuyTovars(tovarList);
                         nethouse.SaveTovar(cookie, tovarList);
+                    }
                 }
             }
             #endregion
@@ -424,7 +421,7 @@ namespace IrbisMoto
                 nethouse.UploadCSVNethouse(cookie, "naSite.csv");
             }
             #endregion
-            
+
             otv = httpRequest.getRequest("https://bike18.ru/products/category/katalog-zapchastey-irbis");
             MatchCollection razdelSite = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
             string[] allprod = File.ReadAllLines("allTovars");
@@ -447,7 +444,7 @@ namespace IrbisMoto
 
                     string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString().Trim();
                     bool b = false;
-                    
+
                     foreach (string str in allprod)
                     {
                         if (artProd == str)
@@ -486,7 +483,7 @@ namespace IrbisMoto
                     string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString().Trim();
                     bool b = false;
                     string reg = new Regex("[0-9]{13}").Match(artProd).ToString();
-                    if(reg == "")
+                    if (reg == "")
                     {
                         continue;
                     }
@@ -1220,7 +1217,29 @@ namespace IrbisMoto
             Properties.Settings.Default.password = tbPassword.Text;
             Properties.Settings.Default.Save();
 
+            minitextTemplate = MiniTextTemplateStr();
+            fullTextTemplate = FullTextTemplateStr();
+            keywordsTextTemplate = tbKeywords.Lines[0].ToString();
+            titleTextTemplate = tbTitle.Lines[0].ToString();
+            descriptionTextTemplate = tbDescription.Lines[0].ToString();
+            discountTemplate = discountTemplateStr();
+
+            Thread tabl = new Thread(() => UpdateTovarSnegohod());
+            forms = tabl;
+            forms.IsBackground = true;
+            forms.Start();
+        }
+
+        private void UpdateTovarSnegohod()
+        {
+            ControlsFormEnabledFalse();
             CookieContainer cookie = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
+            if (cookie.Count == 1)
+            {
+                MessageBox.Show("Логин или пароль для сайта введены не верно", "Ошибка логина/пароля");
+                ControlsFormEnabledTrue();
+                return;
+            }
 
             File.Delete("naSite.csv");
             File.Delete("allTovars");
@@ -1264,6 +1283,7 @@ namespace IrbisMoto
 
                     if (urlTovar == "")
                     {
+                        boldOpen = boldOpenCSV;
                         string slug = chpu.vozvr(name);
                         string razdel = irbisSnegohod(razdelSnegohod);
 
@@ -1278,19 +1298,17 @@ namespace IrbisMoto
                         string keywordsText = keywordsTextTemplate;
                         string discount = discountTemplate;
 
-                        miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("РАЗДЕЛ", razdelSnegohod).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
-
+                        miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
                         miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
 
-                        fullText = fullText.Replace("СКИДКА", discount).Replace("РАЗДЕЛ", razdelSnegohod).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
-
+                        fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
                         fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
 
-                        titleText = titleText.Replace("СКИДКА", discount).Replace("РАЗДЕЛ", razdelSnegohod).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+                        titleText = titleText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
 
-                        descriptionText = descriptionText.Replace("СКИДКА", discount).Replace("РАЗДЕЛ", razdelSnegohod).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+                        descriptionText = descriptionText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
 
-                        keywordsText = keywordsText.Replace("СКИДКА", discount).Replace("РАЗДЕЛ", razdelSnegohod).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+                        keywordsText = keywordsText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
 
                         titleText = textRemove(titleText, 255);
                         descriptionText = textRemove(descriptionText, 200);
@@ -1324,6 +1342,7 @@ namespace IrbisMoto
                     }
                     else
                     {
+                        boldOpen = boldOpenSite;
                         List<string> tovarList = new List<string>();
                         bool izmen = false;
                         bool del = false;
@@ -1343,7 +1362,7 @@ namespace IrbisMoto
                             string discount = discountTemplate;
 
                             string miniText = minitextTemplate;
-                            miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace("РАЗДЕЛ", razdelSnegohod).Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
+                            miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
                             miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
                             tovarList[7] = miniText;
 
@@ -1357,24 +1376,22 @@ namespace IrbisMoto
                             descriptionText = tbDescription.Lines[0].ToString();
                             keywordsText = tbKeywords.Lines[0].ToString();
 
-                            titleText = titleText.Replace("СКИДКА", discount).Replace("РАЗДЕЛ", razdelSnegohod).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+                            titleText = titleText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
 
-                            descriptionText = descriptionText.Replace("СКИДКА", discount).Replace("РАЗДЕЛ", razdelSnegohod).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+                            descriptionText = descriptionText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
 
-                            keywordsText = keywordsText.Replace("СКИДКА", discount).Replace("РАЗДЕЛ", razdelSnegohod).Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+                            keywordsText = keywordsText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
 
                             titleText = textRemove(titleText, 255);
                             descriptionText = textRemove(descriptionText, 200);
                             keywordsText = textRemove(keywordsText, 100);
 
+                            tovarList[11] = descriptionText;
+                            tovarList[12] = keywordsText;
+                            tovarList[13] = titleText;
+
                             // Обновление СЕО
 
-                            izmen = true;
-                        }
-
-                        if (tovarList[42] == "&alsoBuy[0]=als")
-                        {
-                            tovarList[42] = nethouse.alsoBuyTovars(tovarList);
                             izmen = true;
                         }
 
@@ -1414,11 +1431,71 @@ namespace IrbisMoto
                         }
 
                         if (izmen & !del)
+                        {
+                            tovarList[42] = nethouse.alsoBuyTovars(tovarList);
                             nethouse.SaveTovar(cookie, tovarList);
-
+                        }
                     }
                 }
             }
+
+
+            #region uploadInSIte
+            System.Threading.Thread.Sleep(20000);
+            string[] naSite1 = File.ReadAllLines("naSite.csv", Encoding.GetEncoding(1251));
+            if (naSite1.Length > 1)
+            {
+                nethouse.UploadCSVNethouse(cookie, "naSite.csv");
+            }
+            #endregion
+
+            otv = httpRequest.getRequest("https://bike18.ru/products/category/zapchasti-dlya-snegohodov-i-motobuksirovshchikov");
+            MatchCollection razdelSite = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
+            string[] allprod = File.ReadAllLines("allTovars");
+            for (int i = 0; razdelSite.Count > i; i++)
+            {
+                otv = httpRequest.getRequest("https://bike18.ru" + razdelSite[i].ToString() + "?page=all");
+                MatchCollection product = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Matches(otv);
+                for (int n = 0; product.Count > n; n++)
+                {
+                    string urlTovar = product[n].ToString();
+                    otv = httpRequest.getRequest(urlTovar);
+
+                    if (otv == "err")
+                    {
+                        StreamWriter s = new StreamWriter("badURL.txt", true);
+                        s.WriteLine(urlTovar);
+                        s.Close();
+                        continue;
+                    }
+
+                    string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString().Trim();
+                    bool b = false;
+                    string reg = new Regex("[0-9]{13}").Match(artProd).ToString();
+                    if (reg == "")
+                    {
+                        continue;
+                    }
+
+                    foreach (string str in allprod)
+                    {
+                        if (artProd == str)
+                        {
+                            b = true;
+                            break;
+                        }
+                    }
+
+                    if (!b)
+                    {
+                        nethouse.DeleteProduct(cookie, urlTovar);
+                        deleteTovar++;
+                    }
+                }
+            }
+            
+            MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
+            ControlsFormEnabledTrue();
         }
 
         private void ControlsFormEnabledTrue()
