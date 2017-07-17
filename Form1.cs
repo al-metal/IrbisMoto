@@ -424,13 +424,13 @@ namespace IrbisMoto
                 nethouse.UploadCSVNethouse(cookie, "naSite.csv");
             }
             #endregion
-
-            otv = httpRequest.getRequest("http://bike18.ru/products/category/1183836");
+            
+            otv = httpRequest.getRequest("https://bike18.ru/products/category/katalog-zapchastey-irbis");
             MatchCollection razdelSite = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
             string[] allprod = File.ReadAllLines("allTovars");
             for (int i = 0; razdelSite.Count > i; i++)
             {
-                otv = httpRequest.getRequest("http://bike18.ru" + razdelSite[i].ToString() + "/page/all");
+                otv = httpRequest.getRequest("https://bike18.ru" + razdelSite[i].ToString() + "?page=all");
                 MatchCollection product = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Matches(otv);
                 for (int n = 0; product.Count > n; n++)
                 {
@@ -447,6 +447,49 @@ namespace IrbisMoto
 
                     string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString().Trim();
                     bool b = false;
+                    
+                    foreach (string str in allprod)
+                    {
+                        if (artProd == str)
+                        {
+                            b = true;
+                            break;
+                        }
+                    }
+
+                    if (!b)
+                    {
+                        nethouse.DeleteProduct(cookie, urlTovar);
+                        deleteTovar++;
+                    }
+                }
+            }
+            otv = httpRequest.getRequest("https://bike18.ru/products/category/rashodniki-dlya-tehniki");
+            razdelSite = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
+            for (int i = 0; razdelSite.Count > i; i++)
+            {
+                otv = httpRequest.getRequest("https://bike18.ru" + razdelSite[i].ToString() + "?page=all");
+                MatchCollection product = new Regex("(?<=<a href=\").*(?=\"><div class=\"-relative item-image\")").Matches(otv);
+                for (int n = 0; product.Count > n; n++)
+                {
+                    string urlTovar = product[n].ToString();
+                    otv = httpRequest.getRequest(urlTovar);
+
+                    if (otv == "err")
+                    {
+                        StreamWriter s = new StreamWriter("badURL.txt", true);
+                        s.WriteLine(urlTovar);
+                        s.Close();
+                        continue;
+                    }
+
+                    string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString().Trim();
+                    bool b = false;
+                    string reg = new Regex("[0-9]{13}").Match(artProd).ToString();
+                    if(reg == "")
+                    {
+                        continue;
+                    }
 
                     foreach (string str in allprod)
                     {
