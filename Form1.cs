@@ -496,51 +496,12 @@ namespace IrbisMoto
                     string urlTovar = product[n].ToString();
                     otv = httpRequest.getRequest(urlTovar);
 
-                    if (otv == "err")
-                    {
-                        StreamWriter s = new StreamWriter("badURL.txt", true);
-                        s.WriteLine(urlTovar);
-                        s.Close();
-                        continue;
-                    }
-
-                    string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString().Trim();
-                    bool b = false;
-                    string reg = new Regex("[0-9]{13}").Match(artProd).ToString();
-                    if (reg == "")
-                    {
-                        continue;
-                    }
-
-                    foreach (string str in allprod)
-                    {
-                        if (artProd == str)
-                        {
-                            b = true;
-                            break;
-                        }
-                    }
-
-                    if (!b)
-                    {
-                        nethouse.DeleteProduct(cookie, urlTovar);
-                        deleteTovar++;
-                    }
+                    DeleteTovarNonePrice(cookie, urlTovar, allprod);
                 }
             }
 
             MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
             ControlsFormEnabledTrue();
-        }
-
-        private void UploadTovarInSite(CookieContainer cookie)
-        {
-            System.Threading.Thread.Sleep(20000);
-            string[] naSite1 = File.ReadAllLines("naSite.csv", Encoding.GetEncoding(1251));
-            if (naSite1.Length > 1)
-            {
-                nethouse.UploadCSVNethouse(cookie, "naSite.csv");
-            }
         }
 
         private void UpdateTovarSnegohod()
@@ -717,36 +678,7 @@ namespace IrbisMoto
                     string urlTovar = product[n].ToString();
                     otv = httpRequest.getRequest(urlTovar);
 
-                    if (otv == "err")
-                    {
-                        StreamWriter s = new StreamWriter("badURL.txt", true);
-                        s.WriteLine(urlTovar);
-                        s.Close();
-                        continue;
-                    }
-
-                    string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString().Trim();
-                    bool b = false;
-                    string reg = new Regex("[0-9]{13}").Match(artProd).ToString();
-                    if (reg == "")
-                    {
-                        continue;
-                    }
-
-                    foreach (string str in allprod)
-                    {
-                        if (artProd == str)
-                        {
-                            b = true;
-                            break;
-                        }
-                    }
-
-                    if (!b)
-                    {
-                        nethouse.DeleteProduct(cookie, urlTovar);
-                        deleteTovar++;
-                    }
+                    DeleteTovarNonePrice(cookie, urlTovar, allprod);
                 }
             }
 
@@ -936,33 +868,10 @@ namespace IrbisMoto
                     string urlTovar = product[n].ToString();
                     otv = httpRequest.getRequest(urlTovar);
 
-                    if (otv == "err")
-                    {
-                        StreamWriter s = new StreamWriter("badURL.txt", true);
-                        s.WriteLine(urlTovar);
-                        s.Close();
-                        continue;
-                    }
-
-                    string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString().Trim();
-                    bool b = false;
-
-                    foreach (string str in allprod)
-                    {
-                        if (artProd == str)
-                        {
-                            b = true;
-                            break;
-                        }
-                    }
-
-                    if (!b)
-                    {
-                        nethouse.DeleteProduct(cookie, urlTovar);
-                        deleteTovar++;
-                    }
+                    DeleteTovarNonePrice(cookie, urlTovar, allprod);
                 }
             }
+
             otv = httpRequest.getRequest("https://bike18.ru/products/category/rashodniki-dlya-tehniki");
             razdelSite = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
             for (int i = 0; razdelSite.Count > i; i++)
@@ -974,36 +883,7 @@ namespace IrbisMoto
                     string urlTovar = product[n].ToString();
                     otv = httpRequest.getRequest(urlTovar);
 
-                    if (otv == "err")
-                    {
-                        StreamWriter s = new StreamWriter("badURL.txt", true);
-                        s.WriteLine(urlTovar);
-                        s.Close();
-                        continue;
-                    }
-
-                    string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString().Trim();
-                    bool b = false;
-                    string reg = new Regex("[0-9]{13}").Match(artProd).ToString();
-                    if (reg == "")
-                    {
-                        continue;
-                    }
-
-                    foreach (string str in allprod)
-                    {
-                        if (artProd == str)
-                        {
-                            b = true;
-                            break;
-                        }
-                    }
-
-                    if (!b)
-                    {
-                        nethouse.DeleteProduct(cookie, urlTovar);
-                        deleteTovar++;
-                    }
+                    DeleteTovarNonePrice(cookie, urlTovar, allprod);
                 }
             }
             MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
@@ -1768,6 +1648,50 @@ namespace IrbisMoto
             tbTitle.Invoke(new Action(() => tbTitle.Enabled = false));
             cbMiniText.Invoke(new Action(() => cbMiniText.Enabled = false));
             btnAccessory.Invoke(new Action(() => btnAccessory.Enabled = false));
+        }
+
+        private void UploadTovarInSite(CookieContainer cookie)
+        {
+            System.Threading.Thread.Sleep(20000);
+            string[] naSite1 = File.ReadAllLines("naSite.csv", Encoding.GetEncoding(1251));
+            if (naSite1.Length > 1)
+            {
+                nethouse.UploadCSVNethouse(cookie, "naSite.csv");
+            }
+        }
+
+        private void DeleteTovarNonePrice(CookieContainer cookie, string urlTovar, string[] allprod)
+        {
+            if (otv == "err")
+            {
+                StreamWriter s = new StreamWriter("badURL.txt", true);
+                s.WriteLine(urlTovar);
+                s.Close();
+                return;
+            }
+
+            string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString().Trim();
+            bool b = false;
+            string reg = new Regex("[0-9]{13}").Match(artProd).ToString();
+            if (reg == "")
+            {
+                return;
+            }
+
+            foreach (string str in allprod)
+            {
+                if (artProd == str)
+                {
+                    b = true;
+                    break;
+                }
+            }
+
+            if (!b)
+            {
+                nethouse.DeleteProduct(cookie, urlTovar);
+                deleteTovar++;
+            }
         }
     }
 }
