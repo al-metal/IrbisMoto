@@ -352,6 +352,11 @@ namespace IrbisMoto
                 else
                 {
                     double articl = (double)w.Cells[i, 3].Value;
+                    try { articl = (double)w.Cells[i, 1].Value; }
+                    catch
+                    {
+                        continue;
+                    }
                     allTovarInFile(articl);
                     double quantity = (double)w.Cells[i, 10].Value;
                     double priceIrbisDiler = (double)w.Cells[i, 7].Value;
@@ -625,6 +630,11 @@ namespace IrbisMoto
                 else
                 {
                     double articl = (double)w.Cells[i, 1].Value;
+                    try { articl = (double)w.Cells[i, 1].Value; }
+                    catch
+                    {
+                        continue;
+                    }
                     allTovarInFile(articl);
                     double quantity = (double)w.Cells[i, 9].Value;
                     double priceIrbisDiler = (double)w.Cells[i, 6].Value;
