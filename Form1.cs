@@ -481,16 +481,8 @@ namespace IrbisMoto
                     }
                 }
             }
-
-
-            #region uploadInSIte
-            System.Threading.Thread.Sleep(20000);
-            string[] naSite1 = File.ReadAllLines("naSite.csv", Encoding.GetEncoding(1251));
-            if (naSite1.Length > 1)
-            {
-                nethouse.UploadCSVNethouse(cookie, "naSite.csv");
-            }
-            #endregion
+            
+            UploadTovarInSite(cookie);
 
             otv = httpRequest.getRequest("https://bike18.ru/products/category/zapchasti-dlya-snegohodov-i-motobuksirovshchikov");
             MatchCollection razdelSite = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
@@ -539,6 +531,16 @@ namespace IrbisMoto
 
             MessageBox.Show("Удалено " + deleteTovar + " позиций товара\n " + "Отредактировано цен на товары " + editPrice);
             ControlsFormEnabledTrue();
+        }
+
+        private void UploadTovarInSite(CookieContainer cookie)
+        {
+            System.Threading.Thread.Sleep(20000);
+            string[] naSite1 = File.ReadAllLines("naSite.csv", Encoding.GetEncoding(1251));
+            if (naSite1.Length > 1)
+            {
+                nethouse.UploadCSVNethouse(cookie, "naSite.csv");
+            }
         }
 
         private void UpdateTovarSnegohod()
@@ -701,14 +703,7 @@ namespace IrbisMoto
             }
 
 
-            #region uploadInSIte
-            System.Threading.Thread.Sleep(20000);
-            string[] naSite1 = File.ReadAllLines("naSite.csv", Encoding.GetEncoding(1251));
-            if (naSite1.Length > 1)
-            {
-                nethouse.UploadCSVNethouse(cookie, "naSite.csv");
-            }
-            #endregion
+            UploadTovarInSite(cookie);
 
             otv = httpRequest.getRequest("https://bike18.ru/products/category/zapchasti-dlya-snegohodov-i-motobuksirovshchikov");
             MatchCollection razdelSite = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
@@ -927,14 +922,7 @@ namespace IrbisMoto
             }
             #endregion
 
-            #region uploadInSIte
-            System.Threading.Thread.Sleep(20000);
-            string[] naSite1 = File.ReadAllLines("naSite.csv", Encoding.GetEncoding(1251));
-            if (naSite1.Length > 1)
-            {
-                nethouse.UploadCSVNethouse(cookie, "naSite.csv");
-            }
-            #endregion
+            UploadTovarInSite(cookie);
 
             otv = httpRequest.getRequest("https://bike18.ru/products/category/katalog-zapchastey-irbis");
             MatchCollection razdelSite = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
