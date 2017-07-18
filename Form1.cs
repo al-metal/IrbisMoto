@@ -822,162 +822,7 @@ namespace IrbisMoto
 
         private string ReturnRazdel(string razdel)
         {
-            throw new NotImplementedException();
-        }
-
-        private void DownloadImages(ExcelRange er, double articl)
-        {
-            if (er.Hyperlink != null)
-            {
-                string urlImg = er.Hyperlink.ToString();
-                try
-                {
-                    webClient.DownloadFile(urlImg, "pic\\" + articl + ".jpg");
-                }
-                catch
-                {
-
-                }
-            }
-        }
-
-        private string irbisKiyoshiRazdel(string razdelkiyoshi)
-        {
-            string podrazdel = "";
-            switch (razdelkiyoshi)
-            {
-                case "Амортизаторы":
-                    podrazdel = "Амортизаторы KIYOSHI";
-                    break;
-                case "Воздушные фильтры нулевого сопротивления":
-                    podrazdel = "Воздушные фильтры KIYOSHI";
-                    break;
-                case "Глушители спортивные":
-                    podrazdel = "Спортивные глушители KIYOSHI";
-                    break;
-                case "Карбюраторы, жиклеры карбюраторов":
-                    podrazdel = "Карбюраторы, жиклеры карбюраторов KIYOSHI";
-                    break;
-                case "Электрооборудование":
-                    podrazdel = "Электрооборудование KIYOSHI";
-                    break;
-                case "Валы коленчатые":
-                    podrazdel = "Сцепления, барабаны, пружины сцепления KIYOSHI";
-                    break;
-                case "Подшипники":
-                    podrazdel = "Подшипники KIYOSHI";
-                    break;
-                case "Вариаторы, грузики вариатора":
-                    podrazdel = "Вариаторы, грузики вариатора KIYOSHI";
-                    break;
-                case "Ремни вариатора":
-                    podrazdel = "Ремни вариатора KIYOSHI";
-                    break;
-                case "Сцепления, барабаны, пружины сцепления":
-                    podrazdel = "Сцепления, барабаны, пружины сцепления KIYOSHI";
-                    break;
-                case "Цилиндро-поршневые группы":
-                    podrazdel = "Цилиндро- поршневые группы KIYOSHI";
-                    break;
-                case "Лепестковые клапаны":
-                    podrazdel = "Лепестковые клапаны KIYOSHI";
-                    break;
-                case "Газораспределительный механизм":
-                    podrazdel = "Газораспределительный механизм KIYOSHI";
-                    break;
-                case "Стайлинг":
-                    podrazdel = "Стайлинг KIYOSHI";
-                    break;
-                case "Наклейки":
-                    podrazdel = "Стайлинг KIYOSHI";
-                    break;
-                default:
-                    break;
-            }
-
-            string razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => " + podrazdel;
-            return razdel;
-        }
-
-        private void allTovarInFile(double articl)
-        {
-            string article = articl.ToString();
-            StreamWriter sw = new StreamWriter("allTovars", true);
-            sw.WriteLine(article);
-            sw.Close();
-        }
-
-        private string actionText(string action)
-        {
-            switch (action)
-            {
-                case "ЛУЧШАЯ ЦЕНА!":
-                    action = "&markers[3]=1";
-                    break;
-                case "Новое поступление":
-                    action = "&markers[1]=1";
-                    break;
-                case "Новое постуление":
-                    action = "&markers[1]=1";
-                    break;
-                case "Новинка":
-                    action = "&markers[1]=1";
-                    break;
-                default:
-                    action = "";
-                    break;
-            }
-            return action;
-        }
-
-        private string textRemove(string text, int count)
-        {
-            if (text.Length > count)
-            {
-                text = text.Remove(count);
-                text = text.Remove(text.LastIndexOf(" "));
-            }
-            return text;
-        }
-
-        private string discountTemplateStr()
-        {
-            string discount = "<p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 1. <a href=\"https://bike18.ru/oplata-dostavka\">Выгодные условия доставки по всей России!</a></span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 2. <a href=\"https://bike18.ru/stock\">Нашли дешевле!? 110% разницы Ваши!</a></span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 3. <a href=\"https://bike18.ru/service\">Также обращайтесь в наш сервис центр в Ижевске!</a></span></p>";
-            return discount;
-        }
-
-        private double Price(double priceDiler)
-        {
-            double discount = 0;
-            double actualPrice = 0;
-            if (priceDiler <= 15)
-                discount = 2.7;
-            else
-            if (priceDiler <= 199)
-                discount = 2.5;
-            else
-            if (priceDiler <= 2000)
-                discount = 1.7;
-            else
-            if (priceDiler <= 7999)
-                discount = 1.4;
-            else
-            if (priceDiler >= 8000)
-                discount = 1.3;
-
-            actualPrice = priceDiler * discount;
-            actualPrice = Math.Round(actualPrice, 0);
-            int price = Convert.ToInt32(actualPrice);
-            price = (price / 10) * 10;
-            actualPrice = Convert.ToDouble(price);
-
-            return actualPrice;
-        }
-
-        private string irbisZapchastiRazdel(string strRazdel)
-        {
-            string razdel = "Запчасти и расходники => Каталог запчастей IRBIS => ";
-            switch (strRazdel)
+            switch (razdel)
             {
                 case "гусеницы":
                     razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => Гусеницы";
@@ -1449,6 +1294,97 @@ namespace IrbisMoto
                     break;
             }
             return razdel;
+        }
+
+        private void DownloadImages(ExcelRange er, double articl)
+        {
+            if (er.Hyperlink != null)
+            {
+                string urlImg = er.Hyperlink.ToString();
+                try
+                {
+                    webClient.DownloadFile(urlImg, "pic\\" + articl + ".jpg");
+                }
+                catch
+                {
+
+                }
+            }
+        }
+
+        private void allTovarInFile(double articl)
+        {
+            string article = articl.ToString();
+            StreamWriter sw = new StreamWriter("allTovars", true);
+            sw.WriteLine(article);
+            sw.Close();
+        }
+
+        private string actionText(string action)
+        {
+            switch (action)
+            {
+                case "ЛУЧШАЯ ЦЕНА!":
+                    action = "&markers[3]=1";
+                    break;
+                case "Новое поступление":
+                    action = "&markers[1]=1";
+                    break;
+                case "Новое постуление":
+                    action = "&markers[1]=1";
+                    break;
+                case "Новинка":
+                    action = "&markers[1]=1";
+                    break;
+                default:
+                    action = "";
+                    break;
+            }
+            return action;
+        }
+
+        private string textRemove(string text, int count)
+        {
+            if (text.Length > count)
+            {
+                text = text.Remove(count);
+                text = text.Remove(text.LastIndexOf(" "));
+            }
+            return text;
+        }
+
+        private string discountTemplateStr()
+        {
+            string discount = "<p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 1. <a href=\"https://bike18.ru/oplata-dostavka\">Выгодные условия доставки по всей России!</a></span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 2. <a href=\"https://bike18.ru/stock\">Нашли дешевле!? 110% разницы Ваши!</a></span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 3. <a href=\"https://bike18.ru/service\">Также обращайтесь в наш сервис центр в Ижевске!</a></span></p>";
+            return discount;
+        }
+
+        private double Price(double priceDiler)
+        {
+            double discount = 0;
+            double actualPrice = 0;
+            if (priceDiler <= 15)
+                discount = 2.7;
+            else
+            if (priceDiler <= 199)
+                discount = 2.5;
+            else
+            if (priceDiler <= 2000)
+                discount = 1.7;
+            else
+            if (priceDiler <= 7999)
+                discount = 1.4;
+            else
+            if (priceDiler >= 8000)
+                discount = 1.3;
+
+            actualPrice = priceDiler * discount;
+            actualPrice = Math.Round(actualPrice, 0);
+            int price = Convert.ToInt32(actualPrice);
+            price = (price / 10) * 10;
+            actualPrice = Convert.ToDouble(price);
+
+            return actualPrice;
         }
 
         private string MiniTextTemplateStr()
