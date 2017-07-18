@@ -46,6 +46,7 @@
             this.lblAll = new System.Windows.Forms.Label();
             this.lblProduct = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.btnAccessory = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // rtbMiniText
@@ -87,7 +88,7 @@
             // 
             // btnSaveTemplates
             // 
-            this.btnSaveTemplates.Location = new System.Drawing.Point(614, 151);
+            this.btnSaveTemplates.Location = new System.Drawing.Point(613, 184);
             this.btnSaveTemplates.Name = "btnSaveTemplates";
             this.btnSaveTemplates.Size = new System.Drawing.Size(161, 28);
             this.btnSaveTemplates.TabIndex = 5;
@@ -107,7 +108,7 @@
             // 
             // btnUpdateImage
             // 
-            this.btnUpdateImage.Location = new System.Drawing.Point(614, 78);
+            this.btnUpdateImage.Location = new System.Drawing.Point(613, 111);
             this.btnUpdateImage.Name = "btnUpdateImage";
             this.btnUpdateImage.Size = new System.Drawing.Size(161, 28);
             this.btnUpdateImage.TabIndex = 7;
@@ -117,14 +118,14 @@
             // 
             // tbLogin
             // 
-            this.tbLogin.Location = new System.Drawing.Point(614, 125);
+            this.tbLogin.Location = new System.Drawing.Point(613, 158);
             this.tbLogin.Name = "tbLogin";
             this.tbLogin.Size = new System.Drawing.Size(75, 20);
             this.tbLogin.TabIndex = 8;
             // 
             // tbPassword
             // 
-            this.tbPassword.Location = new System.Drawing.Point(700, 125);
+            this.tbPassword.Location = new System.Drawing.Point(699, 158);
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.Size = new System.Drawing.Size(75, 20);
             this.tbPassword.TabIndex = 9;
@@ -133,7 +134,7 @@
             // lblLogin
             // 
             this.lblLogin.AutoSize = true;
-            this.lblLogin.Location = new System.Drawing.Point(614, 109);
+            this.lblLogin.Location = new System.Drawing.Point(613, 142);
             this.lblLogin.Name = "lblLogin";
             this.lblLogin.Size = new System.Drawing.Size(38, 13);
             this.lblLogin.TabIndex = 10;
@@ -142,7 +143,7 @@
             // lblPassword
             // 
             this.lblPassword.AutoSize = true;
-            this.lblPassword.Location = new System.Drawing.Point(697, 109);
+            this.lblPassword.Location = new System.Drawing.Point(696, 142);
             this.lblPassword.Name = "lblPassword";
             this.lblPassword.Size = new System.Drawing.Size(45, 13);
             this.lblPassword.TabIndex = 11;
@@ -161,7 +162,7 @@
             // cbMiniText
             // 
             this.cbMiniText.AutoSize = true;
-            this.cbMiniText.Location = new System.Drawing.Point(614, 185);
+            this.cbMiniText.Location = new System.Drawing.Point(613, 218);
             this.cbMiniText.Name = "cbMiniText";
             this.cbMiniText.Size = new System.Drawing.Size(170, 17);
             this.cbMiniText.TabIndex = 13;
@@ -171,7 +172,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(614, 205);
+            this.label1.Location = new System.Drawing.Point(613, 238);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(82, 13);
             this.label1.TabIndex = 14;
@@ -180,7 +181,7 @@
             // lblAll
             // 
             this.lblAll.AutoSize = true;
-            this.lblAll.Location = new System.Drawing.Point(702, 205);
+            this.lblAll.Location = new System.Drawing.Point(701, 238);
             this.lblAll.Name = "lblAll";
             this.lblAll.Size = new System.Drawing.Size(13, 13);
             this.lblAll.TabIndex = 15;
@@ -189,7 +190,7 @@
             // lblProduct
             // 
             this.lblProduct.AutoSize = true;
-            this.lblProduct.Location = new System.Drawing.Point(702, 218);
+            this.lblProduct.Location = new System.Drawing.Point(701, 251);
             this.lblProduct.Name = "lblProduct";
             this.lblProduct.Size = new System.Drawing.Size(13, 13);
             this.lblProduct.TabIndex = 17;
@@ -198,17 +199,28 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(614, 218);
+            this.label4.Location = new System.Drawing.Point(613, 251);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(68, 13);
             this.label4.TabIndex = 16;
             this.label4.Text = "Обработано";
+            // 
+            // btnAccessory
+            // 
+            this.btnAccessory.Location = new System.Drawing.Point(613, 78);
+            this.btnAccessory.Name = "btnAccessory";
+            this.btnAccessory.Size = new System.Drawing.Size(162, 27);
+            this.btnAccessory.TabIndex = 18;
+            this.btnAccessory.Text = "Акссесуары";
+            this.btnAccessory.UseVisualStyleBackColor = true;
+            this.btnAccessory.Click += new System.EventHandler(this.btnAccessory_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 450);
+            this.Controls.Add(this.btnAccessory);
             this.Controls.Add(this.lblProduct);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.lblAll);
@@ -255,6 +267,7 @@
         private System.Windows.Forms.Label lblAll;
         private System.Windows.Forms.Label lblProduct;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button btnAccessory;
     }
 }
 
