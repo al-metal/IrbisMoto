@@ -351,8 +351,8 @@ namespace IrbisMoto
                 }
                 else
                 {
-                    double articl = (double)w.Cells[i, 3].Value;
-                    try { articl = (double)w.Cells[i, 1].Value; }
+                    double articl;
+                    try { articl = (double)w.Cells[i, 3].Value; }
                     catch
                     {
                         continue;
@@ -629,7 +629,7 @@ namespace IrbisMoto
                 }
                 else
                 {
-                    double articl = (double)w.Cells[i, 1].Value;
+                    double articl;
                     try { articl = (double)w.Cells[i, 1].Value; }
                     catch
                     {
