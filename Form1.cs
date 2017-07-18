@@ -45,6 +45,7 @@ namespace IrbisMoto
         string titleTextTemplate;
         string descriptionTextTemplate;
         string discountTemplate;
+        List<string> newProduct = new List<string>();
 
         bool chekedEditMiniText;
 
@@ -333,8 +334,7 @@ namespace IrbisMoto
             File.Delete("naSite.csv");
             File.Delete("allTovars");
             nethouse.NewListUploadinBike18("naSite");
-            List<string> newProduct = new List<string>();
-
+            
             chekedEditMiniText = cbMiniText.Checked;
 
             FileInfo file = new FileInfo("Прайс-лист ТД Мегаполис 07.07.2017 Москва.xlsx");
@@ -381,63 +381,7 @@ namespace IrbisMoto
 
                     if (urlTovar == "" || urlTovar == null)
                     {
-                        boldOpen = boldOpenCSV;
-                        string slug = chpu.vozvr(name);
-                        string razdel = irbisAccessory(razdelSnegohod);
-
-                        string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
-
-                        string nameBold = boldOpen + name + boldClose;
-
-                        string miniText = minitextTemplate;
-                        string fullText = fullTextTemplate;
-                        string titleText = titleTextTemplate;
-                        string descriptionText = descriptionTextTemplate;
-                        string keywordsText = keywordsTextTemplate;
-                        string discount = discountTemplate;
-                        discount = discount.Replace("\"", "\"\"");
-
-                        miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
-                        miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
-
-                        fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
-                        fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
-
-                        titleText = titleText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                        descriptionText = descriptionText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                        keywordsText = keywordsText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                        titleText = textRemove(titleText, 255);
-                        descriptionText = textRemove(descriptionText, 200);
-                        keywordsText = textRemove(keywordsText, 100);
-                        slug = textRemove(slug, 64);
-
-                        string stock = (string)w.Cells[i, 14].Value;
-
-                        newProduct = new List<string>();
-                        newProduct.Add("");                                 //id
-                        newProduct.Add("\"" + articl + "\"");               //артикул
-                        newProduct.Add("\"" + name + "\"");                 //название
-                        newProduct.Add("\"" + actualPrice + "\"");          //стоимость
-                        newProduct.Add("\"" + "" + "\"");                   //со скидкой
-                        newProduct.Add("\"" + razdel + "\"");               //раздел товара
-                        newProduct.Add("\"" + "100" + "\"");                //в наличии
-                        newProduct.Add("\"" + "0" + "\"");                  //поставка
-                        newProduct.Add("\"" + "1" + "\"");                  //срок поставки
-                        newProduct.Add("\"" + miniText + "\"");             //краткий текст
-                        newProduct.Add("\"" + fullText + "\"");             //полностью текст
-                        newProduct.Add("\"" + titleText + "\"");            //заголовок страницы
-                        newProduct.Add("\"" + descriptionText + "\"");      //описание
-                        newProduct.Add("\"" + keywordsText + "\"");         //ключевые слова
-                        newProduct.Add("\"" + slug + "\"");                 //ЧПУ
-                        newProduct.Add("");                                 //с этим товаром покупают
-                        newProduct.Add("");                                 //рекламные метки
-                        newProduct.Add("\"" + "1" + "\"");                  //показывать
-                        newProduct.Add("\"" + "0" + "\"");                  //удалить
-
-                        files.fileWriterCSV(newProduct, "naSite");
+                        WriteInCSV(articl.ToString(), name, razdelSnegohod, actualPrice.ToString());
                     }
                     else
                     {
@@ -655,62 +599,7 @@ namespace IrbisMoto
 
                     if (urlTovar == "")
                     {
-                        boldOpen = boldOpenCSV;
-                        string slug = chpu.vozvr(name);
-                        string razdel = irbisSnegohod(razdelSnegohod);
-
-                        string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
-
-                        string nameBold = boldOpen + name + boldClose;
-
-                        string miniText = minitextTemplate;
-                        string fullText = fullTextTemplate;
-                        string titleText = titleTextTemplate;
-                        string descriptionText = descriptionTextTemplate;
-                        string keywordsText = keywordsTextTemplate;
-                        string discount = discountTemplate;
-
-                        miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
-                        miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
-
-                        fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
-                        fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
-
-                        titleText = titleText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                        descriptionText = descriptionText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                        keywordsText = keywordsText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                        titleText = textRemove(titleText, 255);
-                        descriptionText = textRemove(descriptionText, 200);
-                        keywordsText = textRemove(keywordsText, 100);
-                        slug = textRemove(slug, 64);
-
-                        string stock = (string)w.Cells[i, 14].Value;
-
-                        newProduct = new List<string>();
-                        newProduct.Add("");                                 //id
-                        newProduct.Add("\"" + articl + "\"");               //артикул
-                        newProduct.Add("\"" + name + "\"");                 //название
-                        newProduct.Add("\"" + actualPrice + "\"");          //стоимость
-                        newProduct.Add("\"" + "" + "\"");                   //со скидкой
-                        newProduct.Add("\"" + razdel + "\"");               //раздел товара
-                        newProduct.Add("\"" + "100" + "\"");                //в наличии
-                        newProduct.Add("\"" + "0" + "\"");                  //поставка
-                        newProduct.Add("\"" + "1" + "\"");                  //срок поставки
-                        newProduct.Add("\"" + miniText + "\"");             //краткий текст
-                        newProduct.Add("\"" + fullText + "\"");             //полностью текст
-                        newProduct.Add("\"" + titleText + "\"");            //заголовок страницы
-                        newProduct.Add("\"" + descriptionText + "\"");      //описание
-                        newProduct.Add("\"" + keywordsText + "\"");         //ключевые слова
-                        newProduct.Add("\"" + slug + "\"");                 //ЧПУ
-                        newProduct.Add("");                                 //с этим товаром покупают
-                        newProduct.Add("");                                 //рекламные метки
-                        newProduct.Add("\"" + "1" + "\"");                  //показывать
-                        newProduct.Add("\"" + "0" + "\"");                  //удалить
-
-                        files.fileWriterCSV(newProduct, "naSite");
+                        WriteInCSV(articl.ToString(), name, razdelSnegohod, actualPrice.ToString());
                     }
                     else
                     {
@@ -935,66 +824,9 @@ namespace IrbisMoto
 
                 if (urlTovar == null)
                 {
-                    boldOpen = boldOpenCSV;
-                    string slug = chpu.vozvr(name);
                     int space = name.IndexOf(" ");
                     string strRazdel = name.Remove(space, name.Length - space);
-                    string razdel = irbisZapchastiRazdel(strRazdel);
-
-                    string miniText = minitextTemplate;
-                    string fullText = fullTextTemplate;
-                    string titleText = titleTextTemplate;
-                    string descriptionText = descriptionTextTemplate;
-                    string keywordsText = keywordsTextTemplate;
-                    string discount = discountTemplate.Replace("\"", "\"\"");
-                    string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
-
-                    string nameBold = boldOpen + name + boldClose;
-
-                    miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
-                    miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
-
-                    fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
-                    fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
-
-                    titleText = titleText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                    descriptionText = descriptionText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                    keywordsText = keywordsText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
-
-                    titleText = textRemove(titleText, 255);
-                    descriptionText = textRemove(descriptionText, 200);
-                    keywordsText = textRemove(keywordsText, 100);
-                    slug = textRemove(slug, 64);
-
-                    string stock = (string)w.Cells[i, 14].Value;
-                    bool kioshi = name.Contains("KIYOSHI");
-                    if (kioshi)
-                        continue;
-
-                    newProduct = new List<string>();
-                    newProduct.Add("");                                 //id
-                    newProduct.Add("\"" + articl + "\"");               //артикул
-                    newProduct.Add("\"" + name + "\"");                 //название
-                    newProduct.Add("\"" + actualPrice + "\"");          //стоимость
-                    newProduct.Add("\"" + "" + "\"");                   //со скидкой
-                    newProduct.Add("\"" + razdel + "\"");               //раздел товара
-                    newProduct.Add("\"" + "100" + "\"");                //в наличии
-                    newProduct.Add("\"" + "0" + "\"");                  //поставка
-                    newProduct.Add("\"" + "1" + "\"");                  //срок поставки
-                    newProduct.Add("\"" + miniText + "\"");             //краткий текст
-                    newProduct.Add("\"" + fullText + "\"");             //полностью текст
-                    newProduct.Add("\"" + titleText + "\"");            //заголовок страницы
-                    newProduct.Add("\"" + descriptionText + "\"");      //описание
-                    newProduct.Add("\"" + keywordsText + "\"");         //ключевые слова
-                    newProduct.Add("\"" + slug + "\"");                 //ЧПУ
-                    newProduct.Add("");                                 //с этим товаром покупают
-                    newProduct.Add("");                                 //рекламные метки
-                    newProduct.Add("\"" + "1" + "\"");                  //показывать
-                    newProduct.Add("\"" + "0" + "\"");                  //удалить
-
-                    files.fileWriterCSV(newProduct, "naSite");
+                    WriteInCSV(articl.ToString(), name, strRazdel, actualPrice.ToString());
                 }
                 else
                 {
@@ -1192,6 +1024,70 @@ namespace IrbisMoto
 
         #endregion
 
+        private void WriteInCSV(string articl, string name, string razdel, string actualPrice)
+        {
+            boldOpen = boldOpenCSV;
+            string slug = chpu.vozvr(name);
+            razdel = ReturnRazdel(razdel);
+
+            string dblProduct = "НАЗВАНИЕ также подходит для: аналогичных моделей.";
+
+            string nameBold = boldOpen + name + boldClose;
+
+            string miniText = minitextTemplate;
+            string fullText = fullTextTemplate;
+            string titleText = titleTextTemplate;
+            string descriptionText = descriptionTextTemplate;
+            string keywordsText = keywordsTextTemplate;
+            string discount = discountTemplate;
+            discount = discount.Replace("\"", "\"\"");
+
+            miniText = miniText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString()).Replace("<p><br /></p><p><br /></p><p><br /></p><p>", "<p><br /></p>");
+            miniText = miniText.Remove(miniText.LastIndexOf("<p>"));
+
+            fullText = fullText.Replace("СКИДКА", discount).Replace("ДУБЛЬ", dblProduct).Replace(" | РАЗДЕЛ", "").Replace("НАЗВАНИЕ", nameBold).Replace("АРТИКУЛ", articl.ToString());
+            fullText = fullText.Remove(fullText.LastIndexOf("<p>"));
+
+            titleText = titleText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+            descriptionText = descriptionText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+            keywordsText = keywordsText.Replace("СКИДКА", discount).Replace(" | РАЗДЕЛ", "").Replace("ДУБЛЬ", dblProduct).Replace("НАЗВАНИЕ", name).Replace("АРТИКУЛ", articl.ToString());
+
+            titleText = textRemove(titleText, 255);
+            descriptionText = textRemove(descriptionText, 200);
+            keywordsText = textRemove(keywordsText, 100);
+            slug = textRemove(slug, 64);
+
+            newProduct = new List<string>();
+            newProduct.Add("");                                 //id
+            newProduct.Add("\"" + articl + "\"");               //артикул
+            newProduct.Add("\"" + name + "\"");                 //название
+            newProduct.Add("\"" + actualPrice + "\"");          //стоимость
+            newProduct.Add("\"" + "" + "\"");                   //со скидкой
+            newProduct.Add("\"" + razdel + "\"");               //раздел товара
+            newProduct.Add("\"" + "100" + "\"");                //в наличии
+            newProduct.Add("\"" + "0" + "\"");                  //поставка
+            newProduct.Add("\"" + "1" + "\"");                  //срок поставки
+            newProduct.Add("\"" + miniText + "\"");             //краткий текст
+            newProduct.Add("\"" + fullText + "\"");             //полностью текст
+            newProduct.Add("\"" + titleText + "\"");            //заголовок страницы
+            newProduct.Add("\"" + descriptionText + "\"");      //описание
+            newProduct.Add("\"" + keywordsText + "\"");         //ключевые слова
+            newProduct.Add("\"" + slug + "\"");                 //ЧПУ
+            newProduct.Add("");                                 //с этим товаром покупают
+            newProduct.Add("");                                 //рекламные метки
+            newProduct.Add("\"" + "1" + "\"");                  //показывать
+            newProduct.Add("\"" + "0" + "\"");                  //удалить
+
+            files.fileWriterCSV(newProduct, "naSite");
+        }
+
+        private string ReturnRazdel(string razdel)
+        {
+            throw new NotImplementedException();
+        }
+
         private void DownloadImages(ExcelRange er, double articl)
         {
             if (er.Hyperlink != null)
@@ -1262,34 +1158,6 @@ namespace IrbisMoto
                     break;
             }
 
-            string razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => " + podrazdel;
-            return razdel;
-        }
-
-        private string irbisSnegohod(string razdelSnegohod)
-        {
-            string podrazdel = "";
-            switch (razdelSnegohod)
-            {
-                case "гусеницы":
-                    podrazdel = "Гусеницы";
-                    break;
-                case "снегоходы Буран":
-                    podrazdel = "Снегоходы Буран";
-                    break;
-                case "снегоходы Тайга":
-                    podrazdel = "Снегоходы Тайга";
-                    break;
-                case "снегоходы Dingo":
-                    podrazdel = "Снегоходы Dingo";
-                    break;
-                case "мотобуксировщики Мухтар":
-                    podrazdel = "Мотобуксировщики Мухтар";
-                    break;
-                default:
-                    podrazdel = "Разное";
-                    break;
-            }
             string razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => " + podrazdel;
             return razdel;
         }
@@ -1374,362 +1242,377 @@ namespace IrbisMoto
             string razdel = "Запчасти и расходники => Каталог запчастей IRBIS => ";
             switch (strRazdel)
             {
+                case "гусеницы":
+                    razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => Гусеницы";
+                    break;
+                case "снегоходы Буран":
+                    razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => Снегоходы Буран";
+                    break;
+                case "снегоходы Тайга":
+                    razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => Снегоходы Тайга";
+                    break;
+                case "снегоходы Dingo":
+                    razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => Снегоходы Dingo";
+                    break;
+                case "мотобуксировщики Мухтар":
+                    razdel = "Запчасти и расходники => Запчасти для снегоходов и мотобуксировщиков => Мотобуксировщики Мухтар";
+                    break;
                 case "Аккумуляторная":
                     razdel = "Запчасти и расходники => Расходники для мототехники => Аккумуляторы";
                     break;
                 case "Амортизатор":
-                    razdel = razdel + "Амортизаторы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Амортизаторы";
                     break;
                 case "Амортизаторы":
-                    razdel = razdel + "Амортизаторы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Амортизаторы";
                     break;
                 case "Багажник":
-                    razdel = razdel + "Багажники";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Багажники";
                     break;
                 case "Бак":
-                    razdel = razdel + "Баки масляные, топливные, системы охлаждения";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Баки масляные, топливные, системы охлаждения";
                     break;
                 case "Барабан":
-                    razdel = razdel + "Блоки переключения, бендиксы, барабаны";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Блоки переключения, бендиксы, барабаны";
                     break;
                 case "Бачок":
-                    razdel = razdel + "Баки масляные, топливные, системы охлаждения";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Баки масляные, топливные, системы охлаждения";
                     break;
                 case "Бендикс":
-                    razdel = razdel + "Блоки переключения, бендиксы, барабаны";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Блоки переключения, бендиксы, барабаны";
                     break;
                 case "Блок":
-                    razdel = razdel + "Блоки переключения, бендиксы, барабаны";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Блоки переключения, бендиксы, барабаны";
                     break;
                 case "Блоки":
-                    razdel = razdel + "Блоки переключения, бендиксы, барабаны";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Блоки переключения, бендиксы, барабаны";
                     break;
                 case "Болты":
-                    razdel = razdel + "Болты, буксы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Болты, буксы";
                     break;
                 case "Вал":
-                    razdel = razdel + "Валы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Валы";
                     break;
                 case "Валы":
-                    razdel = razdel + "Валы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Валы";
                     break;
                 case "Вариатор":
-                    razdel = razdel + "Вариаторы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Вариаторы";
                     break;
                 case "Вентиль":
-                    razdel = razdel + "Вентили";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Вентили";
                     break;
                 case "Вилка":
-                    razdel = razdel + "Вилки переключения передач";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Вилки переключения передач";
                     break;
                 case "Втулка":
-                    razdel = razdel + "Втулки";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Втулки";
                     break;
                 case "Генератор":
-                    razdel = razdel + "Генераторы в сборе";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Генераторы в сборе";
                     break;
                 case "Глушитель":
-                    razdel = razdel + "Глушители";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Глушители";
                     break;
                 case "Головка":
-                    razdel = razdel + "Головки цилиндра";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Головки цилиндра";
                     break;
                 case "грузики":
-                    razdel = razdel + "Грузики вариатора";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Грузики вариатора";
                     break;
                 case "Датчик":
-                    razdel = razdel + "Датчики";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Датчики";
                     break;
                 case "Двигатель":
-                    razdel = razdel + "Двигатели в сборе";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Двигатели в сборе";
                     break;
                 case "Демпфер":
-                    razdel = razdel + "Демпферы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Демпферы";
                     break;
                 case "Демпферные":
-                    razdel = razdel + "Демпферы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Демпферы";
                     break;
                 case "Диск":
-                    razdel = razdel + "Колесные диски";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Колесные диски";
                     break;
                 case "Диски":
-                    razdel = razdel + "Диски сцепления";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Диски сцепления";
                     break;
                 case "Жгут":
-                    razdel = razdel + "Жгуты проводов";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Жгуты проводов";
                     break;
                 case "Замков":
-                    razdel = razdel + "Замки";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Замки";
                     break;
                 case "Замок":
-                    razdel = razdel + "Замки";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Замки";
                     break;
                 case "Защита":
-                    razdel = razdel + "Защита двигателя";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Защита двигателя";
                     break;
                 case "Звезда":
                     razdel = "Запчасти и расходники => Расходники для мототехники => Звезды";
                     break;
                 case "Зубчатый":
-                    razdel = razdel + "Зубчатые сектора";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Зубчатые сектора";
                     break;
                 case "Камера":
-                    razdel = razdel + "Камеры";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Камеры";
                     break;
                 case "Индикатор":
-                    razdel = razdel + "Индикаторы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Индикаторы";
                     break;
                 case "Карбюратор":
-                    razdel = razdel + "Карбюраторы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Карбюраторы";
                     break;
                 case "Катушка":
-                    razdel = razdel + "Катушки зажигания";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Катушки зажигания";
                     break;
                 case "Клапан":
-                    razdel = razdel + "Клапаны";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Клапаны";
                     break;
                 case "Клапаны":
-                    razdel = razdel + "Клапаны";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Клапаны";
                     break;
                 case "Клипса":
-                    razdel = razdel + "Клипсы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Клипсы";
                     break;
                 case "Кнопка":
-                    razdel = razdel + "Кнопки";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Кнопки";
                     break;
                 case "Кнопки":
-                    razdel = razdel + "Кнопки";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Кнопки";
                     break;
                 case "Кожух":
-                    razdel = razdel + "Кожухи";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Кожухи";
                     break;
                 case "Коллектор":
-                    razdel = razdel + "Коллекторы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Коллекторы";
                     break;
                 case "Колодки":
                     razdel = "Запчасти и расходники => Расходники для мототехники => Тормозные колодки";
                     break;
                 case "Колпачок":
-                    razdel = razdel + "Свечные колпачки";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Свечные колпачки";
                     break;
                 case "Кольца":
-                    razdel = razdel + "Кольца";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Кольца";
                     break;
                 case "Кольцо":
-                    razdel = razdel + "Кольца";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Кольца";
                     break;
                 case "Коммутатор":
-                    razdel = razdel + "Коммутаторы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Коммутаторы";
                     break;
                 case "Коромысла":
-                    razdel = razdel + "Коромысла";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Коромысла";
                     break;
                 case "Корпус":
-                    razdel = razdel + "Корпуса картеров, предохранителей";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Корпуса картеров, предохранителей";
                     break;
                 case "Кран":
-                    razdel = razdel + "Топливные краны";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Топливные краны";
                     break;
                 case "Крепление":
-                    razdel = razdel + "Крепления и кронштейны";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Крепления и кронштейны";
                     break;
                 case "Кронштейн":
-                    razdel = razdel + "Крепления и кронштейны";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Крепления и кронштейны";
                     break;
                 case "Крыло":
-                    razdel = razdel + "Крылья";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Крылья";
                     break;
                 case "Крыльчатка":
-                    razdel = razdel + "Крыльчатки";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Крыльчатки";
                     break;
                 case "Крышка":
-                    razdel = razdel + "Крышки";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Крышки";
                     break;
                 case "Лампа":
-                    razdel = razdel + "Лампы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Лампы";
                     break;
                 case "Машинка":
-                    razdel = razdel + "Тормозные машинки";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Тормозные машинки";
                     break;
                 case "Мембрана":
-                    razdel = razdel + "Мембраны карбюратора";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Мембраны карбюратора";
                     break;
                 case "Муфта":
-                    razdel = razdel + "Обгонные муфты";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Обгонные муфты";
                     break;
                 case "Наконечник":
-                    razdel = razdel + "Наконечники рулевой тяги";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Наконечники рулевой тяги";
                     break;
                 case "Направляющие":
-                    razdel = razdel + "Направляющие цепи";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Направляющие цепи";
                     break;
                 case "Насос":
-                    razdel = razdel + "Насосы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Насосы";
                     break;
                 case "Натяжитель":
-                    razdel = razdel + "Натяжители цепи";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Натяжители цепи";
                     break;
                 case "Обтекатели":
-                    razdel = razdel + "Обтекатели";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Обтекатели";
                     break;
                 case "Обтекатель":
-                    razdel = razdel + "Обтекатели";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Обтекатели";
                     break;
                 case "Опора":
-                    razdel = razdel + "Опоры";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Опоры";
                     break;
                 case "Ось":
-                    razdel = razdel + "Оси";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Оси";
                     break;
                 case "Палец":
-                    razdel = razdel + "Поршневые пальцы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Поршневые пальцы";
                     break;
                 case "Панель":
-                    razdel = razdel + "Панели приборов";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Панели приборов";
                     break;
                 case "Патрубок":
-                    razdel = razdel + "Патрубки";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Патрубки";
                     break;
                 case "Педаль":
-                    razdel = razdel + "Педали тормоза";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Педали тормоза";
                     break;
                 case "Пластик":
-                    razdel = razdel + "Пластик";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Пластик";
                     break;
                 case "Подножка":
-                    razdel = razdel + "Подножки";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Подножки";
                     break;
                 case "Подножки":
-                    razdel = razdel + "Подножки";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Подножки";
                     break;
                 case "Подшипник":
-                    razdel = razdel + "Подшипники";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Подшипники";
                     break;
                 case "Подшипники":
-                    razdel = razdel + "Подшипники";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Подшипники";
                     break;
                 case "Поршневой":
-                    razdel = razdel + "Поршни";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Поршни";
                     break;
                 case "Привод":
-                    razdel = razdel + "Приводы спидометра";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Приводы спидометра";
                     break;
                 case "Прокладка":
-                    razdel = razdel + "Прокладки";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Прокладки";
                     break;
                 case "Прокладки":
-                    razdel = razdel + "Прокладки";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Прокладки";
                     break;
                 case "Пружина":
-                    razdel = razdel + "Пружины";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Пружины";
                     break;
                 case "Пружины":
-                    razdel = razdel + "Пружины";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Пружины";
                     break;
                 case "Радиатор":
-                    razdel = razdel + "Радиаторы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Радиаторы";
                     break;
                 case "Рама":
-                    razdel = razdel + "Рамы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Рамы";
                     break;
                 case "Реле":
-                    razdel = razdel + "Реле";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Реле";
                     break;
                 case "Реле-регулятор":
-                    razdel = razdel + "Реле";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Реле";
                     break;
                 case "Ремень":
-                    razdel = razdel + "Ремни вариатора";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Ремни вариатора";
                     break;
                 case "Ремкомплект":
-                    razdel = razdel + "Ремкомплекты карбюраторов";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Ремкомплекты карбюраторов";
                     break;
                 case "Решетка":
-                    razdel = razdel + "Решетки";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Решетки";
                     break;
                 case "Ролик":
-                    razdel = razdel + "Ролики натяжителя цепи";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Ролики натяжителя цепи";
                     break;
                 case "Ротор":
-                    razdel = razdel + "Роторы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Роторы";
                     break;
                 case "Руль":
-                    razdel = razdel + "Рули";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Рули";
                     break;
                 case "Ручка":
-                    razdel = razdel + "Ручки, рычаги";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Ручки, рычаги";
                     break;
                 case "Ручки":
-                    razdel = razdel + "Ручки, рычаги";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Ручки, рычаги";
                     break;
                 case "Рычаг":
-                    razdel = razdel + "Ручки, рычаги";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Ручки, рычаги";
                     break;
                 case "Рычаги":
-                    razdel = razdel + "Ручки, рычаги";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Ручки, рычаги";
                     break;
                 case "Сайлентблок":
-                    razdel = razdel + "Сайлентблоки, сальники";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Сайлентблоки, сальники";
                     break;
                 case "Сальник":
-                    razdel = razdel + "Сайлентблоки, сальники";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Сайлентблоки, сальники";
                     break;
                 case "Сальники":
-                    razdel = razdel + "Сайлентблоки, сальники";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Сайлентблоки, сальники";
                     break;
                 case "Свеча":
                     razdel = "Запчасти и расходники => Расходники для мототехники => Свечи зажигания";
                     break;
                 case "Сигнал":
-                    razdel = razdel + "Звуковые сигналы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Звуковые сигналы";
                     break;
                 case "Сиденье":
-                    razdel = razdel + "Сиденья";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Сиденья";
                     break;
                 case "Спица":
-                    razdel = razdel + "Спицы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Спицы";
                     break;
                 case "Стартер":
-                    razdel = razdel + "Статоры генератора";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Статоры генератора";
                     break;
                 case "Статор":
-                    razdel = razdel + "Статоры генератора";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Статоры генератора";
                     break;
                 case "Ступица":
-                    razdel = razdel + "Ступицы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Ступицы";
                     break;
                 case "Суппорт":
-                    razdel = razdel + "Суппорты";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Суппорты";
                     break;
                 case "Сцепление":
-                    razdel = razdel + "Сцепление в сборе";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Сцепление в сборе";
                     break;
                 case "Толкатель":
-                    razdel = razdel + "Толкатели";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Толкатели";
                     break;
                 case "Тормоз":
-                    razdel = razdel + "Тормоза";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Тормоза";
                     break;
                 case "Траверса":
-                    razdel = razdel + "Траверсы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Траверсы";
                     break;
                 case "Трос":
-                    razdel = razdel + "Тросы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Тросы";
                     break;
                 case "Турбина":
-                    razdel = razdel + "Трубки, турбины";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Трубки, турбины";
                     break;
                 case "Тяга":
-                    razdel = razdel + "Тяги";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Тяги";
                     break;
                 case "Указатели":
-                    razdel = razdel + "Указатели поворотов";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Указатели поворотов";
                     break;
                 case "Успокоитель":
-                    razdel = razdel + "Успокоители цепи";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Успокоители цепи";
                     break;
                 case "Фара":
-                    razdel = razdel + "Фары";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Фары";
                     break;
                 case "Фильтр":
                     razdel = "Запчасти и расходники => Расходники для мототехники => Фильтры";
@@ -1738,37 +1621,94 @@ namespace IrbisMoto
                     razdel = "Запчасти и расходники => Расходники для мототехники => Фильтры";
                     break;
                 case "Фонарь":
-                    razdel = razdel + "Фары";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Фары";
                     break;
                 case "Цапфа":
-                    razdel = razdel + "Цапфы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Цапфы";
                     break;
                 case "Цепь":
                     razdel = "Запчасти и расходники => Расходники для мототехники => Цепи";
                     break;
                 case "Цилиндро-поршневая":
-                    razdel = razdel + "ЦПГ";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => ЦПГ";
                     break;
                 case "Шестерни":
-                    razdel = razdel + "Шестерни и шайбы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Шестерни и шайбы";
                     break;
                 case "Шестерня":
-                    razdel = razdel + "Шестерни и шайбы";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Шестерни и шайбы";
                     break;
                 case "Шина":
                     razdel = "Запчасти и расходники => Расходники для мототехники => Моторезина";
                     break;
                 case "Шланг":
-                    razdel = razdel + "Шланги";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Шланги";
                     break;
                 case "Электроклапан":
-                    razdel = razdel + "Электроклапана карбюраторов";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Электроклапана карбюраторов";
                     break;
                 case "Электростартер":
-                    razdel = razdel + "Электростартеры";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Электростартеры";
+                    break;
+                case "Защита для мототехники":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Защита для мототехники";
+                    break;
+                case "Лебедки":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Лебедки";
+                    break;
+                case "Стекла ветровые":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Стекла ветровые";
+                    break;
+                case "Зеркала":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Зеркала";
+                    break;
+                case "Кофры, сумки":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Кофры, сумки";
+                    break;
+                case "Канистры для мототехники":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Канистры для мототехники";
+                    break;
+                case "Цепи на колеса":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Цепи на колеса";
+                    break;
+                case "Электроника":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Электроника";
+                    break;
+                case "Оптика, LED лампы":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Оптика, LED лампы";
+                    break;
+                case "Рули, ручки руля, наконечники руля, защита":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Рули, ручки руля, наконечники руля, защита";
+                    break;
+                case "Стайлинг, рамки номеров гос. регистрации":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Стайлинг, рамки номеров гос. регистрации";
+                    break;
+                case "Проставки амортизаторов":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Проставки амортизаторов";
+                    break;
+                case "Чехлы":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Чехлы";
+                    break;
+                case "Противоугонные устройства":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Противоугонные устройства";
+                    break;
+                case "Декоративные метизы":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Декоративные метизы";
+                    break;
+                case "Инструменты":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Инструменты";
+                    break;
+                case "Литература":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Литература";
+                    break;
+                case "Наклейки":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Наклейки";
+                    break;
+                case "Зимние аксессуары":
+                    razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => Зимние аксессуары";
                     break;
                 default:
-                    razdel = razdel + "Разное";
+                    razdel = "Запчасти и расходники => Каталог запчастей IRBIS => Разное";
                     break;
             }
             return razdel;
@@ -1840,78 +1780,6 @@ namespace IrbisMoto
             tbTitle.Invoke(new Action(() => tbTitle.Enabled = false));
             cbMiniText.Invoke(new Action(() => cbMiniText.Enabled = false));
             btnAccessory.Invoke(new Action(() => btnAccessory.Enabled = false));
-        }
-
-        private string irbisAccessory(string razdelSnegohod)
-        {
-            string razdel = "Аксессуары и инструменты => Аксессуары и инструменты VIRZ для мототехники => ";
-
-            switch (razdelSnegohod)
-            {
-                case "Защита для мототехники":
-                    razdel += "Защита для мототехники";
-                    break;
-                case "Лебедки":
-                    razdel += "Лебедки";
-                    break;
-                case "Стекла ветровые":
-                    razdel += "Стекла ветровые";
-                    break;
-                case "Зеркала":
-                    razdel += "Зеркала";
-                    break;
-                case "Кофры, сумки":
-                    razdel += "Кофры, сумки";
-                    break;
-                case "Канистры для мототехники":
-                    razdel += "Канистры для мототехники";
-                    break;
-                case "Цепи на колеса":
-                    razdel += "Цепи на колеса";
-                    break;
-                case "Электроника":
-                    razdel += "Электроника";
-                    break;
-                case "Оптика, LED лампы":
-                    razdel += "Оптика, LED лампы";
-                    break;
-                case "Рули, ручки руля, наконечники руля, защита":
-                    razdel += "Рули, ручки руля, наконечники руля, защита";
-                    break;
-                case "Стайлинг, рамки номеров гос. регистрации":
-                    razdel += "Стайлинг, рамки номеров гос. регистрации";
-                    break;
-                case "Проставки амортизаторов":
-                    razdel += "Проставки амортизаторов";
-                    break;
-                case "Чехлы":
-                    razdel += "Чехлы";
-                    break;
-                case "Противоугонные устройства":
-                    razdel += "Противоугонные устройства";
-                    break;
-                case "Декоративные метизы":
-                    razdel += "Декоративные метизы";
-                    break;
-                case "Инструменты":
-                    razdel += "Инструменты";
-                    break;
-                case "Литература":
-                    razdel += "Литература";
-                    break;
-                case "Наклейки":
-                    razdel += "Наклейки";
-                    break;
-                case "Зимние аксессуары":
-                    razdel += "Зимние аксессуары";
-                    break;
-
-                default:
-                    razdel += "Прочие VIRZ";
-                    break;
-            }
-
-            return razdel;
         }
     }
 }
