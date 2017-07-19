@@ -573,7 +573,7 @@ namespace IrbisMoto
             MatchCollection razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
             for (int i = 0; razdel.Count > i; i++)
             {
-                otv = webRequest.getRequest("http://bike18.ru" + razdel[i].ToString() + "/page/all");
+                otv = webRequest.getRequest("http://bike18.ru" + razdel[i].ToString() + "?page=all");
                 MatchCollection tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*?(?=\" >)").Matches(otv);
                 for (int n = 0; tovar.Count > n; n++)
                 {
@@ -596,7 +596,7 @@ namespace IrbisMoto
             razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
             for (int i = 0; razdel.Count > i; i++)
             {
-                otv = webRequest.getRequest("http://bike18.ru" + razdel[i].ToString() + "/page/all");
+                otv = webRequest.getRequest("http://bike18.ru" + razdel[i].ToString() + "?page=all");
                 MatchCollection tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*?(?=\" >)").Matches(otv);
                 for (int n = 0; tovar.Count > n; n++)
                 {
@@ -619,7 +619,7 @@ namespace IrbisMoto
             razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
             for (int i = 0; razdel.Count > i; i++)
             {
-                otv = webRequest.getRequest("http://bike18.ru" + razdel[i].ToString() + "/page/all");
+                otv = webRequest.getRequest("http://bike18.ru" + razdel[i].ToString() + "?page=all");
                 MatchCollection tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*?(?=\" >)").Matches(otv);
                 for (int n = 0; tovar.Count > n; n++)
                 {
@@ -642,7 +642,7 @@ namespace IrbisMoto
             razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
             for (int i = 0; razdel.Count > i; i++)
             {
-                otv = webRequest.getRequest("http://bike18.ru" + razdel[i].ToString() + "/page/all");
+                otv = webRequest.getRequest("http://bike18.ru" + razdel[i].ToString() + "?page=all");
                 MatchCollection tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*?(?=\" >)").Matches(otv);
                 for (int n = 0; tovar.Count > n; n++)
                 {
