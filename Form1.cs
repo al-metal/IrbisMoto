@@ -587,6 +587,7 @@ namespace IrbisMoto
                         {
                             nethouse.UploadImage(cookie, tovar[n].ToString());
                             countUpdateImage++;
+                            lblProduct.Invoke(new Action(() => lblProduct.Text = countUpdateImage.ToString()));
                         }
                     }
                 }
@@ -610,6 +611,7 @@ namespace IrbisMoto
                         {
                             nethouse.UploadImage(cookie, tovar[n].ToString());
                             countUpdateImage++;
+                            lblProduct.Invoke(new Action(() => lblProduct.Text = countUpdateImage.ToString()));
                         }
                     }
                 }
@@ -633,6 +635,7 @@ namespace IrbisMoto
                         {
                             nethouse.UploadImage(cookie, tovar[n].ToString());
                             countUpdateImage++;
+                            lblProduct.Invoke(new Action(() => lblProduct.Text = countUpdateImage.ToString()));
                         }
                     }
                 }
@@ -656,6 +659,7 @@ namespace IrbisMoto
                         {
                             nethouse.UploadImage(cookie, tovar[n].ToString());
                             countUpdateImage++;
+                            lblProduct.Invoke(new Action(() => lblProduct.Text = countUpdateImage.ToString()));
                         }
                     }
                 }
