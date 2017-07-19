@@ -376,6 +376,8 @@ namespace Bike18
             urlProduct = urlProduct.Replace("http://bike18.ru", "http://bike18.nethouse.ru");
 
             otv = webRequest.PostRequest(cookieBike18, urlProduct);
+            if (otv == null)
+                return;
             string artProd = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString().Trim();
 
             MatchCollection prId = new Regex("(?<=data-id=\").*?(?=\")").Matches(otv);
