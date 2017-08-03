@@ -403,7 +403,7 @@ namespace IrbisMoto
                     if (urlTovar == null)
                         urlTovar = nethouse.searchTovar(name, "IRB_" + articl.ToString());
 
-                    if (urlTovar == "")
+                    if (urlTovar == "" || urlTovar == null)
                     {
                         WriteInCSV(articl.ToString(), name, razdelSnegohod, actualPrice.ToString());
                     }
@@ -459,7 +459,7 @@ namespace IrbisMoto
 
             chekedEditMiniText = cbMiniText.Checked;
 
-            FileInfo file = new FileInfo("Прайс-лист ТД Мегаполис 07.07.2017 Москва.xlsx");
+            FileInfo file = new FileInfo("Прайс-лист ТД Мегаполис МОТО 31.07.2017.xlsx");
             ExcelPackage p = new ExcelPackage(file);
 
             ExcelWorksheet w = p.Workbook.Worksheets[3];
