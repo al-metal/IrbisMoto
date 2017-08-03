@@ -45,6 +45,7 @@ namespace IrbisMoto
         string titleTextTemplate;
         string descriptionTextTemplate;
         string discountTemplate;
+        int countUpdateImage;
         List<string> newProduct = new List<string>();
 
         bool chekedEditMiniText;
@@ -568,8 +569,19 @@ namespace IrbisMoto
                 return;
             }
 
-            int countUpdateImage = 0;
-            otv = webRequest.getRequest("https://bike18.ru/products/category/katalog-zapchastey-irbis");
+            countUpdateImage = 0;
+            UpdateTovarInCategory(cookie, "https://bike18.ru/products/category/katalog-zapchastey-irbis");
+            UpdateTovarInCategory(cookie, "https://bike18.ru/products/category/katalog-zapchastey-kiyoshi");
+            UpdateTovarInCategory(cookie, "https://bike18.ru/products/category/zapchasti-dlya-snegohodov-i-motobuksirovshchikov");
+            UpdateTovarInCategory(cookie, "https://bike18.ru/products/category/aksessuary-i-instrumenty-virz-dlya-mototehniki");
+
+            MessageBox.Show("Обновлено картинок: " + countUpdateImage);
+            ControlsFormEnabledTrue();
+        }
+
+        private void UpdateTovarInCategory(CookieContainer cookie, string url)
+        {
+            otv = webRequest.getRequest(url);
             MatchCollection razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
             for (int i = 0; razdel.Count > i; i++)
             {
@@ -577,96 +589,31 @@ namespace IrbisMoto
                 MatchCollection tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*?(?=\" >)").Matches(otv);
                 for (int n = 0; tovar.Count > n; n++)
                 {
-                    otv = webRequest.getRequest(tovar[n].ToString());
-                    string urlImageTovar = new Regex("(?<=class=\"avatar-view \"><link rel=\"image_src\" href=\").*?(?=\">)").Match(otv).ToString();
-                    if (urlImageTovar == "")
-                    {
-                        string articl = new Regex("(?<= Артикул:)[\\w\\W]*?(?=</div>)").Match(otv).ToString();
-                        articl = articl.Trim();
-                        if (File.Exists("pic\\" + articl + ".jpg"))
-                        {
-                            nethouse.UploadImage(cookie, tovar[n].ToString());
-                            countUpdateImage++;
-                            lblProduct.Invoke(new Action(() => lblProduct.Text = countUpdateImage.ToString()));
-                        }
-                    }
+                    ImageProduct(cookie, tovar[n].ToString());
                 }
             }
+        }
 
-            otv = webRequest.getRequest("https://bike18.ru/products/category/katalog-zapchastey-kiyoshi");
-            razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
-            for (int i = 0; razdel.Count > i; i++)
+        private void ImageProduct(CookieContainer cookie, string url)
+        {
+            otv = webRequest.getRequest(url);
+            string urlImageTovar = new Regex("(?<=class=\"avatar-view \"><link rel=\"image_src\" href=\").*?(?=\">)").Match(otv).ToString();
+            if (urlImageTovar == "")
             {
-                otv = webRequest.getRequest("http://bike18.ru" + razdel[i].ToString() + "?page=all");
-                MatchCollection tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                for (int n = 0; tovar.Count > n; n++)
+                string articl = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString();
+                articl = articl.Trim();
+                if (File.Exists("pic\\" + articl + ".jpg"))
                 {
-                    otv = webRequest.getRequest(tovar[n].ToString());
-                    string urlImageTovar = new Regex("(?<=class=\"avatar-view \"><link rel=\"image_src\" href=\").*?(?=\">)").Match(otv).ToString();
-                    if (urlImageTovar == "")
-                    {
-                        string articl = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString();
-                        articl = articl.Trim();
-                        if (File.Exists("pic\\" + articl + ".jpg"))
-                        {
-                            nethouse.UploadImage(cookie, tovar[n].ToString());
-                            countUpdateImage++;
-                            lblProduct.Invoke(new Action(() => lblProduct.Text = countUpdateImage.ToString()));
-                        }
-                    }
+                    UpdateImages(cookie, url);
                 }
             }
+        }
 
-            otv = webRequest.getRequest("https://bike18.ru/products/category/zapchasti-dlya-snegohodov-i-motobuksirovshchikov");
-            razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
-            for (int i = 0; razdel.Count > i; i++)
-            {
-                otv = webRequest.getRequest("http://bike18.ru" + razdel[i].ToString() + "?page=all");
-                MatchCollection tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                for (int n = 0; tovar.Count > n; n++)
-                {
-                    otv = webRequest.getRequest(tovar[n].ToString());
-                    string urlImageTovar = new Regex("(?<=class=\"avatar-view \"><link rel=\"image_src\" href=\").*?(?=\">)").Match(otv).ToString();
-                    if (urlImageTovar == "")
-                    {
-                        string articl = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString();
-                        articl = articl.Trim();
-                        if (File.Exists("pic\\" + articl + ".jpg"))
-                        {
-                            nethouse.UploadImage(cookie, tovar[n].ToString());
-                            countUpdateImage++;
-                            lblProduct.Invoke(new Action(() => lblProduct.Text = countUpdateImage.ToString()));
-                        }
-                    }
-                }
-            }
-
-            otv = webRequest.getRequest("https://bike18.ru/products/category/aksessuary-i-instrumenty-virz-dlya-mototehniki");
-            razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
-            for (int i = 0; razdel.Count > i; i++)
-            {
-                otv = webRequest.getRequest("http://bike18.ru" + razdel[i].ToString() + "?page=all");
-                MatchCollection tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                for (int n = 0; tovar.Count > n; n++)
-                {
-                    otv = webRequest.getRequest(tovar[n].ToString());
-                    string urlImageTovar = new Regex("(?<=class=\"avatar-view \"><link rel=\"image_src\" href=\").*?(?=\">)").Match(otv).ToString();
-                    if (urlImageTovar == "")
-                    {
-                        string articl = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div)").Match(otv).ToString();
-                        articl = articl.Trim();
-                        if (File.Exists("pic\\" + articl + ".jpg"))
-                        {
-                            nethouse.UploadImage(cookie, tovar[n].ToString());
-                            countUpdateImage++;
-                            lblProduct.Invoke(new Action(() => lblProduct.Text = countUpdateImage.ToString()));
-                        }
-                    }
-                }
-            }
-
-            MessageBox.Show("Обновлено картинок: " + countUpdateImage);
-            ControlsFormEnabledTrue();
+        private void UpdateImages(CookieContainer cookie, string url)
+        {
+            nethouse.UploadImage(cookie, url);
+            countUpdateImage++;
+            lblProduct.Invoke(new Action(() => lblProduct.Text = countUpdateImage.ToString()));
         }
 
         #endregion
